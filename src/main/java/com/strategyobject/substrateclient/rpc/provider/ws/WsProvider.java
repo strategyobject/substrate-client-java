@@ -14,6 +14,7 @@ import com.strategyobject.substrateclient.rpc.provider.coder.JsonRpcResponseSubs
 import com.strategyobject.substrateclient.rpc.provider.coder.RpcCoder;
 import lombok.*;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.framing.CloseFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,8 +169,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         try {
             if (this.webSocket != null) {
-                // 1000 - Normal closure; the connection successfully completed
-                this.webSocket.close(1000);
+                this.webSocket.close(CloseFrame.NORMAL);
                 this.webSocket = null;
             }
         } catch (Exception ex) {
