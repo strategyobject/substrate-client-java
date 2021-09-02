@@ -1,7 +1,5 @@
 package com.strategyobject.substrateclient.rpc.provider.ws;
 
-import com.google.common.base.MoreObjects;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +26,9 @@ public final class ErrorCodes {
     }
 
     private static String getUnmapped(int code) {
-        if (code <= 1999) {
+        if (code >= 0 && code <= 999) {
+            return "(Unused)";
+        } else if (code <= 1999) {
             return "(For WebSocket standard)";
         } else if (code <= 2999) {
             return "(For WebSocket extensions)";
@@ -38,15 +38,11 @@ public final class ErrorCodes {
             return "(For applications)";
         }
 
-        return null;
+        return "(Unknown)";
     }
 
     public static String getWSErrorString(int code) {
-        if (code >= 0 && code <= 999) {
-            return "(Unused)";
-        }
-
-        return KNOWN.getOrDefault(code, MoreObjects.firstNonNull(getUnmapped(code), "(Unknown)"));
+        return KNOWN.getOrDefault(code, getUnmapped(code));
     }
 
     private ErrorCodes() {
