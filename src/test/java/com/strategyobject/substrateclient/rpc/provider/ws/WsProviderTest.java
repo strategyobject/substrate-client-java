@@ -38,12 +38,15 @@ class WsProviderTest {
     }
 
     @Test
-    void connectThrowsWhileConnecting() {
+    void connectFailsWhenConnected() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .build()) {
 
-            assertThrows(IllegalStateException.class, wsProvider::connect);
+            val executionException = assertThrows(
+                    ExecutionException.class,
+                    () -> wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS));
+            assertTrue(executionException.getCause() instanceof IllegalStateException);
         }
     }
 

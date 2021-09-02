@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 @Getter
@@ -72,8 +73,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private final Map<String, JsonRpcResponseSubscription<?>> waitingForId = new ConcurrentHashMap<>();
     private final int heartbeatInterval;
     private int autoConnectMs;
-    private boolean isConnected = false;
-    private WebSocketClient webSocket;
+    private volatile boolean isConnected = false;
+    private final AtomicReference<WebSocketClient> webSocket = new AtomicReference<>(null);
 
     static {
         ALIASES.put("chain_finalisedHead", "chain_finalizedHead");
@@ -130,24 +131,26 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      * however if you decided otherwise, you may connect manually using this method.
      */
     public CompletableFuture<Void> connect() {
-        Preconditions.checkState(this.webSocket == null);
-
         val whenConnected = new CompletableFuture<Void>();
 
         try {
-            this.webSocket = WebSocket.builder()
-                    .setServerUri(this.endpoint)
-                    .setHttpHeaders(this.headers)
-                    .onClose(this::onSocketClose)
-                    .onError(this::onSocketError)
-                    .onMessage(this::onSocketMessage)
-                    .onOpen(this::onSocketOpen)
-                    .build();
+            Preconditions.checkState(
+                    this.webSocket.compareAndSet(
+                            null,
+                            WebSocket.builder()
+                                    .setServerUri(this.endpoint)
+                                    .setHttpHeaders(this.headers)
+                                    .onClose(this::onSocketClose)
+                                    .onError(this::onSocketError)
+                                    .onMessage(this::onSocketMessage)
+                                    .onOpen(this::onSocketOpen)
+                                    .build()));
 
-            this.webSocket.setConnectionLostTimeout(this.heartbeatInterval);
+            val webSocket = this.webSocket.get();
+            webSocket.setConnectionLostTimeout(this.heartbeatInterval);
 
             this.eventEmitter.once(ProviderInterfaceEmitted.CONNECTED, _x -> whenConnected.complete(null));
-            this.webSocket.connect();
+            webSocket.connect();
         } catch (Exception ex) {
             logger.error("Connect error", ex);
             this.emit(ProviderInterfaceEmitted.ERROR, ex);
@@ -168,10 +171,14 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.autoConnectMs = 0;
 
         try {
-            if (this.webSocket != null) {
-                this.webSocket.close(CloseFrame.NORMAL);
-                this.webSocket = null;
-            }
+            this.webSocket.updateAndGet(ws -> {
+                if (ws != null) {
+                    ws.close(CloseFrame.NORMAL);
+                }
+
+                return null;
+            });
+
         } catch (Exception ex) {
             logger.error("Error disconnecting", ex);
             this.emit(ProviderInterfaceEmitted.ERROR, ex);
@@ -197,7 +204,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                                              List<Object> params,
                                              SubscriptionHandler<S> subscription) {
         Preconditions.checkState(
-                this.webSocket != null && this.isConnected,
+                this.webSocket.get() != null && this.isConnected,
                 "WebSocket is not connected");
 
         val jsonRpcRequest = this.coder.encodeObject(method, params);
@@ -205,8 +212,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         val id = jsonRpcRequest.getId();
 
         logger.debug("Calling {} {}, {}, {}, {}", id, method, params, json, subscription);
-
-        this.webSocket.send(json);
 
         val whenResponseReceived = new CompletableFuture<R>();
         val callback = new WeakReferenceFinalizer<>(
@@ -217,7 +222,13 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         val resultType = RpcCoder.<R>getResultType();
         this.handlers.put(id, new WsStateAwaiting<>(callback, method, params, subscription, resultType));
 
-        return whenResponseReceived;
+        return CompletableFuture.runAsync(() -> this.webSocket.get().send(json))
+                .whenComplete((_res, ex) -> {
+                    if (ex != null) {
+                        this.handlers.remove(id);
+                    }
+                })
+                .thenCombine(whenResponseReceived, (_a, b) -> b);
     }
 
     /**
@@ -287,7 +298,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             whenUnsubscribed.complete(false);
         } else {
             this.subscriptions.remove(subscription);
-            if (this.isConnected() && this.webSocket != null) {
+            if (this.isConnected() && this.webSocket.get() != null) {
                 return this.send(method, Collections.singletonList(id), null);
             }
 
@@ -308,7 +319,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         val errorMessage = String.format(
                 "Disconnected from %s code: '%s' reason: '%s'",
-                this.webSocket == null ? this.endpoint : this.webSocket.getURI(),
+                this.webSocket.get() == null ? this.endpoint : this.webSocket.get().getURI(),
                 code,
                 reason);
 
@@ -317,7 +328,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
 
         this.isConnected = false;
-        this.webSocket = null;
+        this.webSocket.updateAndGet(_ws -> null);
         this.emit(ProviderInterfaceEmitted.DISCONNECTED);
 
         // reject all hanging requests
@@ -422,7 +433,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     }
 
     public void onSocketOpen() {
-        logger.info("Connected to: {}", this.webSocket.getURI());
+        logger.info("Connected to: {}", this.webSocket.get().getURI());
 
         this.isConnected = true;
         this.emit(ProviderInterfaceEmitted.CONNECTED);
