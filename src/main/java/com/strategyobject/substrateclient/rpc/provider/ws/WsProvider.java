@@ -101,16 +101,33 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return always returns true
+     */
     @Override
     public boolean hasSubscriptions() {
         return true;
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return true if connected
+     */
     @Override
     public boolean isConnected() {
         return this.isConnected;
     }
 
+
+    /**
+     * {@inheritDoc}
+     * <p> The {@link com.strategyobject.substrateclient.rpc.provider.ws.WsProvider} connects automatically by default,
+     * however if you decided otherwise, you may connect manually using this method.
+     */
     public CompletableFuture<Void> connect() {
         Preconditions.checkState(this.webSocket == null);
 
@@ -139,6 +156,10 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return whenConnected;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void disconnect() {
         this.isConnected = false;
@@ -158,6 +179,13 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param type Event
+     * @param sub  Callback
+     * @return unsubscribe function
+     */
     @Override
     public Runnable on(ProviderInterfaceEmitted type, EventListener sub) {
         this.eventEmitter.on(type, sub);
@@ -165,9 +193,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return () -> this.eventEmitter.removeListener(type, sub);
     }
 
-    public <R, S> CompletableFuture<R> send(String method,
-                                            List<Object> params,
-                                            SubscriptionHandler<S> subscription) {
+    private <R, S> CompletableFuture<R> send(String method,
+                                             List<Object> params,
+                                             SubscriptionHandler<S> subscription) {
         Preconditions.checkState(
                 this.webSocket != null && this.isConnected,
                 "WebSocket is not connected");
@@ -178,6 +206,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         logger.debug("Calling {} {}, {}, {}, {}", id, method, params, json, subscription);
 
+        this.webSocket.send(json);
+
         val whenResponseReceived = new CompletableFuture<R>();
         val callback = new WeakReferenceFinalizer<>(
                 whenResponseReceived,
@@ -187,21 +217,44 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         val resultType = RpcCoder.<R>getResultType();
         this.handlers.put(id, new WsStateAwaiting<>(callback, method, params, subscription, resultType));
 
-        this.webSocket.send(json);
-
         return whenResponseReceived;
     }
 
+    /**
+     * Send JSON data using WebSockets to configured endpoint
+     *
+     * @param method The RPC methods to execute
+     * @param params Encoded parameters as applicable for the method
+     * @param <T>    Type of the result
+     * @return future containing result
+     */
     @Override
     public <T> CompletableFuture<T> send(String method, List<Object> params) {
         return send(method, params, null);
     }
 
+    /**
+     * Send JSON data using WebSockets to configured endpoint
+     *
+     * @param method The RPC methods to execute
+     * @param <T>    Type of the result
+     * @return future containing result
+     */
     @Override
     public <T> CompletableFuture<T> send(String method) {
         return send(method, null, null);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param type     Subscription type
+     * @param method   The RPC methods to execute
+     * @param params   Encoded parameters as applicable for the method
+     * @param callback Callback
+     * @param <T>
+     * @return future containing subscription id
+     */
     public <T> CompletableFuture<String> subscribe(String type,
                                                    String method,
                                                    List<Object> params,
@@ -211,6 +264,14 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return this.send(method, params, new SubscriptionHandler<>(callback, type, resultType));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param type   Subscription type
+     * @param method The RPC methods to execute
+     * @param id     Subscription id
+     * @return true if unsubscribed
+     */
     @Override
     public CompletableFuture<Boolean> unsubscribe(String type, String method, String id) {
         val subscription = type + "::" + id;
@@ -460,7 +521,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             return this;
         }
 
-        public Builder setHeartbeatInterval(int heartbeatInterval) {
+        public Builder setHeartbeatsInterval(int heartbeatInterval) {
             this.heartbeatInterval = heartbeatInterval;
             return this;
         }

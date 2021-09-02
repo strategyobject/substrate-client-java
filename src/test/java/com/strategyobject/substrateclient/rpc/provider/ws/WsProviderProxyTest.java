@@ -38,7 +38,7 @@ public class WsProviderProxyTest {
     void canReconnect() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(getWsAddress())
-                .setHeartbeatInterval(HEARTBEAT_INTERVAL)
+                .setHeartbeatsInterval(HEARTBEAT_INTERVAL)
                 .build()) {
 
             await()

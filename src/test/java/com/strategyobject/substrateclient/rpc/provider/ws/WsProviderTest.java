@@ -207,7 +207,7 @@ class WsProviderTest {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             val executionException = assertThrows(
                     ExecutionException.class,
-                    () -> wsProvider.send("unknown_method").get(WAIT_TIMEOUT, TimeUnit.SECONDS));
+                    () -> wsProvider.send("unknown_method", null).get(WAIT_TIMEOUT, TimeUnit.SECONDS));
             assertTrue(executionException.getCause() instanceof RpcException);
         }
     }
