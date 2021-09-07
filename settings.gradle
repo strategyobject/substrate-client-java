@@ -1,2 +1,13 @@
 rootProject.name = 'substrate-client'
 
+include 'common'
+include 'transport'
+include 'rpc'
+include 'rpc:core'
+include 'rpc:codegen'
+include 'rpc:sections'
+include 'api'
+include 'types'
+include 'scale'
+include 'tests'
+

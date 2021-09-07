@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':transport')
+    implementation project(':rpc:sections')
+    implementation project(':rpc:core')
+    implementation project(':rpc:codegen')
+}

@@ -1,0 +1,17 @@
+dependencies {
+    compileOnly project(':rpc:codegen')
+    annotationProcessor project(':rpc:codegen')
+    compileOnly project(':rpc:core')
+    compileOnly project(':transport')
+    implementation project(':types')
+
+    testImplementation project(':rpc:codegen')
+    testImplementation project(':tests')
+    testCompileOnly project(':rpc:core')
+    testCompileOnly project(':common')
+    testCompileOnly project(':transport')
+    testImplementation 'org.testcontainers:testcontainers:1.16.0'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.0'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.5'
+    testImplementation 'org.awaitility:awaitility:4.1.0'
+}
