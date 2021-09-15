@@ -58,7 +58,7 @@ public class ChainTests {
             // TO DO use real converter
             ResultConverter resultConverter = mock(ResultConverter.class);
             when(resultConverter.<String, BlockHash>convert(anyString()))
-                    .thenAnswer(invocation -> new BlockHash(Convert.toBytes(invocation.getArgument(0))));
+                    .thenAnswer(invocation -> BlockHash.fromBytes(Convert.toBytes(invocation.getArgument(0))));
 
             Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
 
@@ -88,7 +88,7 @@ public class ChainTests {
             ResultConverter resultConverter = mock(ResultConverter.class);
             when(resultConverter.<AbstractMap<?, ?>, Header>convert(any()))
                     .thenAnswer(invocation -> new Header(
-                            new BlockHash(
+                            BlockHash.fromBytes(
                                     Convert.toBytes((String) ((AbstractMap<?, ?>) invocation.getArgument(0)).get("parentHash"))
                             )));
 

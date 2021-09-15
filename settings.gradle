@@ -11,4 +11,5 @@ include 'types'
 include 'scale'
 include 'tests'
 include 'coder'
+include 'crypto'
 
