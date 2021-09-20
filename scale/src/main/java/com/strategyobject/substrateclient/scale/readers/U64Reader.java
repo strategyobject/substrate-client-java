@@ -3,13 +3,17 @@ package com.strategyobject.substrateclient.scale.readers;
 import com.strategyobject.substrateclient.common.streams.StreamUtils;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 
-public class BoolReader implements ScaleReader<Boolean> {
+public class U64Reader implements ScaleReader<BigInteger> {
     @Override
-    public Boolean read(@NonNull InputStream stream) throws IOException {
-        return StreamUtils.readByte(stream) != 0;
+    public BigInteger read(@NonNull InputStream stream) throws IOException {
+        val bytes = StreamUtils.readBytes(8, stream, true);
+
+        return new BigInteger(1, bytes);
     }
 }
