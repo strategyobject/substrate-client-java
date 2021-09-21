@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,7 +17,7 @@ class U16ReaderTest {
     @ParameterizedTest
     @CsvSource({"0x0000,0", "0x2a00,42", "0x4500,69", "0xffff,65535"})
     void read(String input, int expected) {
-        val bytes = Convert.toBytes(input);
+        val bytes = HexConverter.toBytes(input);
         val stream = new ByteArrayInputStream(bytes);
         val actual = u16Reader.read(stream);
         assertEquals(expected, actual);

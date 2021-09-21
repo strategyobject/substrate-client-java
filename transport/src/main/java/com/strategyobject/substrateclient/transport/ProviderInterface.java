@@ -46,20 +46,18 @@ public interface ProviderInterface {
      *
      * @param method The RPC methods to execute
      * @param params Encoded parameters as applicable for the method
-     * @param <T>    Type of the result
      * @return future containing result
      */
-    <T> CompletableFuture<T> send(String method,
-                                  List<Object> params);
+    CompletableFuture<Object> send(String method,
+                                   List<Object> params);
 
     /**
      * Send data to the node
      *
      * @param method The RPC methods to execute
-     * @param <T>    Type of the result
      * @return future containing result
      */
-    <T> CompletableFuture<T> send(String method);
+    CompletableFuture<Object> send(String method);
 
 
     /**
@@ -69,13 +67,12 @@ public interface ProviderInterface {
      * @param method   The RPC methods to execute
      * @param params   Encoded parameters as applicable for the method
      * @param callback Callback
-     * @param <T>      Type of the result
      * @return future containing subscription id
      */
-    <T> CompletableFuture<String> subscribe(String type,
-                                            String method,
-                                            List<Object> params,
-                                            BiConsumer<Exception, T> callback);
+    CompletableFuture<String> subscribe(String type,
+                                        String method,
+                                        List<Object> params,
+                                        BiConsumer<Exception, Object> callback);
 
     /**
      * Allows unsubscribing to subscriptions made with {@link #subscribe(String, String, List, BiConsumer)}

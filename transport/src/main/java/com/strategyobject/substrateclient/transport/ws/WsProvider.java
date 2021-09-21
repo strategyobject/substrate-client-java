@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -31,16 +30,15 @@ import java.util.function.BiConsumer;
 
 @Getter
 @Setter
-class WsStateSubscription<T> extends SubscriptionHandler<T> {
+class WsStateSubscription extends SubscriptionHandler {
     private String method;
     private List<Object> params;
 
-    public WsStateSubscription(BiConsumer<Exception, T> callBack,
+    public WsStateSubscription(BiConsumer<Exception, Object> callBack,
                                String type,
-                               Type resultType,
                                String method,
                                List<Object> params) {
-        super(callBack, type, resultType);
+        super(callBack, type);
         this.method = method;
         this.params = params;
     }
@@ -49,12 +47,11 @@ class WsStateSubscription<T> extends SubscriptionHandler<T> {
 @AllArgsConstructor
 @Getter
 @Setter
-class WsStateAwaiting<R, S> {
-    private WeakReference<CompletableFuture<R>> callBack;
+class WsStateAwaiting<T> {
+    private WeakReference<CompletableFuture<T>> callBack;
     private String method;
     private List<Object> params;
-    private SubscriptionHandler<S> subscription;
-    private Type resultType;
+    private SubscriptionHandler subscription;
 }
 
 public class WsProvider implements ProviderInterface, AutoCloseable {
@@ -73,9 +70,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private final URI endpoint;
     private final Map<String, String> headers;
     private final EventEmitter eventEmitter = new EventEmitter();
-    private final Map<Integer, WsStateAwaiting<?, ?>> handlers = new ConcurrentHashMap<>();
-    private final Map<String, WsStateSubscription<?>> subscriptions = new ConcurrentHashMap<>();
-    private final Map<String, JsonRpcResponseSubscription<?>> waitingForId = new ConcurrentHashMap<>();
+    private final Map<Integer, WsStateAwaiting<?>> handlers = new ConcurrentHashMap<>();
+    private final Map<String, WsStateSubscription> subscriptions = new ConcurrentHashMap<>();
+    private final Map<String, JsonRpcResponseSubscription> waitingForId = new ConcurrentHashMap<>();
     private final int heartbeatInterval;
     private final AtomicReference<WebSocketClient> webSocket = new AtomicReference<>(null);
     private int autoConnectMs;
@@ -200,9 +197,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return () -> this.eventEmitter.removeListener(type, sub);
     }
 
-    private <R, S> CompletableFuture<R> send(String method,
-                                             List<Object> params,
-                                             SubscriptionHandler<S> subscription) {
+    private <T> CompletableFuture<T> send(String method,
+                                          List<Object> params,
+                                          SubscriptionHandler subscription) {
         Preconditions.checkState(
                 this.webSocket.get() != null && this.isConnected,
                 "WebSocket is not connected");
@@ -213,15 +210,13 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         logger.debug("Calling {} {}, {}, {}, {}", id, method, params, json, subscription);
 
-        val whenResponseReceived = new CompletableFuture<R>();
+        val whenResponseReceived = new CompletableFuture<T>();
         val callback = new WeakReferenceFinalizer<>(
                 whenResponseReceived,
                 referenceQueue,
                 () -> this.handlers.remove(id));
 
-        // TODO It won't work as expected, so it should be removed or be passed via arguments
-        val resultType = RpcCoder.<R>getResultType();
-        this.handlers.put(id, new WsStateAwaiting<>(callback, method, params, subscription, resultType));
+        this.handlers.put(id, new WsStateAwaiting<>(callback, method, params, subscription));
 
         return CompletableFuture.runAsync(() -> this.webSocket.get().send(json))
                 .whenComplete((_res, ex) -> {
@@ -237,11 +232,10 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      *
      * @param method The RPC methods to execute
      * @param params Encoded parameters as applicable for the method
-     * @param <T>    Type of the result
      * @return future containing result
      */
     @Override
-    public <T> CompletableFuture<T> send(String method, List<Object> params) {
+    public CompletableFuture<Object> send(String method, List<Object> params) {
         return send(method, params, null);
     }
 
@@ -249,11 +243,10 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      * Send JSON data using WebSockets to configured endpoint
      *
      * @param method The RPC methods to execute
-     * @param <T>    Type of the result
      * @return future containing result
      */
     @Override
-    public <T> CompletableFuture<T> send(String method) {
+    public CompletableFuture<Object> send(String method) {
         return send(method, null, null);
     }
 
@@ -264,17 +257,13 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      * @param method   The RPC methods to execute
      * @param params   Encoded parameters as applicable for the method
      * @param callback Callback
-     * @param <T>
      * @return future containing subscription id
      */
-    public <T> CompletableFuture<String> subscribe(String type,
-                                                   String method,
-                                                   List<Object> params,
-                                                   BiConsumer<Exception, T> callback) {
-        // TODO It won't work as expected, so it should be removed or be passed via arguments
-        val resultType = RpcCoder.<T>getResultType();
-
-        return this.send(method, params, new SubscriptionHandler<>(callback, type, resultType));
+    public CompletableFuture<String> subscribe(String type,
+                                               String method,
+                                               List<Object> params,
+                                               BiConsumer<Exception, Object> callback) {
+        return this.send(method, params, new SubscriptionHandler(callback, type));
     }
 
     /**
@@ -368,9 +357,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     }
 
     @SuppressWarnings("unchecked")
-    private <R, S> void onSocketMessageResult(JsonRpcResponseSingle<R> response) {
+    private <T> void onSocketMessageResult(JsonRpcResponseSingle response) {
         val id = response.getId();
-        val handler = (WsStateAwaiting<R, S>) this.handlers.get(id);
+        val handler = (WsStateAwaiting<T>) this.handlers.get(id);
         if (handler == null) {
             logger.error("Unable to find handler for id={}", id);
             return;
@@ -378,7 +367,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         val callback = Optional.ofNullable(handler.getCallBack().get());
         try {
-            val result = response.getResult(handler.getResultType());
+            val result = (T) response.getResult();
             // first send the result - in case of subs, we may have an update
             // immediately if we have some queued results already
             callback.ifPresent(x -> x.complete(result));
@@ -388,10 +377,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                 val subId = subscription.getType() + "::" + result;
                 this.subscriptions.put(
                         subId,
-                        new WsStateSubscription<>(
+                        new WsStateSubscription(
                                 subscription.getCallBack(),
                                 subscription.getType(),
-                                subscription.getResultType(),
                                 handler.getMethod(),
                                 handler.getParams()));
 
@@ -408,14 +396,13 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.handlers.remove(id);
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> void onSocketMessageSubscribe(JsonRpcResponseSubscription<T> response) {
+    private void onSocketMessageSubscribe(JsonRpcResponseSubscription response) {
         val method = ALIASES.getOrDefault(response.getMethod(), response.getMethod());
         val subId = method + "::" + response.getParams().getSubscription();
 
         logger.debug("Handling: response =', {}, 'subscription =', {}", response, subId);
 
-        val handler = (WsStateSubscription<T>) this.subscriptions.get(subId);
+        val handler = this.subscriptions.get(subId);
         if (handler == null) {
             // store the JSON, we could have out-of-order subid coming in
             this.waitingForId.put(subId, response);
@@ -427,7 +414,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.waitingForId.remove(subId);
 
         try {
-            val result = response.getResult(handler.getResultType());
+            val result = response.getResult();
             handler.getCallBack().accept(null, result);
         } catch (Exception ex) {
             handler.getCallBack().accept(ex, null);
@@ -448,7 +435,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     }
 
     private void resubscribe() {
-        Map<String, WsStateSubscription<?>> subscriptions = new HashMap<>(this.subscriptions);
+        Map<String, WsStateSubscription> subscriptions = new HashMap<>(this.subscriptions);
 
         this.subscriptions.clear();
 

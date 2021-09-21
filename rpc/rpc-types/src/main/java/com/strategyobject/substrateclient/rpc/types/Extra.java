@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.scale.ScaleEncoded;
+import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 
-public interface Extra extends ScaleEncoded<Extra> {
+public interface Extra extends ScaleSelfWritable<Extra> {
 }

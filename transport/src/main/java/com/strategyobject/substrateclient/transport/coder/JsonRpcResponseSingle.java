@@ -1,20 +1,16 @@
 package com.strategyobject.substrateclient.transport.coder;
 
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 
-import java.lang.reflect.Type;
-import java.util.function.Function;
-
 @Getter
-public class JsonRpcResponseSingle<T> extends JsonRpcObject {
+public class JsonRpcResponseSingle extends JsonRpcObject {
     private final JsonRpcResponseBaseError error;
-    private final Function<Type, T> result;
+    private final Object result;
 
     private JsonRpcResponseSingle(int id,
                                   String jsonrpc,
                                   JsonRpcResponseBaseError error,
-                                  Function<Type, T> result) {
+                                  Object result) {
         this.id = id;
         this.jsonrpc = jsonrpc;
         this.error = error;
@@ -27,20 +23,18 @@ public class JsonRpcResponseSingle<T> extends JsonRpcObject {
         if (error != null) {
             error.throwRpcException();
         }
-
-        Preconditions.checkNotNull(this.result, "No result found in JsonRpc response");
     }
 
-    public T getResult(Type resultType) {
+    public Object getResult() {
         this.validate();
-        return this.result.apply(resultType);
+        return this.result;
     }
 
-    public static JsonRpcResponseSingle<?> from(JsonRpcResponse response) {
-        return new JsonRpcResponseSingle<>(
+    public static JsonRpcResponseSingle from(JsonRpcResponse response) {
+        return new JsonRpcResponseSingle(
                 response.id,
                 response.jsonrpc,
                 response.error,
-                type -> RpcCoder.decodeObject(response.result.toString(), type));
+                response.result);
     }
 }

@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,7 +24,7 @@ class U128ReaderTest {
             "0xffffffffffffffffffffffffffffffff,340282366920938463463374607431768211455"
     })
     void read(String input, String expected) {
-        val bytes = Convert.toBytes(input);
+        val bytes = HexConverter.toBytes(input);
         val stream = new ByteArrayInputStream(bytes);
         val actual = u128Reader.read(stream);
         assertEquals(new BigInteger(expected), actual);

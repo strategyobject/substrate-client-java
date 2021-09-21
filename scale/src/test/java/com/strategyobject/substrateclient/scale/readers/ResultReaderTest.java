@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
-import com.strategyobject.substrateclient.scale.Result;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.types.Result;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -15,9 +15,9 @@ class ResultReaderTest {
     @SneakyThrows
     @Test
     void readOk() {
-        val resultReader = new ResultReader<>();
+        val resultReader = new ResultReader();
 
-        val bytes = Convert.toBytes("0x002a");
+        val bytes = HexConverter.toBytes("0x002a");
         val stream = new ByteArrayInputStream(bytes);
         val actual = resultReader.read(stream, new U8Reader(), new VoidReader());
         assertEquals(Result.ok(42), actual);
@@ -26,9 +26,9 @@ class ResultReaderTest {
     @SneakyThrows
     @Test
     void readErr() {
-        val resultReader = new ResultReader<>();
+        val resultReader = new ResultReader();
 
-        val bytes = Convert.toBytes("0x0100");
+        val bytes = HexConverter.toBytes("0x0100");
         val stream = new ByteArrayInputStream(bytes);
         val actual = resultReader.read(stream, new VoidReader(), new BoolReader());
         assertEquals(Result.err(false), actual);

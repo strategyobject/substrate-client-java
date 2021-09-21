@@ -23,7 +23,7 @@ class WsProviderTest {
     private static final int WAIT_TIMEOUT = 10;
 
     @Container
-    static TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
 
     @Test
     void canConnect() {
@@ -143,7 +143,7 @@ class WsProviderTest {
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            val version = wsProvider.<String>send("system_version").get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val version = (String) wsProvider.send("system_version").get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             assertFalse(Strings.isNullOrEmpty(version));
         }
     }

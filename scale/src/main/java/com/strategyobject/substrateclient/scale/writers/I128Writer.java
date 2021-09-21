@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.writers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import lombok.NonNull;
 import lombok.val;
@@ -19,7 +19,7 @@ public class I128Writer implements ScaleWriter<BigInteger> {
         Preconditions.checkArgument(bytes.length <= 16,
                 "Value exceeded 128 bits.");
 
-        StreamUtils.writeBytes(bytes, stream, true);
-        StreamUtils.writeBytes(new byte[16 - bytes.length], stream);
+        Streamer.writeBytes(bytes, stream, true);
+        Streamer.writeBytes(new byte[16 - bytes.length], stream);
     }
 }

@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.writers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import lombok.NonNull;
 
@@ -15,6 +15,6 @@ public class StringWriter implements ScaleWriter<String> {
         Preconditions.checkArgument(writers == null || writers.length == 0);
 
         CompactIntegerWriter.writeInternal(value.length(), stream);
-        StreamUtils.writeBytes(value.getBytes(StandardCharsets.UTF_8), stream);
+        Streamer.writeBytes(value.getBytes(StandardCharsets.UTF_8), stream);
     }
 }

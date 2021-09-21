@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.scale.ScaleEncoded;
+import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 
-public interface Signature extends ScaleEncoded<Signature> {
+public interface Signature extends ScaleSelfWritable<Signature> {
     SignatureKind getKind();
 }

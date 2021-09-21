@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.scale.ScaleEncoded;
+import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 
-public interface Address extends ScaleEncoded<Address> {
+public interface Address extends ScaleSelfWritable<Address> {
     AddressKind getKind();
 }

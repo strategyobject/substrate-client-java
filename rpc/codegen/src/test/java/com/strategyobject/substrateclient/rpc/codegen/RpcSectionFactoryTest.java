@@ -22,9 +22,9 @@ public class RpcSectionFactoryTest {
         val factory = new RpcGeneratedSectionFactory();
 
         val expected = true;
-        val sendFuture = CompletableFuture.completedFuture(String.valueOf(expected));
+        val sendFuture = CompletableFuture.completedFuture((Object) String.valueOf(expected));
         val provider = mock(ProviderInterface.class);
-        when(provider.<String>send(anyString(), anyList()))
+        when(provider.send(anyString(), anyList()))
                 .thenReturn(sendFuture);
 
         val parameterConverter = mock(ParameterConverter.class);

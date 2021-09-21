@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.CompactMode;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
@@ -19,7 +19,7 @@ public class CompactIntegerReader implements ScaleReader<Integer> {
     }
 
     static int readInternal(InputStream stream) throws IOException {
-        val head = StreamUtils.readByte(stream);
+        val head = Streamer.readByte(stream);
         val mode = CompactMode.fromValue((byte) (head & 0b11));
         return parseCompactInteger(mode, head, stream);
     }
@@ -31,9 +31,9 @@ public class CompactIntegerReader implements ScaleReader<Integer> {
             case SINGLE:
                 return head >> 2;
             case TWO:
-                return (head >> 2) + (StreamUtils.readByte(stream) << 6);
+                return (head >> 2) + (Streamer.readByte(stream) << 6);
             case FOUR:
-                val bytes = StreamUtils.readBytes(3, stream);
+                val bytes = Streamer.readBytes(3, stream);
                 return (head >> 2) +
                         (Byte.toUnsignedInt(bytes[0]) << 6) +
                         (Byte.toUnsignedInt(bytes[1]) << (6 + 8)) +

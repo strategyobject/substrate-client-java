@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Testcontainers
 public class WsProviderProxyTest {
-    static Network network = Network.newNetwork();
+    static final Network network = Network.newNetwork();
 
     @Container
-    static TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0)
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0)
             .withNetwork(network);
 
     @Container
-    static ToxiproxyContainer toxiproxy = new ToxiproxyContainer("shopify/toxiproxy")
+    static final ToxiproxyContainer toxiproxy = new ToxiproxyContainer("shopify/toxiproxy")
             .withNetwork(network)
             .withNetworkAliases("toxiproxy");
 

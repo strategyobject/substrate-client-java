@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +22,7 @@ class I64ReaderTest {
             "0xffffffffffffff7f,9223372036854775807"
     })
     void read(String input, long expected) {
-        val bytes = Convert.toBytes(input);
+        val bytes = HexConverter.toBytes(input);
         val stream = new ByteArrayInputStream(bytes);
         val actual = i64Reader.read(stream);
         assertEquals(expected, actual);

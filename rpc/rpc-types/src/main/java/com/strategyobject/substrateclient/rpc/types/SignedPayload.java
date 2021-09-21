@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.scale.ScaleWriterNotFoundException;
+import com.strategyobject.substrateclient.scale.registry.ScaleWriterNotFoundException;
 import com.strategyobject.substrateclient.types.Signable;
 import lombok.Getter;
 import lombok.NonNull;
@@ -13,7 +13,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Getter
 public class SignedPayload<C extends Call, E extends Extra & SignedExtension>
-    implements Signable {
+        implements Signable {
     private final C call;
     private final E extra;
 

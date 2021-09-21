@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ class StringWriterTest {
     void write() {
         val stream = new ByteArrayOutputStream();
         stringWriter.write("test", stream);
-        val actual = Convert.toHex(stream.toByteArray());
+        val actual = HexConverter.toHex(stream.toByteArray());
 
         assertEquals("0x1074657374", actual);
     }
@@ -27,7 +27,7 @@ class StringWriterTest {
     void writeEmpty() {
         val stream = new ByteArrayOutputStream();
         stringWriter.write("", stream);
-        val actual = Convert.toHex(stream.toByteArray());
+        val actual = HexConverter.toHex(stream.toByteArray());
 
         assertEquals("0x00", actual);
     }

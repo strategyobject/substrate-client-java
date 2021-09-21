@@ -5,19 +5,16 @@ import com.google.common.base.Strings;
 import lombok.Getter;
 import lombok.val;
 
-import java.lang.reflect.Type;
-import java.util.function.Function;
-
 @Getter
-public class JsonRpcResponseSubscription<T> extends JsonRpcObject {
+public class JsonRpcResponseSubscription extends JsonRpcObject {
     @Getter
-    public static class SubscriptionParam<T> {
+    public static class SubscriptionParam {
         private final JsonRpcResponseBaseError error;
-        private final Function<Type, T> result;
+        private final Object result;
         private final String subscription;
 
         private SubscriptionParam(JsonRpcResponseBaseError error,
-                                  Function<Type, T> result,
+                                  Object result,
                                   String subscription) {
             this.error = error;
             this.result = result;
@@ -26,12 +23,12 @@ public class JsonRpcResponseSubscription<T> extends JsonRpcObject {
     }
 
     private final String method;
-    private final SubscriptionParam<T> params;
+    private final SubscriptionParam params;
 
     private JsonRpcResponseSubscription(int id,
                                         String jsonrpc,
                                         String method,
-                                        SubscriptionParam<T> params) {
+                                        SubscriptionParam params) {
         this.id = id;
         this.jsonrpc = jsonrpc;
         this.method = method;
@@ -51,19 +48,19 @@ public class JsonRpcResponseSubscription<T> extends JsonRpcObject {
         }
     }
 
-    public T getResult(Type resultType) {
+    public Object getResult() {
         this.validate();
-        return this.params.result.apply(resultType);
+        return this.params.result;
     }
 
-    public static JsonRpcResponseSubscription<?> from(JsonRpcResponse response) {
-        return new JsonRpcResponseSubscription<>(
+    public static JsonRpcResponseSubscription from(JsonRpcResponse response) {
+        return new JsonRpcResponseSubscription(
                 response.id,
                 response.jsonrpc,
                 response.method,
-                new SubscriptionParam<>(
+                new SubscriptionParam(
                         response.params.error,
-                        type -> RpcCoder.decodeObject(response.params.result.toString(), type),
+                        response.params.result,
                         response.params.subscription
                 ));
     }

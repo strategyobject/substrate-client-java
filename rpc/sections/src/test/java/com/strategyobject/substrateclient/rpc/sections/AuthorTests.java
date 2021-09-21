@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import com.strategyobject.substrateclient.crypto.KeyRing;
 import com.strategyobject.substrateclient.rpc.codegen.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.codegen.RpcInterfaceInitializationException;
@@ -11,8 +11,8 @@ import com.strategyobject.substrateclient.rpc.core.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.rpc.sections.substitutes.BalanceTransfer;
 import com.strategyobject.substrateclient.rpc.types.*;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.ScaleWriterNotFoundException;
-import com.strategyobject.substrateclient.scale.ScaleWriterRegistry;
+import com.strategyobject.substrateclient.scale.registry.ScaleWriterNotFoundException;
+import com.strategyobject.substrateclient.scale.registry.ScaleWriterRegistry;
 import com.strategyobject.substrateclient.scale.writers.CompactIntegerWriter;
 import com.strategyobject.substrateclient.scale.writers.U32Writer;
 import com.strategyobject.substrateclient.scale.writers.U8Writer;
@@ -85,18 +85,14 @@ public class AuthorTests {
             Author rpcSection = sectionFactory.create(Author.class, wsProvider, parameterConverter, resultConverter);
 
             val publicKey = PublicKey.fromBytes(
-                    Convert.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"));
+                    HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"));
             val keyType = "aura";
-            var result = rpcSection.hasKey(publicKey,
-                            keyType)
-                    .get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            var result = rpcSection.hasKey(publicKey, keyType).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertFalse(result);
 
             rpcSection.insertKey(keyType, "alice", publicKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            result = rpcSection.hasKey(publicKey,
-                            keyType)
-                    .get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            result = rpcSection.hasKey(publicKey, keyType).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertTrue(result);
         }
@@ -129,7 +125,7 @@ public class AuthorTests {
             assertDoesNotThrow(() -> rpcSection.insertKey("aura",
                             "alice",
                             PublicKey.fromBytes(
-                                    Convert.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d")))
+                                    HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d")))
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS));
         }
     }
@@ -154,7 +150,7 @@ public class AuthorTests {
             // TO DO use real converter
             ResultConverter resultConverter = mock(ResultConverter.class);
             when(resultConverter.<String, BlockHash>convert(anyString()))
-                    .thenAnswer(invocation -> BlockHash.fromBytes(Convert.toBytes(invocation.getArgument(0))));
+                    .thenAnswer(invocation -> BlockHash.fromBytes(HexConverter.toBytes(invocation.getArgument(0))));
 
             Chain chainSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
 
@@ -206,33 +202,34 @@ public class AuthorTests {
                         new CompactIntegerWriter().write(encodedExtrinsic.size(), targetBuf);
                         targetBuf.write(encodedExtrinsic.toByteArray());
 
-                        return Convert.toHex(targetBuf.toByteArray());
+                        return HexConverter.toHex(targetBuf.toByteArray());
                     }
                 });
 
         return rpcEncoderRegistry;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private ScaleWriterRegistry mockScaleWriterRegistry() throws ScaleWriterNotFoundException {
         ScaleWriterRegistry registry = mock(ScaleWriterRegistry.class);
 
-        when(registry.resolve(AddressId.class)).thenReturn(getAddressIdScaleWriter());
+        when(registry.resolve(AddressId.class)).thenReturn((ScaleWriter) getAddressIdScaleWriter());
 
-        when(registry.resolve(BalanceTransfer.class)).thenReturn(getBalanceTransferScaleWriter());
+        when(registry.resolve(BalanceTransfer.class)).thenReturn((ScaleWriter) getBalanceTransferScaleWriter());
 
-        when(registry.resolve(ImmortalEra.class)).thenReturn(getImmortalEraScaleWriter());
+        when(registry.resolve(ImmortalEra.class)).thenReturn((ScaleWriter) getImmortalEraScaleWriter());
 
-        when(registry.resolve(SignedExtra.class)).thenReturn(getSignedExtraScaleWriter());
+        when(registry.resolve(SignedExtra.class)).thenReturn((ScaleWriter) getSignedExtraScaleWriter());
 
-        when(registry.resolve(SignedAdditionalExtra.class)).thenReturn(getSignedAdditionalExtraScaleWriter());
+        when(registry.resolve(SignedAdditionalExtra.class)).thenReturn((ScaleWriter) getSignedAdditionalExtraScaleWriter());
 
-        when(registry.resolve(BlockHash.class)).thenReturn(getBlockHashScaleWriter());
+        when(registry.resolve(BlockHash.class)).thenReturn((ScaleWriter) getBlockHashScaleWriter());
 
-        when(registry.resolve(Extrinsic.class)).thenReturn(getExtrinsicScaleWriter());
+        when(registry.resolve(Extrinsic.class)).thenReturn((ScaleWriter) getExtrinsicScaleWriter());
 
-        when(registry.resolve(Sr25519Signature.class)).thenReturn(getSr25519SignatureScaleWriter());
+        when(registry.resolve(Sr25519Signature.class)).thenReturn((ScaleWriter) getSr25519SignatureScaleWriter());
 
-        when(registry.resolve(SignaturePayload.class)).thenReturn(getSignaturePayloadScaleWriter());
+        when(registry.resolve(SignaturePayload.class)).thenReturn((ScaleWriter) getSignaturePayloadScaleWriter());
 
         return registry;
     }
@@ -343,9 +340,7 @@ public class AuthorTests {
     }
 
     private ScaleWriter<byte[]> newByteArrayWriter() {
-        return (value, stream, writers) -> {
-            stream.write(value);
-        };
+        return (value, stream, writers) -> stream.write(value);
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis) {
@@ -382,13 +377,13 @@ public class AuthorTests {
         val str = "0x98319d4ff8a9508c4bb0cf0b5a78d760a0b2082c02775e6e82370816fedfff48925a225d97aa00682d6a59b95b18780c10d" +
                 "7032336e88f3442b42361f4a66011d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
 
-        return KeyPair.fromBytes(Convert.toBytes(str));
+        return KeyPair.fromBytes(HexConverter.toBytes(str));
     }
 
     private KeyPair bobKeyPair() {
         val str = "0x081ff694633e255136bdb456c20a5fc8fed21f8b964c11bb17ff534ce80ebd5941ae88f85d0c1bfc37be41c904e1dfc01de" +
                 "8c8067b0d6d5df25dd1ac0894a3258eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48";
 
-        return KeyPair.fromBytes(Convert.toBytes(str));
+        return KeyPair.fromBytes(HexConverter.toBytes(str));
     }
 }

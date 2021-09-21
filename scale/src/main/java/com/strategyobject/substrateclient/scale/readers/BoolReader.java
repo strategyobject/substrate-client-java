@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
 
@@ -13,6 +13,6 @@ public class BoolReader implements ScaleReader<Boolean> {
     public Boolean read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
-        return StreamUtils.readByte(stream) != 0;
+        return Streamer.readByte(stream) != 0;
     }
 }

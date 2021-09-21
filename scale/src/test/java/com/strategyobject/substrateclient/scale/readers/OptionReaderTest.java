@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -15,9 +15,9 @@ class OptionReaderTest {
     @SneakyThrows
     @Test
     void readNone() {
-        val optionReader = new OptionReader<>();
+        val optionReader = new OptionReader();
 
-        val bytes = Convert.toBytes("0x00");
+        val bytes = HexConverter.toBytes("0x00");
         val stream = new ByteArrayInputStream(bytes);
         val actual = optionReader.read(stream, new VoidReader());
         assertEquals(Optional.empty(), actual);
@@ -26,9 +26,9 @@ class OptionReaderTest {
     @SneakyThrows
     @Test
     void readSome() {
-        val optionReader = new OptionReader<>();
+        val optionReader = new OptionReader();
 
-        val bytes = Convert.toBytes("0x0100");
+        val bytes = HexConverter.toBytes("0x0100");
         val stream = new ByteArrayInputStream(bytes);
         val actual = optionReader.read(stream, new I8Reader());
         assertEquals(Optional.of((byte) 0), actual);

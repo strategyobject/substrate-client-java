@@ -112,7 +112,7 @@ class RpcSubscriptionProcessor extends RpcInterfaceMethodProcessor {
         val unsubscribeMethod = String.format(RPC_METHOD_NAME_TEMPLATE, section, subscriptionAnnotation.unsubscribeMethod());
         methodSpecBuilder
                 .addStatement(
-                        "$T<$T, ?> callbackProxy = (e, r) -> { $N.accept(e, $L); }",
+                        "$T<$T, Object> callbackProxy = (e, r) -> { $N.accept(e, $L); }",
                         BiConsumer.class,
                         Exception.class,
                         callbackName,

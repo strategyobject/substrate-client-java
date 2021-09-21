@@ -10,7 +10,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class OptionWriterTest {
-    private final OptionWriter<Byte> optionWriter = new OptionWriter<>();
+    private final OptionWriter optionWriter = new OptionWriter();
 
     @SneakyThrows
     @Test

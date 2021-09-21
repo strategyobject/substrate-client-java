@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +18,7 @@ class CompactBigIntegerReaderTest {
     @ParameterizedTest
     @CsvSource({"0x00,0", "0x04,1", "0xa8,42", "0x1501,69", "0xfeffffff,1073741823", "0x0300000040,1073741824"})
     void read(String input, String expected) {
-        val bytes = Convert.toBytes(input);
+        val bytes = HexConverter.toBytes(input);
         val stream = new ByteArrayInputStream(bytes);
         val actual = compactBigIntegerReader.read(stream);
         assertEquals(new BigInteger(expected), actual);

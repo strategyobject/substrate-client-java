@@ -5,7 +5,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
 
     testImplementation project(':tests')
-    testImplementation 'ch.qos.logback:logback-classic:1.2.5'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.6'
     testImplementation 'org.testcontainers:testcontainers:1.16.0'
     testImplementation 'org.testcontainers:junit-jupiter:1.16.0'
     testImplementation "org.testcontainers:toxiproxy:1.16.0"

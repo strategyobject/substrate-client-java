@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +19,7 @@ class I16WriterTest {
     void write(short input, String expected) {
         val stream = new ByteArrayOutputStream();
         i16Writer.write(input, stream);
-        val actual = Convert.toHex(stream.toByteArray());
+        val actual = HexConverter.toHex(stream.toByteArray());
         assertEquals(expected, actual);
     }
 }

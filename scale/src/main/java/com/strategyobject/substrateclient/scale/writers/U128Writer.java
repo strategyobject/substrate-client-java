@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.writers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import lombok.NonNull;
 import lombok.val;
@@ -21,10 +21,10 @@ public class U128Writer implements ScaleWriter<BigInteger> {
         val bytes = value.toByteArray();
         //leading zero byte
         if (bytes.length > 16) {
-            StreamUtils.writeBytes(bytes, 1, stream, true);
+            Streamer.writeBytes(bytes, 1, stream, true);
         } else {
-            StreamUtils.writeBytes(bytes, stream, true);
-            StreamUtils.writeBytes(new byte[16 - bytes.length], stream, true);
+            Streamer.writeBytes(bytes, stream, true);
+            Streamer.writeBytes(new byte[16 - bytes.length], stream, true);
         }
     }
 }

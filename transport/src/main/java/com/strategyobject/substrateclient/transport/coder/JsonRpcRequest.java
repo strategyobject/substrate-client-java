@@ -6,8 +6,8 @@ import java.util.List;
 
 @Getter
 public class JsonRpcRequest extends JsonRpcObject {
-    protected String method;
-    protected List<Object> params;
+    protected final String method;
+    protected final List<Object> params;
 
     public JsonRpcRequest(int id, String method, List<Object> params) {
         this.id = id;

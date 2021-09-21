@@ -1,9 +1,7 @@
 package com.strategyobject.substrateclient.transport.coder;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,14 +20,5 @@ public class RpcCoder {
 
     public static JsonRpcResponse decodeJson(String json) {
         return GSON.fromJson(json, JsonRpcResponse.class);
-    }
-
-    public static <T> T decodeObject(String json, Type objectType) {
-        return GSON.fromJson(json, objectType);
-    }
-
-    public static <T> Type getResultType() {
-        return new TypeToken<T>() {
-        }.getType();
     }
 }

@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
 import lombok.val;
@@ -16,7 +16,7 @@ public class I32Reader implements ScaleReader<Integer> {
     public Integer read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
-        val bytes = StreamUtils.readBytes(4, stream);
+        val bytes = Streamer.readBytes(4, stream);
         ByteBuffer buf = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
         buf.put(bytes);
         buf.flip();

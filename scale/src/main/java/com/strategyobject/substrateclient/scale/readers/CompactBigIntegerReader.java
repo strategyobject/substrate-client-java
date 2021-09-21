@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.CompactMode;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
@@ -16,7 +16,7 @@ public class CompactBigIntegerReader implements ScaleReader<BigInteger> {
     public BigInteger read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
-        val head = StreamUtils.readByte(stream);
+        val head = Streamer.readByte(stream);
         val mode = CompactMode.fromValue((byte) (head & 0b11));
         if (mode != CompactMode.BIG_INTEGER) {
             return BigInteger.valueOf(
@@ -24,7 +24,7 @@ public class CompactBigIntegerReader implements ScaleReader<BigInteger> {
         }
 
         val len = (head >> 2) + 4;
-        val value = StreamUtils.readBytes(len, stream, true);
+        val value = Streamer.readBytes(len, stream, true);
         return new BigInteger(1, value);
     }
 }

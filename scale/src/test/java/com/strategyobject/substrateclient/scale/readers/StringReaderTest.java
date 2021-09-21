@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class StringReaderTest {
     void read() {
         val stringReader = new StringReader();
 
-        val bytes = Convert.toBytes("0x1074657374");
+        val bytes = HexConverter.toBytes("0x1074657374");
         val stream = new ByteArrayInputStream(bytes);
         val actual = stringReader.read(stream);
 
@@ -28,7 +28,7 @@ class StringReaderTest {
     void readEmpty() {
         val stringReader = new StringReader();
 
-        val bytes = Convert.toBytes("0x00");
+        val bytes = HexConverter.toBytes("0x00");
         val stream = new ByteArrayInputStream(bytes);
         val actual = stringReader.read(stream);
 

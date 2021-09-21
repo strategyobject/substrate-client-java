@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
 import lombok.val;
@@ -16,7 +16,7 @@ public class StringReader implements ScaleReader<String> {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
         val len = CompactIntegerReader.readInternal(stream);
-        val bytes = StreamUtils.readBytes(len, stream);
+        val bytes = Streamer.readBytes(len, stream);
         return new String(bytes, StandardCharsets.UTF_8);
     }
 }

@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.writers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.CompactMode;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import lombok.NonNull;
@@ -26,6 +26,6 @@ public class CompactBigIntegerWriter implements ScaleWriter<BigInteger> {
         val leadingZero = bytes[0] == 0;
         val len = leadingZero ? bytes.length - 1 : bytes.length;
         stream.write(((len - 4) << 2) + mode.getValue());
-        StreamUtils.writeBytes(bytes, leadingZero ? 1 : 0, stream, true);
+        Streamer.writeBytes(bytes, leadingZero ? 1 : 0, stream, true);
     }
 }

@@ -1,26 +1,25 @@
 package com.strategyobject.substrateclient.scale.readers;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.streams.StreamUtils;
-import com.strategyobject.substrateclient.scale.Result;
+import com.strategyobject.substrateclient.common.io.Streamer;
 import com.strategyobject.substrateclient.scale.ScaleReader;
+import com.strategyobject.substrateclient.types.Result;
 import lombok.NonNull;
 import lombok.val;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ResultReader<T, E> implements ScaleReader<Result<T, E>> {
+public class ResultReader implements ScaleReader<Result<?, ?>> {
     @Override
-    @SuppressWarnings("unchecked")
-    public Result<T, E> read(@NonNull InputStream stream, @NonNull ScaleReader<?>... readers) throws IOException {
+    public Result<?, ?> read(@NonNull InputStream stream, @NonNull ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers.length == 2);
         Preconditions.checkNotNull(readers[0]);
         Preconditions.checkNotNull(readers[1]);
 
-        val okReader = (ScaleReader<T>)readers[0];
-        val errReader = (ScaleReader<E>)readers[1];
-        return StreamUtils.readByte(stream) == 0
+        val okReader = readers[0];
+        val errReader = readers[1];
+        return Streamer.readByte(stream) == 0
                 ? Result.ok(okReader.read(stream))
                 : Result.err(errReader.read(stream));
     }

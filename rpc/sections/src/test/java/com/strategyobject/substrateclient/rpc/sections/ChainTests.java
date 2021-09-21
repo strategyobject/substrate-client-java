@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
-import com.strategyobject.substrateclient.common.utils.Convert;
+import com.strategyobject.substrateclient.common.utils.HexConverter;
 import com.strategyobject.substrateclient.rpc.codegen.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.rpc.codegen.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.core.ParameterConverter;
@@ -60,7 +60,7 @@ public class ChainTests {
             // TO DO use real converter
             ResultConverter resultConverter = mock(ResultConverter.class);
             when(resultConverter.<String, BlockHash>convert(anyString()))
-                    .thenAnswer(invocation -> BlockHash.fromBytes(Convert.toBytes(invocation.getArgument(0))));
+                    .thenAnswer(invocation -> BlockHash.fromBytes(HexConverter.toBytes(invocation.getArgument(0))));
 
             Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
 
@@ -91,7 +91,7 @@ public class ChainTests {
             when(resultConverter.<AbstractMap<?, ?>, Header>convert(any()))
                     .thenAnswer(invocation -> new Header(
                             BlockHash.fromBytes(
-                                    Convert.toBytes((String) ((AbstractMap<?, ?>) invocation.getArgument(0)).get("parentHash"))
+                                    HexConverter.toBytes((String) ((AbstractMap<?, ?>) invocation.getArgument(0)).get("parentHash"))
                             )));
 
             Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
@@ -137,7 +137,7 @@ public class ChainTests {
             // TO DO use real converter
             ResultConverter resultConverter = mock(ResultConverter.class);
             when(resultConverter.<String, BlockHash>convert(anyString()))
-                    .thenAnswer(invocation -> BlockHash.fromBytes(Convert.toBytes(invocation.getArgument(0))));
+                    .thenAnswer(invocation -> BlockHash.fromBytes(HexConverter.toBytes(invocation.getArgument(0))));
 
             Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
 
