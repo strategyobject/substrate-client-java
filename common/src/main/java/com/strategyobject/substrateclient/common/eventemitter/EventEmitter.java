@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventEmitter {
-    Map<EventType, List<EventListener>> listeners = new ConcurrentHashMap<>();
+    final Map<EventType, List<EventListener>> listeners = new ConcurrentHashMap<>();
 
     public boolean emit(EventType eventType, Object... args) {
         val eventListeners = listeners.get(eventType);

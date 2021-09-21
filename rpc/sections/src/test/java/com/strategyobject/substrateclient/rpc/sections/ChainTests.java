@@ -2,14 +2,14 @@ package com.strategyobject.substrateclient.rpc.sections;
 
 import com.strategyobject.substrateclient.common.utils.Convert;
 import com.strategyobject.substrateclient.rpc.codegen.RpcInterfaceInitializationException;
-import com.strategyobject.substrateclient.rpc.codegen.RpcSectionFactory;
+import com.strategyobject.substrateclient.rpc.codegen.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.core.ParameterConverter;
 import com.strategyobject.substrateclient.rpc.core.ResultConverter;
+import com.strategyobject.substrateclient.rpc.types.BlockHash;
+import com.strategyobject.substrateclient.rpc.types.Header;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
-import com.strategyobject.substrateclient.types.BlockHash;
-import com.strategyobject.substrateclient.types.Header;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.Network;
@@ -26,7 +26,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -38,7 +39,7 @@ public class ChainTests {
     private static final Network network = Network.newNetwork();
 
     @Container
-    static TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0)
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0)
             .withNetwork(network);
 
     @Test
@@ -49,8 +50,9 @@ public class ChainTests {
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcSectionFactory();
+            val sectionFactory = new RpcGeneratedSectionFactory();
 
+            // TO DO use real converter
             ParameterConverter parameterConverter = mock(ParameterConverter.class);
             when(parameterConverter.convert(anyString()))
                     .thenAnswer(invocation -> invocation);
@@ -76,7 +78,7 @@ public class ChainTests {
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcSectionFactory();
+            val sectionFactory = new RpcGeneratedSectionFactory();
 
             ParameterConverter parameterConverter = mock(ParameterConverter.class);
             when(parameterConverter.convert(anyString()))
@@ -114,6 +116,34 @@ public class ChainTests {
             val result = unsubscribeFunc.get().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertTrue(result);
+        }
+    }
+
+    @Test
+    void getBlockHash() throws ExecutionException, InterruptedException, TimeoutException, RpcInterfaceInitializationException {
+        try (WsProvider wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .disableAutoConnect()
+                .build()) {
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            val sectionFactory = new RpcGeneratedSectionFactory();
+
+            // TO DO use real converter
+            ParameterConverter parameterConverter = mock(ParameterConverter.class);
+            when(parameterConverter.convert(any()))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            // TO DO use real converter
+            ResultConverter resultConverter = mock(ResultConverter.class);
+            when(resultConverter.<String, BlockHash>convert(anyString()))
+                    .thenAnswer(invocation -> BlockHash.fromBytes(Convert.toBytes(invocation.getArgument(0))));
+
+            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
+
+            BlockHash result = rpcSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(new BigInteger(result.getData()), BigInteger.ZERO);
         }
     }
 }

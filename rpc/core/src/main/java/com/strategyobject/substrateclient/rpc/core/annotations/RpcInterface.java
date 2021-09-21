@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.rpc.codegen.annotations;
+package com.strategyobject.substrateclient.rpc.core.annotations;
 
 import lombok.NonNull;
 

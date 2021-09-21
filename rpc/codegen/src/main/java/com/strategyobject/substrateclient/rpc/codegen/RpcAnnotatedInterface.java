@@ -5,7 +5,7 @@ import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 import com.strategyobject.substrateclient.rpc.core.ParameterConverter;
 import com.strategyobject.substrateclient.rpc.core.ResultConverter;
 import com.strategyobject.substrateclient.transport.ProviderInterface;

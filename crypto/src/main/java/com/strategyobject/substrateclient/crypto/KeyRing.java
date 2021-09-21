@@ -25,23 +25,23 @@ public class KeyRing {
         this.publicKey = keyPair.asPublicKey();
     }
 
-    public Signature sign(byte @NonNull [] message) {
-        return cryptoProvider.sign(publicKey, secretKey, message);
-    }
-
-    public boolean verifyOwn(@NonNull Signature signature, byte @NonNull [] message) {
-        return cryptoProvider.verify(signature, message, publicKey);
-    }
-
-    public boolean verify(@NonNull Signature signature, byte @NonNull [] message, @NonNull PublicKey publicKey) {
-        return cryptoProvider.verify(signature, message, publicKey);
-    }
-
     public static KeyRing fromKeyPair(@NonNull KeyPair keyPair) {
         return new KeyRing(keyPair.asSecretKey(), keyPair.asPublicKey());
     }
 
     public static KeyRing fromSeed(@NonNull Seed seed) {
         return new KeyRing(seed);
+    }
+
+    public SignatureData sign(@NonNull Signable message) {
+        return cryptoProvider.sign(publicKey, secretKey, message);
+    }
+
+    public boolean verifyOwn(@NonNull SignatureData signature, @NonNull Signable message) {
+        return cryptoProvider.verify(signature, message, publicKey);
+    }
+
+    public boolean verify(@NonNull SignatureData signature, @NonNull Signable message, @NonNull PublicKey publicKey) {
+        return cryptoProvider.verify(signature, message, publicKey);
     }
 }

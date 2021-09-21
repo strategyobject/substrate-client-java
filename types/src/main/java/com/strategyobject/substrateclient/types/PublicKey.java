@@ -3,11 +3,9 @@ package com.strategyobject.substrateclient.types;
 
 import lombok.NonNull;
 
-public class PublicKey extends FixedBytes {
-    private static final int KEY_LENGTH = 32;
-
+public class PublicKey extends FixedBytes<Size.Of32> {
     protected PublicKey(byte[] data) {
-        super(data, KEY_LENGTH);
+        super(data, Size.of32);
     }
 
     public static PublicKey fromBytes(byte @NonNull [] data) {

@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
@@ -60,6 +60,7 @@ class RpcSubscriptionProcessor extends RpcInterfaceMethodProcessor {
         var hasCallback = false;
         val callbackType = elementUtils.getTypeElement(BiConsumer.class.getTypeName()).asType();
         val exceptionType = elementUtils.getTypeElement(Exception.class.getTypeName()).asType();
+        TypeMirror callbackParameter = null;
         String callbackName = null;
         for (val param : method.getParameters()) {
             val parameterName = param.getSimpleName().toString();
@@ -75,6 +76,7 @@ class RpcSubscriptionProcessor extends RpcInterfaceMethodProcessor {
                             method.getSimpleName());
                 }
 
+                callbackParameter = ((DeclaredType) paramType).getTypeArguments().get(1);
                 if (!typeUtils.isSameType(exceptionType, ((DeclaredType) paramType).getTypeArguments().get(0))) {
                     throw new ProcessingException(
                             interfaceElement,
@@ -100,13 +102,21 @@ class RpcSubscriptionProcessor extends RpcInterfaceMethodProcessor {
                     method.getSimpleName());
         }
 
+        val convertCall = typeUtils.isSameType(callbackParameter,
+                elementUtils.getTypeElement(Void.class.getTypeName()).asType()) // if callback is BiConsumer<Exception, Void>
+                ? "null"
+                : "resultConverter.convert(r)";
+
         val typeName = String.format(RPC_METHOD_NAME_TEMPLATE, section, subscriptionAnnotation.type());
         val subscribeMethod = String.format(RPC_METHOD_NAME_TEMPLATE, section, subscriptionAnnotation.subscribeMethod());
         val unsubscribeMethod = String.format(RPC_METHOD_NAME_TEMPLATE, section, subscriptionAnnotation.unsubscribeMethod());
         methodSpecBuilder
                 .addStatement(
-                        "BiConsumer<Exception, ?> callbackProxy = (e, r) -> { $N.accept(e, resultConverter.convert(r)); }",
-                        callbackName)
+                        "$T<$T, ?> callbackProxy = (e, r) -> { $N.accept(e, $L); }",
+                        BiConsumer.class,
+                        Exception.class,
+                        callbackName,
+                        convertCall)
                 .addStatement(
                         "return providerInterface.subscribe($1S, $2S, params, callbackProxy)" +
                                 ".thenApply(id -> () -> providerInterface.unsubscribe($1S, $3S, id))",
@@ -172,11 +182,11 @@ class RpcSubscriptionProcessor extends RpcInterfaceMethodProcessor {
 
         throw new ProcessingException(
                 interfaceElement,
-                "Method `%s.%s` has unexpected return type. Must be `%s<%s<%s>>`.",
+                "Method `%s.%s` has unexpected return type. Must be `%3$s<%4$s<%3$s<%5$s>>>`.",
                 interfaceElement.getQualifiedName().toString(),
                 method.getSimpleName(),
                 CompletableFuture.class.getSimpleName(),
-                Runnable.class.getSimpleName(),
+                Supplier.class.getSimpleName(),
                 Boolean.class.getSimpleName());
     }
 }

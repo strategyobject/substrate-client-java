@@ -40,7 +40,7 @@ class Native {
     }
 
     private static String copyLibraryFromResourcesToTempDir() throws IOException {
-        String osDir = null;
+        String osDir;
         if (IS_WINDOWS) {
             osDir = "windows";
         } else if (IS_LINUX) {

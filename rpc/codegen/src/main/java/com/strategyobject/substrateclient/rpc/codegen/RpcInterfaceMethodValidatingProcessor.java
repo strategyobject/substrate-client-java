@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.rpc.codegen;
 
 import com.squareup.javapoet.TypeSpec;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcCall;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 import lombok.NonNull;
 import lombok.val;
 

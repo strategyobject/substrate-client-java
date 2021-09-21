@@ -6,7 +6,7 @@ import lombok.NonNull;
 public interface CryptoProvider {
     KeyPair createPairFromSeed(@NonNull Seed seed);
 
-    Signature sign(@NonNull PublicKey publicKey, @NonNull SecretKey secretKey, byte @NonNull [] message);
+    SignatureData sign(@NonNull PublicKey publicKey, @NonNull SecretKey secretKey, @NonNull Signable message);
 
-    boolean verify(@NonNull Signature signature, byte @NonNull [] message, @NonNull PublicKey publicKey);
+    boolean verify(@NonNull SignatureData signature, @NonNull Signable message, @NonNull PublicKey publicKey);
 }

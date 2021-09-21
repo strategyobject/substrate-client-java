@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen;
 
 import com.google.auto.service.AutoService;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 import lombok.val;
 
 import javax.annotation.processing.*;
@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
-@SupportedAnnotationTypes("com.strategyobject.substrateclient.rpc.codegen.annotations.RpcInterface")
+@SupportedAnnotationTypes("com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class RpcInterfaceProcessor extends AbstractProcessor {

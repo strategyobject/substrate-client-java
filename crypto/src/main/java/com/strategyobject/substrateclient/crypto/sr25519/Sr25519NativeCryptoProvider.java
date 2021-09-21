@@ -16,18 +16,18 @@ public class Sr25519NativeCryptoProvider implements CryptoProvider {
     }
 
     @Override
-    public Signature sign(@NonNull PublicKey publicKey, @NonNull SecretKey secretKey, byte @NonNull [] message) {
+    public SignatureData sign(@NonNull PublicKey publicKey, @NonNull SecretKey secretKey, @NonNull Signable message) {
         try {
-            return Signature.fromBytes(Native.sign(publicKey.getData(), secretKey.getData(), message));
+            return SignatureData.fromBytes(Native.sign(publicKey.getData(), secretKey.getData(), message.getBytes()));
         } catch (NativeException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean verify(@NonNull Signature signature, byte @NonNull [] message, @NonNull PublicKey publicKey) {
+    public boolean verify(@NonNull SignatureData signature, @NonNull Signable message, @NonNull PublicKey publicKey) {
         try {
-            return Native.verify(signature.getData(), message, publicKey.getData());
+            return Native.verify(signature.getData(), message.getBytes(), publicKey.getData());
         } catch (NativeException e) {
             throw new RuntimeException(e);
         }

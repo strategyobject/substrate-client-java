@@ -4,13 +4,14 @@ import com.google.common.base.Strings;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcCall;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
 import lombok.NonNull;
 import lombok.val;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -59,12 +60,16 @@ class RpcCallProcessor extends RpcInterfaceMethodProcessor {
         val returnType = method.getReturnType();
         ensureMethodHasAppropriateReturnType(method, typeUtils, elementUtils, returnType);
 
+        val futureParameter = ((DeclaredType) returnType).getTypeArguments().get(0);
+        val isReturnVoid = typeUtils.isSameType(futureParameter,
+                elementUtils.getTypeElement(Void.class.getTypeName()).asType());
+
         val methodSpecBuilder = MethodSpec.methodBuilder(method.getSimpleName().toString())
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
                 .returns(TypeName.get(returnType));
 
-        String paramsArgument = null;
+        String paramsArgument;
         if (!method.getParameters().isEmpty()) {
             methodSpecBuilder.addStatement("java.util.List<Object> params = new java.util.ArrayList<Object>()");
 
@@ -81,10 +86,14 @@ class RpcCallProcessor extends RpcInterfaceMethodProcessor {
         }
 
         val methodName = String.format(RPC_METHOD_NAME_TEMPLATE, section, methodAnnotation.method());
+        val thenApply = isReturnVoid
+                ? "r -> null"
+                : "resultConverter::convert";
         methodSpecBuilder.addStatement(
-                "return providerInterface.send($S$L).thenApply(r -> resultConverter.convert(r))",
+                "return providerInterface.send($S$L).thenApply($L)",
                 methodName,
-                paramsArgument);
+                paramsArgument,
+                thenApply);
 
         return methodSpecBuilder.build();
     }

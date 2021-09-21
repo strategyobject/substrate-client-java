@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcInterface;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;

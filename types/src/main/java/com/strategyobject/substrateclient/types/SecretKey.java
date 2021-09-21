@@ -2,11 +2,9 @@ package com.strategyobject.substrateclient.types;
 
 import lombok.NonNull;
 
-public class SecretKey extends FixedBytes {
-    private static final int KEY_LENGTH = 64;
-
+public class SecretKey extends FixedBytes<Size.Of64> {
     protected SecretKey(byte[] data) {
-        super(data, KEY_LENGTH);
+        super(data, Size.of64);
     }
 
     public static SecretKey fromBytes(byte @NonNull [] data) {

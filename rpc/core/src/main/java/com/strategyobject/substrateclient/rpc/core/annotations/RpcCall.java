@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.rpc.codegen.annotations;
+package com.strategyobject.substrateclient.rpc.core.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,8 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
-public @interface RpcSubscription {
-    String type();
-    String subscribeMethod();
-    String unsubscribeMethod();
+public @interface RpcCall {
+    String method();
 }

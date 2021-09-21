@@ -5,15 +5,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @EqualsAndHashCode
-abstract class FixedBytes {
+public abstract class FixedBytes<S extends Size> {
     @Getter
     private final byte[] data;
 
-    protected FixedBytes(byte[] data, int size) {
+    protected FixedBytes(byte[] data, S size) {
         Preconditions.checkNotNull(data);
         Preconditions.checkArgument(
-                data.length == size,
-                "The data size must be %s; received %s.", size, data.length);
+                data.length == size.getValue(),
+                "The data size must be %s; received %s.", size.getValue(), data.length);
 
         this.data = data;
     }

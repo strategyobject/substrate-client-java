@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 public class RpcSectionFactoryTest {
     @Test
     void createsRpcSectionAndCallMethod() throws ExecutionException, InterruptedException, RpcInterfaceInitializationException {
-        val factory = new RpcSectionFactory();
+        val factory = new RpcGeneratedSectionFactory();
 
         val expected = true;
         val sendFuture = CompletableFuture.completedFuture(String.valueOf(expected));

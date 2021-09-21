@@ -4,12 +4,12 @@ import lombok.NonNull;
 
 import java.util.Arrays;
 
-public class KeyPair extends FixedBytes {
+public class KeyPair extends FixedBytes<Size.Of96> {
     private static final int SECRET_KEY_LENGTH = 64;
     private static final int PUBLIC_KEY_LENGTH = 32;
 
     protected KeyPair(byte[] data) {
-        super(data, SECRET_KEY_LENGTH + PUBLIC_KEY_LENGTH);
+        super(data, Size.of96);
     }
 
     public static KeyPair fromBytes(byte @NonNull [] data) {

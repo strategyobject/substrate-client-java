@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.substitutes;
 
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcCall;
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 
 import java.util.concurrent.CompletableFuture;
 

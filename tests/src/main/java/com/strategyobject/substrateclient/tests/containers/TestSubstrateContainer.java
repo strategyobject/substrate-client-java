@@ -9,7 +9,7 @@ public class TestSubstrateContainer extends GenericContainer<TestSubstrateContai
         super(IMAGE + version);
 
         addExposedPorts(30333, 9944, 9933);
-        withCommand("--tmp --dev --ws-external --rpc-external");
+        withCommand("--tmp --dev --ws-external --rpc-methods=Unsafe --rpc-cors all --rpc-external");
     }
 
     public String getWsAddress() {

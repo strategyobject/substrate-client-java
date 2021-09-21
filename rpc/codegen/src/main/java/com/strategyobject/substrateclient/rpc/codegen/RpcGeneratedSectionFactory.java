@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.codegen;
 
-import com.strategyobject.substrateclient.rpc.codegen.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 import com.strategyobject.substrateclient.rpc.core.ParameterConverter;
 import com.strategyobject.substrateclient.rpc.core.ResultConverter;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import static com.strategyobject.substrateclient.rpc.codegen.Constants.CLASS_NAME_TEMPLATE;
 
-public class RpcSectionFactory {
+public class RpcGeneratedSectionFactory {
     public <T> T create(@NonNull Class<T> interfaceClass,
                         @NonNull ProviderInterface provider,
                         @NonNull ParameterConverter parameterConverter,
@@ -23,7 +23,7 @@ public class RpcSectionFactory {
                             RpcInterface.class.getSimpleName()));
         }
 
-        Class<?> clazz = null;
+        Class<?> clazz;
         try {
             clazz = Class.forName(String.format(CLASS_NAME_TEMPLATE, interfaceClass.getName()));
             val ctor = clazz.getConstructor(ProviderInterface.class, ParameterConverter.class, ResultConverter.class);
