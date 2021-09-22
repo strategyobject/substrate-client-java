@@ -14,10 +14,10 @@ class ResultWriterTest {
     @SneakyThrows
     @Test
     void writeOk() {
-        val resultWriter = new ResultWriter<>(new U8Writer(), null);
+        val resultWriter = new ResultWriter<>();
 
         val stream = new ByteArrayOutputStream();
-        resultWriter.write(Result.ok(42), stream);
+        resultWriter.write(Result.ok(42), stream, new U8Writer(), new VoidWriter());
         val actual = stream.toByteArray();
         assertArrayEquals(new byte[]{0, 42}, actual);
     }
@@ -25,10 +25,10 @@ class ResultWriterTest {
     @SneakyThrows
     @Test
     void writeErr() {
-        val resultWriter = new ResultWriter<>(null, new BoolWriter());
+        val resultWriter = new ResultWriter<>();
 
         val stream = new ByteArrayOutputStream();
-        resultWriter.write(Result.err(false), stream);
+        resultWriter.write(Result.err(false), stream, new VoidWriter(), new BoolWriter());
         val actual = stream.toByteArray();
         assertArrayEquals(new byte[]{1, 0}, actual);
     }

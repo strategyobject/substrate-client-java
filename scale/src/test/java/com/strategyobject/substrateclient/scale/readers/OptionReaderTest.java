@@ -15,22 +15,22 @@ class OptionReaderTest {
     @SneakyThrows
     @Test
     void readNone() {
-        val optionReader = new OptionReader<>(null);
+        val optionReader = new OptionReader<>();
 
         val bytes = Convert.toBytes("0x00");
         val stream = new ByteArrayInputStream(bytes);
-        val actual = optionReader.read(stream);
+        val actual = optionReader.read(stream, new VoidReader());
         assertEquals(Optional.empty(), actual);
     }
 
     @SneakyThrows
     @Test
     void readSome() {
-        val optionReader = new OptionReader<>(new I8Reader());
+        val optionReader = new OptionReader<>();
 
         val bytes = Convert.toBytes("0x0100");
         val stream = new ByteArrayInputStream(bytes);
-        val actual = optionReader.read(stream);
+        val actual = optionReader.read(stream, new I8Reader());
         assertEquals(Optional.of((byte) 0), actual);
     }
 }

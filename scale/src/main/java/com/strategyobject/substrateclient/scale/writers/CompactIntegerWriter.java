@@ -1,7 +1,9 @@
 package com.strategyobject.substrateclient.scale.writers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.scale.CompactMode;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
+import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 
@@ -10,7 +12,9 @@ import java.io.OutputStream;
 
 public class CompactIntegerWriter implements ScaleWriter<Integer> {
     @Override
-    public void write(Integer value, OutputStream stream) throws IOException {
+    public void write(@NonNull Integer value, @NonNull OutputStream stream, ScaleWriter<?>... writers) throws IOException {
+        Preconditions.checkArgument(writers == null || writers.length == 0);
+
         writeInternal(value, stream);
     }
 

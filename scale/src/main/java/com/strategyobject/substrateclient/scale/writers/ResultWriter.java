@@ -1,19 +1,24 @@
 package com.strategyobject.substrateclient.scale.writers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.scale.Result;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-@RequiredArgsConstructor
 public class ResultWriter<T, E> implements ScaleWriter<Result<T, E>> {
-    private final ScaleWriter<T> okWriter;
-    private final ScaleWriter<E> errWriter;
-
     @Override
-    public void write(Result<T, E> value, OutputStream stream) throws IOException {
+    @SuppressWarnings("unchecked")
+    public void write(@NonNull Result<T, E> value, @NonNull OutputStream stream, @NonNull ScaleWriter<?>... writers) throws IOException {
+        Preconditions.checkArgument(writers.length == 2);
+        Preconditions.checkNotNull(writers[0]);
+        Preconditions.checkNotNull(writers[1]);
+
+        val okWriter = (ScaleWriter<T>)writers[0];
+        val errWriter = (ScaleWriter<E>)writers[1];
         if (value.isOk()) {
             stream.write(0);
             okWriter.write(value.unwrap(), stream);

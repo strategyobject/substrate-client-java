@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface ScaleReader<T> {
-    T read(@NonNull InputStream stream) throws IOException;
+    T read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException;
 }

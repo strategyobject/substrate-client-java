@@ -15,10 +15,10 @@ class ListWriterTest {
     @SneakyThrows
     @Test
     void write() {
-        val listWriter = new ListWriter<>(new U16Writer());
+        val listWriter = new ListWriter<>();
 
         val stream = new ByteArrayOutputStream();
-        listWriter.write(Arrays.asList(4, 8, 15, 16, 23, 42), stream);
+        listWriter.write(Arrays.asList(4, 8, 15, 16, 23, 42), stream, new U16Writer());
         val actual = Convert.toHex(stream.toByteArray());
 
         assertEquals("0x18040008000f00100017002a00", actual);
@@ -27,10 +27,10 @@ class ListWriterTest {
     @SneakyThrows
     @Test
     void writeEmpty() {
-        val listWriter = new ListWriter<>(new U16Writer());
+        val listWriter = new ListWriter<>();
 
         val stream = new ByteArrayOutputStream();
-        listWriter.write(new ArrayList<>(), stream);
+        listWriter.write(new ArrayList<>(), stream, new U16Writer());
         val actual = Convert.toHex(stream.toByteArray());
 
         assertEquals("0x00", actual);

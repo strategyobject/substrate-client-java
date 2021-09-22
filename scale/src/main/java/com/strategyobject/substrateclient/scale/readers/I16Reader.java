@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.streams.StreamUtils;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
@@ -12,7 +13,9 @@ import java.nio.ByteOrder;
 
 public class I16Reader implements ScaleReader<Short> {
     @Override
-    public Short read(@NonNull InputStream stream) throws IOException {
+    public Short read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
+        Preconditions.checkArgument(readers == null || readers.length == 0);
+
         val bytes = StreamUtils.readBytes(2, stream);
         ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
         buf.put(bytes);

@@ -1,18 +1,22 @@
 package com.strategyobject.substrateclient.scale.writers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 public class OptionWriter<T> implements ScaleWriter<Optional<T>> {
-    private final ScaleWriter<T> nestedWriter;
-
     @Override
-    public void write(Optional<T> value, OutputStream stream) throws IOException {
+    @SuppressWarnings("unchecked")
+    public void write(@NonNull Optional<T> value, @NonNull OutputStream stream, @NonNull ScaleWriter<?>... writers) throws IOException {
+        Preconditions.checkArgument(writers.length == 1);
+        Preconditions.checkNotNull(writers[0]);
+
+        val nestedWriter = (ScaleWriter<T>) writers[0];
         if (value.isPresent()) {
             stream.write(1);
             nestedWriter.write(value.get(), stream);

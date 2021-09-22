@@ -3,6 +3,7 @@ package com.strategyobject.substrateclient.scale.writers;
 import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.streams.StreamUtils;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
+import lombok.NonNull;
 import lombok.val;
 
 import java.io.IOException;
@@ -11,7 +12,8 @@ import java.math.BigInteger;
 
 public class U128Writer implements ScaleWriter<BigInteger> {
     @Override
-    public void write(BigInteger value, OutputStream stream) throws IOException {
+    public void write(@NonNull BigInteger value, @NonNull OutputStream stream, ScaleWriter<?>... writers) throws IOException {
+        Preconditions.checkArgument(writers == null || writers.length == 0);
         Preconditions.checkArgument(
                 value.compareTo(BigInteger.valueOf(0)) >= 0 && value.compareTo(BigInteger.ZERO.setBit(128)) < 0,
                 "Only values in range 0..2^128-1 are supported");

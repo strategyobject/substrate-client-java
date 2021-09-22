@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.streams.StreamUtils;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
@@ -11,7 +12,9 @@ import java.math.BigInteger;
 
 public class U128Reader implements ScaleReader<BigInteger> {
     @Override
-    public BigInteger read(@NonNull InputStream stream) throws IOException {
+    public BigInteger read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
+        Preconditions.checkArgument(readers == null || readers.length == 0);
+        
         val bytes = StreamUtils.readBytes(16, stream, true);
 
         return new BigInteger(1, bytes);

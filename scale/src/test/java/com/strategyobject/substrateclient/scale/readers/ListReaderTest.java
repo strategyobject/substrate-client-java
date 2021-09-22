@@ -16,11 +16,11 @@ class ListReaderTest {
     @SneakyThrows
     @Test
     void read() {
-        val listReader = new ListReader<>(new U16Reader());
+        val listReader = new ListReader<>();
 
         val bytes = Convert.toBytes("0x18040008000f00100017002a00");
         val stream = new ByteArrayInputStream(bytes);
-        val actual = listReader.read(stream);
+        val actual = listReader.read(stream, new U16Reader());
 
         assertEquals(Arrays.asList(4, 8, 15, 16, 23, 42), actual);
     }
@@ -28,11 +28,11 @@ class ListReaderTest {
     @SneakyThrows
     @Test
     void readEmpty() {
-        val listReader = new ListReader<>(new U16Reader());
+        val listReader = new ListReader<>();
 
         val bytes = Convert.toBytes("0x00");
         val stream = new ByteArrayInputStream(bytes);
-        val actual = listReader.read(stream);
+        val actual = listReader.read(stream, new U16Reader());
 
         assertEquals(new ArrayList<>(), actual);
     }

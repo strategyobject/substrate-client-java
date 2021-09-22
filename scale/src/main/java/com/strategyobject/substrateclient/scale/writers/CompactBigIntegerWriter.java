@@ -1,8 +1,10 @@
 package com.strategyobject.substrateclient.scale.writers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.streams.StreamUtils;
 import com.strategyobject.substrateclient.scale.CompactMode;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
+import lombok.NonNull;
 import lombok.val;
 
 import java.io.IOException;
@@ -11,7 +13,9 @@ import java.math.BigInteger;
 
 public class CompactBigIntegerWriter implements ScaleWriter<BigInteger> {
     @Override
-    public void write(BigInteger value, OutputStream stream) throws IOException {
+    public void write(@NonNull BigInteger value, @NonNull OutputStream stream, ScaleWriter<?>... writers) throws IOException {
+        Preconditions.checkArgument(writers == null || writers.length == 0);
+
         val mode = CompactMode.fromNumber(value);
         if (mode != CompactMode.BIG_INTEGER) {
             CompactIntegerWriter.writeValue(value.intValueExact(), stream, mode);

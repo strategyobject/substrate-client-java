@@ -15,22 +15,22 @@ class ResultReaderTest {
     @SneakyThrows
     @Test
     void readOk() {
-        val resultReader = new ResultReader<>(new U8Reader(), null);
+        val resultReader = new ResultReader<>();
 
         val bytes = Convert.toBytes("0x002a");
         val stream = new ByteArrayInputStream(bytes);
-        val actual = resultReader.read(stream);
+        val actual = resultReader.read(stream, new U8Reader(), new VoidReader());
         assertEquals(Result.ok(42), actual);
     }
 
     @SneakyThrows
     @Test
     void readErr() {
-        val resultReader = new ResultReader<>(null, new BoolReader());
+        val resultReader = new ResultReader<>();
 
         val bytes = Convert.toBytes("0x0100");
         val stream = new ByteArrayInputStream(bytes);
-        val actual = resultReader.read(stream);
+        val actual = resultReader.read(stream, new VoidReader(), new BoolReader());
         assertEquals(Result.err(false), actual);
     }
 }

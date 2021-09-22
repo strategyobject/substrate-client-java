@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers;
 
+import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.streams.StreamUtils;
 import com.strategyobject.substrateclient.scale.CompactMode;
 import com.strategyobject.substrateclient.scale.ScaleReader;
@@ -12,7 +13,9 @@ import java.math.BigInteger;
 
 public class CompactBigIntegerReader implements ScaleReader<BigInteger> {
     @Override
-    public BigInteger read(@NonNull InputStream stream) throws IOException {
+    public BigInteger read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
+        Preconditions.checkArgument(readers == null || readers.length == 0);
+
         val head = StreamUtils.readByte(stream);
         val mode = CompactMode.fromValue((byte) (head & 0b11));
         if (mode != CompactMode.BIG_INTEGER) {
