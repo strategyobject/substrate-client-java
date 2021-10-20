@@ -1,7 +1,6 @@
 package com.strategyobject.substrateclient.scale;
 
-import com.strategyobject.substrateclient.scale.registry.ScaleWriterNotFoundException;
-import com.strategyobject.substrateclient.scale.registry.ScaleWriterRegistry;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 
@@ -10,7 +9,7 @@ import java.io.OutputStream;
 
 public interface ScaleSelfWritable<T extends ScaleSelfWritable<T>> {
     @SuppressWarnings("unchecked")
-    default void write(@NonNull OutputStream stream) throws ScaleWriterNotFoundException, IOException {
+    default void write(@NonNull OutputStream stream) throws IOException {
         val writer = (ScaleWriter<T>) ScaleWriterRegistry
                 .getInstance()
                 .resolve(this.getClass());

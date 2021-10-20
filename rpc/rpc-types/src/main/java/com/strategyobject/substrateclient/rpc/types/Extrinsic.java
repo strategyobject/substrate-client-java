@@ -1,15 +1,14 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.rpc.core.RpcEncoded;
 import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 import lombok.Getter;
 
 import java.util.Optional;
 
-// RpcEncoder must be overridden. It must be represented in hex string as a byte array of scale.
+// ScaleWriter must be overridden. It must be represented in hex string as a byte array of scale.
 @Getter
 public class Extrinsic<C extends Call, A extends Address, S extends Signature, E extends Extra>
-        implements RpcEncoded<Extrinsic<C, A, S, E>>, ScaleSelfWritable<Extrinsic<C, A, S, E>> {
+        implements ScaleSelfWritable<Extrinsic<C, A, S, E>> {
     private final Optional<SignaturePayload<A, S, E>> signature;
     private final C call;
 

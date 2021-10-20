@@ -5,16 +5,13 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
+import javax.lang.model.type.*;
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class TypeTraverser<T> {
-
     private final Class<T> clazz;
 
     public TypeTraverser(Class<T> clazz) {
@@ -23,9 +20,15 @@ public abstract class TypeTraverser<T> {
 
     protected abstract T whenTypeVar(@NonNull TypeVariable type, TypeMirror override);
 
+    protected abstract T whenPrimitiveType(@NonNull PrimitiveType type, TypeMirror override);
+
     protected abstract T whenNonGenericType(@NonNull DeclaredType type, TypeMirror override);
 
     protected abstract T whenGenericType(@NonNull DeclaredType type, TypeMirror override, @NonNull T[] subtypes);
+
+    protected boolean doTraverseArguments(@NonNull DeclaredType type, TypeMirror override) {
+        return true;
+    }
 
     @SuppressWarnings("unchecked")
     public T traverse(@NonNull TypeMirror type) {
@@ -33,12 +36,16 @@ public abstract class TypeTraverser<T> {
             return whenTypeVar((TypeVariable) type, null);
         }
 
+        if (type.getKind().isPrimitive()) {
+            return whenPrimitiveType((PrimitiveType) type, null);
+        }
+
         if (!(type instanceof DeclaredType)) {
             throw new IllegalArgumentException("Type is not supported: " + type);
         }
 
         val declaredType = (DeclaredType) type;
-        val typeArguments = declaredType.getTypeArguments();
+        val typeArguments = getTypeArgumentsOrDefault(declaredType, null);
         return typeArguments.size() == 0 ?
                 whenNonGenericType(declaredType, null) :
                 whenGenericType(
@@ -55,12 +62,16 @@ public abstract class TypeTraverser<T> {
             return whenTypeVar((TypeVariable) type, typeOverride.type);
         }
 
+        if (type.getKind().isPrimitive()) {
+            return whenPrimitiveType((PrimitiveType) type, typeOverride.type);
+        }
+
         if (!(type instanceof DeclaredType)) {
             throw new IllegalArgumentException("Type is not supported: " + type);
         }
 
         val declaredType = (DeclaredType) type;
-        val typeArguments = declaredType.getTypeArguments();
+        val typeArguments = getTypeArgumentsOrDefault(declaredType, typeOverride.type);
         val typeArgumentsSize = typeArguments.size();
         val typeOverrideSize = typeOverride.children.size();
         if (typeIsNonGeneric(typeArgumentsSize, typeOverrideSize)) {
@@ -90,10 +101,16 @@ public abstract class TypeTraverser<T> {
                         .toArray(x -> (T[]) Array.newInstance(clazz, typeArguments.size())));
     }
 
+    private List<? extends TypeMirror> getTypeArgumentsOrDefault(DeclaredType declaredType, TypeMirror override) {
+        return (doTraverseArguments(declaredType, override) ?
+                declaredType.getTypeArguments() :
+                Collections.emptyList());
+    }
+
     private boolean typeIsNonGeneric(int typeArgumentsSize, int typeOverrideSize) {
         if (typeArgumentsSize == 0) {
             if (typeOverrideSize > 0) {
-                throw new IllegalArgumentException("Nongeneric type cannot be overridden by generic");
+                throw new IllegalArgumentException("Non generic type cannot be overridden by generic");
             }
 
             return true;

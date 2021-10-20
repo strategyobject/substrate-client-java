@@ -1,11 +1,7 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
-import com.strategyobject.substrateclient.rpc.codegen.RpcInterfaceInitializationException;
-import com.strategyobject.substrateclient.rpc.codegen.RpcGeneratedSectionFactory;
-import com.strategyobject.substrateclient.rpc.core.ParameterConverter;
-import com.strategyobject.substrateclient.rpc.core.ResultConverter;
-import com.strategyobject.substrateclient.rpc.types.Metadata;
-import com.strategyobject.substrateclient.rpc.types.RuntimeVersion;
+import com.strategyobject.substrateclient.rpc.codegen.sections.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.codegen.sections.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -20,9 +16,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Testcontainers
 public class StateTests {
@@ -42,18 +35,7 @@ public class StateTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-
-            // TO DO use real converter
-            ParameterConverter parameterConverter = mock(ParameterConverter.class);
-            when(parameterConverter.convert(any()))
-                    .thenAnswer(invocation -> invocation);
-
-            // TO DO use real converter
-            ResultConverter resultConverter = mock(ResultConverter.class);
-            when(resultConverter.convert(any()))
-                    .thenAnswer(invocation -> new RuntimeVersion());
-
-            State rpcSection = sectionFactory.create(State.class, wsProvider, parameterConverter, resultConverter);
+            State rpcSection = sectionFactory.create(State.class, wsProvider);
 
             assertDoesNotThrow(() -> {
                 rpcSection.getRuntimeVersion().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -70,18 +52,7 @@ public class StateTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-
-            // TO DO use real converter
-            ParameterConverter parameterConverter = mock(ParameterConverter.class);
-            when(parameterConverter.convert(any()))
-                    .thenAnswer(invocation -> invocation);
-
-            // TO DO use real converter
-            ResultConverter resultConverter = mock(ResultConverter.class);
-            when(resultConverter.convert(any()))
-                    .thenAnswer(invocation -> new Metadata());
-
-            State rpcSection = sectionFactory.create(State.class, wsProvider, parameterConverter, resultConverter);
+            State rpcSection = sectionFactory.create(State.class, wsProvider);
 
             assertDoesNotThrow(() -> {
                 rpcSection.getMetadata().get(WAIT_TIMEOUT, TimeUnit.SECONDS);

@@ -1,18 +1,24 @@
 package com.strategyobject.substrateclient.rpc.types;
 
+import com.strategyobject.substrateclient.scale.ScaleType;
+import com.strategyobject.substrateclient.scale.annotations.Scale;
+import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
 import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
+@ScaleWriter
 public class SignedAdditionalExtra implements AdditionalExtra {
-    private final long specVersion; // as u32
-    private final long txVersion; // as u32
+    @Scale(ScaleType.U32.class)
+    private final long specVersion;
+    @Scale(ScaleType.U32.class)
+    private final long txVersion;
     private final BlockHash genesis;
     private final BlockHash eraBlock;
 
     SignedAdditionalExtra(long specVersion, long txVersion, @NonNull BlockHash genesis, @NonNull BlockHash eraBlock) {
-        this.specVersion = specVersion;
-        this.txVersion = txVersion;
+        this.specVersion = (int) specVersion;
+        this.txVersion = (int) txVersion;
         this.genesis = genesis;
         this.eraBlock = eraBlock;
     }

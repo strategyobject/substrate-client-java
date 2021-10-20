@@ -1,10 +1,12 @@
 package com.strategyobject.substrateclient.rpc.types;
 
+import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
 import com.strategyobject.substrateclient.types.SignatureData;
 import lombok.Getter;
 import lombok.NonNull;
 
 @Getter
+@ScaleWriter
 public class Sr25519Signature implements Signature {
     private final SignatureKind kind = SignatureKind.SR25519;
     private final SignatureData data;

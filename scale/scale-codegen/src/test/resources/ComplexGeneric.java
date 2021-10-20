@@ -23,7 +23,7 @@ public class ComplexGeneric<T> {
                     @Scale(String.class)
             }
     )
-    public Map<List<T>, Result<Optional<Boolean>, String>> testGeneric;
+    private Map<List<T>, Result<Optional<Boolean>, String>> testGeneric;
 
     @ScaleGeneric(
             template = "Map<I32, Result>",
@@ -33,7 +33,7 @@ public class ComplexGeneric<T> {
                     @Scale(name = "Result"),
             }
     )
-    public Map<Integer, Result<Boolean, String>> testGenericDefaultImplicit;
+    private Map<Integer, Result<Boolean, String>> testGenericDefaultImplicit;
 
     @ScaleGeneric(
             template = "Map<I32, Result>",
@@ -43,5 +43,29 @@ public class ComplexGeneric<T> {
                     @Scale(value = Default.class, name = "Result"),
             }
     )
-    public Map<Integer, Result<Boolean, String>> testGenericDefaultExplicit;
+    private Map<Integer, Result<Boolean, String>> testGenericDefaultExplicit;
+
+    public Map<List<T>, Result<Optional<Boolean>, String>> getTestGeneric() {
+        return testGeneric;
+    }
+
+    public void setTestGeneric(Map<List<T>, Result<Optional<Boolean>, String>> testGeneric) {
+        this.testGeneric = testGeneric;
+    }
+
+    public Map<Integer, Result<Boolean, String>> getTestGenericDefaultImplicit() {
+        return testGenericDefaultImplicit;
+    }
+
+    public void setTestGenericDefaultImplicit(Map<Integer, Result<Boolean, String>> testGenericDefaultImplicit) {
+        this.testGenericDefaultImplicit = testGenericDefaultImplicit;
+    }
+
+    public Map<Integer, Result<Boolean, String>> getTestGenericDefaultExplicit() {
+        return testGenericDefaultExplicit;
+    }
+
+    public void setTestGenericDefaultExplicit(Map<Integer, Result<Boolean, String>> testGenericDefaultExplicit) {
+        this.testGenericDefaultExplicit = testGenericDefaultExplicit;
+    }
 }

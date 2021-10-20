@@ -1,11 +1,14 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.rpc.core.RpcEncoded;
+import com.strategyobject.substrateclient.rpc.core.annotations.RpcDecoder;
+import com.strategyobject.substrateclient.scale.annotations.Scale;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@RequiredArgsConstructor
 @Getter
-public class Header implements RpcEncoded<Header> {
-    private final BlockHash parentHash;
+@Setter
+@RpcDecoder
+public class Header {
+    @Scale
+    private BlockHash parentHash;
 }

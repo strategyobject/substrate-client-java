@@ -6,6 +6,7 @@ import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 import com.strategyobject.substrateclient.rpc.types.Extrinsic;
 import com.strategyobject.substrateclient.rpc.types.ExtrinsicStatus;
 import com.strategyobject.substrateclient.rpc.types.Hash;
+import com.strategyobject.substrateclient.scale.annotations.Scale;
 import com.strategyobject.substrateclient.types.PublicKey;
 
 import java.util.concurrent.CompletableFuture;
@@ -15,15 +16,16 @@ import java.util.function.Supplier;
 @RpcInterface(section = "author")
 public interface Author {
     @RpcCall(method = "hasKey")
-    CompletableFuture<Boolean> hasKey(PublicKey publicKey, String keyType);
+    CompletableFuture<Boolean> hasKey(@Scale PublicKey publicKey, String keyType);
 
     @RpcCall(method = "insertKey")
-    CompletableFuture<Void> insertKey(String keyType, String secretUri, PublicKey publicKey);
+    CompletableFuture<Void> insertKey(String keyType, String secretUri, @Scale PublicKey publicKey);
 
     @RpcCall(method = "submitExtrinsic")
-    CompletableFuture<Hash> submitExtrinsic(Extrinsic<?, ?, ?, ?> extrinsic);
+    @Scale
+    CompletableFuture<Hash> submitExtrinsic(@Scale Extrinsic<?, ?, ?, ?> extrinsic);
 
     @RpcSubscription(type = "extrinsicUpdate", subscribeMethod = "submitAndWatchExtrinsic", unsubscribeMethod = "unwatchExtrinsic")
-    CompletableFuture<Supplier<CompletableFuture<Boolean>>> submitAndWatchExtrinsic(Extrinsic<?, ?, ?, ?> extrinsic,
+    CompletableFuture<Supplier<CompletableFuture<Boolean>>> submitAndWatchExtrinsic(@Scale Extrinsic<?, ?, ?, ?> extrinsic,
                                                                                     BiConsumer<Exception, ExtrinsicStatus> callback);
 }

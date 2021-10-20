@@ -2,18 +2,18 @@ package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.squareup.javapoet.*;
 import com.strategyobject.substrateclient.common.codegen.JavaPoet;
+import com.strategyobject.substrateclient.common.codegen.ProcessingException;
+import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.annotations.AutoRegister;
 import com.strategyobject.substrateclient.scale.annotations.Ignore;
-import com.strategyobject.substrateclient.scale.codegen.ProcessingException;
-import com.strategyobject.substrateclient.scale.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
-import com.strategyobject.substrateclient.scale.registry.ScaleWriterRegistry;
+import com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 
-import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
@@ -24,9 +24,14 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+import static com.strategyobject.substrateclient.common.codegen.AnnotationUtils.suppressWarnings;
+import static com.strategyobject.substrateclient.common.codegen.TypeUtils.getGetterName;
+import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_SELF_WRITABLE;
 import static java.util.stream.Collectors.toMap;
 
 public class ScaleWriterAnnotatedClass {
+    private static final String WRITERS_ARG = "writers";
+    private static final String REGISTRY = "registry";
 
     private final TypeElement classElement;
     private final Map<String, Integer> typeVarMap;
@@ -39,15 +44,13 @@ public class ScaleWriterAnnotatedClass {
                 .collect(toMap(i -> typeParameters.get(i).toString(), Function.identity()));
     }
 
-    public void generateWriter(@NonNull ProcessorContext context,
-                               @NonNull Filer filer) throws IOException, ProcessingException {
-        val className = classElement.getSimpleName().toString();
-        val writerName = context.getWriterName(className);
+    public void generateWriter(@NonNull ProcessorContext context) throws IOException, ProcessingException {
+        val writerName = ScaleProcessorHelper.getWriterName(classElement.getSimpleName().toString());
         val classWildcardTyped = JavaPoet.setEachGenericParameterAsWildcard(classElement);
 
         val typeSpecBuilder = TypeSpec.classBuilder(writerName)
                 .addAnnotation(AnnotationSpec.builder(AutoRegister.class)
-                        .addMember("types", "{$L.class}", className)
+                        .addMember("types", "{$L.class}", classElement.getQualifiedName().toString())
                         .build())
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ParameterizedTypeName.get(ClassName.get(ScaleWriter.class), classWildcardTyped))
@@ -56,13 +59,14 @@ public class ScaleWriterAnnotatedClass {
         JavaFile.builder(
                 context.getPackageName(classElement),
                 typeSpecBuilder.build()
-        ).build().writeTo(filer);
+        ).build().writeTo(context.getFiler());
     }
 
     private MethodSpec generateWriteMethod(TypeName classWildcardTyped,
                                            ProcessorContext context) throws ProcessingException {
         val methodSpec = MethodSpec.methodBuilder("write")
                 .addAnnotation(Override.class)
+                .addAnnotation(suppressWarnings("unchecked"))
                 .addModifiers(Modifier.PUBLIC)
                 .returns(TypeName.VOID)
                 .addParameter(classWildcardTyped, "value")
@@ -86,7 +90,7 @@ public class ScaleWriterAnnotatedClass {
         methodSpec.addStatement("if (value == null) throw new IllegalArgumentException(\"value is null\")");
 
         val classTypeParametersSize = classElement.getTypeParameters().size();
-        if (classTypeParametersSize == 0 || context.isSubtypeOfScaleSelfWritable(classElement.asType())) {
+        if (classTypeParametersSize == 0 || context.isSubtypeOf(classElement.asType(), context.erasure(context.getType(SCALE_SELF_WRITABLE)))) {
             methodSpec.addStatement("if (writers != null && writers.length > 0) throw new IllegalArgumentException()");
         } else {
             methodSpec
@@ -105,12 +109,12 @@ public class ScaleWriterAnnotatedClass {
                 .beginControlFlow("try");
 
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val generator = new TypeWriteGenerator(CodeBlock.class, context, typeVarMap);
+        val compositor = new WriterCompositor(context, typeVarMap, String.format("%s[$L]", WRITERS_ARG), REGISTRY);
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;
                 if (field.getAnnotation(Ignore.class) == null) {
-                    setField(methodSpec, field, scaleAnnotationParser, generator);
+                    setField(methodSpec, field, scaleAnnotationParser, compositor);
                 }
             }
         }
@@ -124,19 +128,19 @@ public class ScaleWriterAnnotatedClass {
     private void setField(MethodSpec.Builder methodSpec,
                           VariableElement field,
                           ScaleAnnotationParser scaleAnnotationParser,
-                          TypeWriteGenerator generator) throws ProcessingException {
+                          WriterCompositor compositor) throws ProcessingException {
         try {
             val fieldType = field.asType();
             val typeOverride = scaleAnnotationParser.parse(field);
             val writerCode = typeOverride != null ?
-                    generator.traverse(fieldType, typeOverride) :
-                    generator.traverse(fieldType);
+                    compositor.traverse(fieldType, typeOverride) :
+                    compositor.traverse(fieldType);
 
             methodSpec.addStatement(
                     CodeBlock.builder()
                             .add("(($T)", ScaleWriter.class)
                             .add(writerCode)
-                            .add(").write(value.$L, stream)", field)
+                            .add(").write(value.$L(), stream)", getGetterName(field))
                             .build());
         } catch (Exception e) {
             throw new ProcessingException(e, field, e.getMessage());

@@ -48,7 +48,7 @@ public interface ProviderInterface {
      * @param params Encoded parameters as applicable for the method
      * @return future containing result
      */
-    CompletableFuture<Object> send(String method,
+    CompletableFuture<Object> send(String method, // TODO replace `Object` to something like `JObject` to have more strict contract
                                    List<Object> params);
 
     /**

@@ -1,7 +1,8 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.rpc.core.RpcEncoded;
 import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
+import com.strategyobject.substrateclient.scale.annotations.ScaleReader;
 
-public class Metadata implements ScaleSelfWritable<Metadata>, RpcEncoded<Metadata> {
+@ScaleReader
+public class Metadata implements ScaleSelfWritable<Metadata> {
 }

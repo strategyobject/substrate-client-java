@@ -4,5 +4,13 @@ import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
 
 @ScaleWriter
 public class MissesScaleSelfWritable<T> implements ScaleSelfWritable<T> {
-    public String testString;
+    private String testString;
+
+    public String getTestString() {
+        return testString;
+    }
+
+    public void setTestString(String testString) {
+        this.testString = testString;
+    }
 }

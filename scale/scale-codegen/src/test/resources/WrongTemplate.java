@@ -24,5 +24,13 @@ public class WrongTemplate<T> {
                     @Scale(String.class)
             }
     )
-    public Map<List<T>, Result<Optional<Boolean>, String>> testGeneric;
+    private Map<List<T>, Result<Optional<Boolean>, String>> testGeneric;
+
+    public Map<List<T>, Result<Optional<Boolean>, String>> getTestGeneric() {
+        return testGeneric;
+    }
+
+    public void setTestGeneric(Map<List<T>, Result<Optional<Boolean>, String>> testGeneric) {
+        this.testGeneric = testGeneric;
+    }
 }

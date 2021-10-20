@@ -10,11 +10,35 @@ public class GenericScaleSelfWritable<
         T3 extends ScaleSelfWritable<T3>> implements ScaleSelfWritable<GenericScaleSelfWritable<T1, T2, T3>> {
 
     @Scale
-    public T1 testGeneric1;
+    private T1 testGeneric1;
 
     @Scale
-    public T2 testGeneric2;
+    private T2 testGeneric2;
 
     @Scale
-    public T3 testGeneric3;
+    private T3 testGeneric3;
+
+    public T1 getTestGeneric1() {
+        return testGeneric1;
+    }
+
+    public void setTestGeneric1(T1 testGeneric1) {
+        this.testGeneric1 = testGeneric1;
+    }
+
+    public T2 getTestGeneric2() {
+        return testGeneric2;
+    }
+
+    public void setTestGeneric2(T2 testGeneric2) {
+        this.testGeneric2 = testGeneric2;
+    }
+
+    public T3 getTestGeneric3() {
+        return testGeneric3;
+    }
+
+    public void setTestGeneric3(T3 testGeneric3) {
+        this.testGeneric3 = testGeneric3;
+    }
 }

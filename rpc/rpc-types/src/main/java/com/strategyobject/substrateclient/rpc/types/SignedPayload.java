@@ -1,6 +1,5 @@
 package com.strategyobject.substrateclient.rpc.types;
 
-import com.strategyobject.substrateclient.scale.registry.ScaleWriterNotFoundException;
 import com.strategyobject.substrateclient.types.Signable;
 import lombok.Getter;
 import lombok.NonNull;
@@ -26,7 +25,7 @@ public class SignedPayload<C extends Call, E extends Extra & SignedExtension>
             extra.getAdditionalExtra().write(buf);
 
             return buf.toByteArray();
-        } catch (ScaleWriterNotFoundException | IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -2,6 +2,7 @@ package com.strategyobject.substrateclient.scale.codegen;
 
 import com.google.common.base.Strings;
 import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
+import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.common.utils.StringUtils;
 import com.strategyobject.substrateclient.scale.annotations.Scale;
@@ -10,8 +11,8 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 
+import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.HashMap;
@@ -19,20 +20,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_ANNOTATIONS_DEFAULT;
+
 public class ScaleAnnotationParser {
     private final ProcessorContext context;
 
-    public ScaleAnnotationParser(ProcessorContext context) {
+    public ScaleAnnotationParser(@NonNull ProcessorContext context) {
         this.context = context;
     }
 
-    public TypeTraverser.TypeTreeNode parse(@NonNull VariableElement field) {
-        val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(field, Scale.class, "value");
+    public TypeTraverser.TypeTreeNode parse(@NonNull AnnotatedConstruct annotated) {
+        val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotated, Scale.class, "value");
         if (scaleType != null) {
             return new TypeTraverser.TypeTreeNode(scaleType);
         }
 
-        val scaleGeneric = AnnotationUtils.getAnnotationMirror(field, ScaleGeneric.class);
+        val scaleGeneric = AnnotationUtils.getAnnotationMirror(annotated, ScaleGeneric.class);
         if (scaleGeneric != null) {
             val template = AnnotationUtils.<String>getValueFromAnnotation(scaleGeneric, "template");
             val typesMap = getTypesMap(scaleGeneric);
@@ -89,7 +92,7 @@ public class ScaleAnnotationParser {
 
     private TypeMirror getMappedType(Map<String, TypeMirror> typesMap, String name) {
         val type = typesMap.get(name);
-        return type == null || context.isSubtypeOfScaleAnnotationsDefault(type) ? null : type;
+        return type == null || context.isSubtypeOf(type, context.getType(SCALE_ANNOTATIONS_DEFAULT)) ? null : type;
     }
 
     private Map<String, TypeMirror> getTypesMap(AnnotationMirror scaleGeneric) {
@@ -101,7 +104,7 @@ public class ScaleAnnotationParser {
             validateScaleAnnotationIsNotEmpty(name, type);
 
             if (type == null) {
-                type = context.getScaleAnnotationsDefaultType();
+                type = context.getType(SCALE_ANNOTATIONS_DEFAULT);
             }
 
             if (Strings.isNullOrEmpty(name)) {

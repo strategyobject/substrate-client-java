@@ -1,12 +1,8 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
-import com.strategyobject.substrateclient.rpc.codegen.RpcInterfaceInitializationException;
-import com.strategyobject.substrateclient.rpc.codegen.RpcGeneratedSectionFactory;
-import com.strategyobject.substrateclient.rpc.core.ParameterConverter;
-import com.strategyobject.substrateclient.rpc.core.ResultConverter;
+import com.strategyobject.substrateclient.rpc.codegen.sections.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.codegen.sections.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.rpc.types.BlockHash;
-import com.strategyobject.substrateclient.rpc.types.Header;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -17,7 +13,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigInteger;
-import java.util.AbstractMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -28,10 +23,6 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Testcontainers
 public class ChainTests {
@@ -51,18 +42,7 @@ public class ChainTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-
-            // TO DO use real converter
-            ParameterConverter parameterConverter = mock(ParameterConverter.class);
-            when(parameterConverter.convert(anyString()))
-                    .thenAnswer(invocation -> invocation);
-
-            // TO DO use real converter
-            ResultConverter resultConverter = mock(ResultConverter.class);
-            when(resultConverter.<String, BlockHash>convert(anyString()))
-                    .thenAnswer(invocation -> BlockHash.fromBytes(HexConverter.toBytes(invocation.getArgument(0))));
-
-            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
+            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider);
 
             BlockHash result = rpcSection.getFinalizedHead().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -79,22 +59,7 @@ public class ChainTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-
-            ParameterConverter parameterConverter = mock(ParameterConverter.class);
-            when(parameterConverter.convert(anyString()))
-                    .thenAnswer(invocation -> {
-                        throw new RuntimeException("Mustn't be called.");
-                    });
-
-            // TO DO use real converter
-            ResultConverter resultConverter = mock(ResultConverter.class);
-            when(resultConverter.<AbstractMap<?, ?>, Header>convert(any()))
-                    .thenAnswer(invocation -> new Header(
-                            BlockHash.fromBytes(
-                                    HexConverter.toBytes((String) ((AbstractMap<?, ?>) invocation.getArgument(0)).get("parentHash"))
-                            )));
-
-            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
+            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider);
 
             val blockCount = new AtomicInteger(0);
             val blockHash = new AtomicReference<BlockHash>(null);
@@ -128,18 +93,7 @@ public class ChainTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-
-            // TO DO use real converter
-            ParameterConverter parameterConverter = mock(ParameterConverter.class);
-            when(parameterConverter.convert(any()))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
-
-            // TO DO use real converter
-            ResultConverter resultConverter = mock(ResultConverter.class);
-            when(resultConverter.<String, BlockHash>convert(anyString()))
-                    .thenAnswer(invocation -> BlockHash.fromBytes(HexConverter.toBytes(invocation.getArgument(0))));
-
-            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider, parameterConverter, resultConverter);
+            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider);
 
             BlockHash result = rpcSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 

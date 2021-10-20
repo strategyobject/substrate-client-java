@@ -38,6 +38,10 @@ public final class StringUtils {
         return result;
     }
 
+    public static String capitalize(@NonNull String source) {
+        return source.substring(0, 1).toUpperCase() + source.substring(1);
+    }
+
     private StringUtils() {
     }
 }

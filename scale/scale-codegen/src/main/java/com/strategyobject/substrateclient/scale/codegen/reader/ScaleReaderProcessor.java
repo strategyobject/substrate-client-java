@@ -1,17 +1,15 @@
 package com.strategyobject.substrateclient.scale.codegen.reader;
 
 import com.google.auto.service.AutoService;
+import com.strategyobject.substrateclient.common.codegen.ProcessingException;
+import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.scale.annotations.ScaleReader;
-import com.strategyobject.substrateclient.scale.codegen.ProcessingException;
-import com.strategyobject.substrateclient.scale.codegen.ProcessorContext;
 import lombok.val;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.util.Set;
 
@@ -20,17 +18,14 @@ import java.util.Set;
 @AutoService(Processor.class)
 public class ScaleReaderProcessor extends AbstractProcessor {
     private ProcessorContext context;
-    private Filer filer;
-    private Messager messager;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        filer = processingEnv.getFiler();
-        messager = processingEnv.getMessager();
-        context = new ProcessorContext(
-                processingEnv.getTypeUtils(),
-                processingEnv.getElementUtils());
+        context = new ProcessorContext(processingEnv.getTypeUtils(),
+                processingEnv.getElementUtils(),
+                processingEnv.getFiler(),
+                processingEnv.getMessager());
     }
 
     @Override
@@ -41,7 +36,7 @@ public class ScaleReaderProcessor extends AbstractProcessor {
 
         for (val annotatedElement : roundEnv.getElementsAnnotatedWith(ScaleReader.class)) {
             if (annotatedElement.getKind() != ElementKind.CLASS) {
-                error(
+                context.error(
                         annotatedElement,
                         "Only classes can be annotated with `@%s`.",
                         ScaleReader.class.getSimpleName());
@@ -51,24 +46,16 @@ public class ScaleReaderProcessor extends AbstractProcessor {
 
             val typeElement = (TypeElement) annotatedElement;
             try {
-                new ScaleReaderAnnotatedClass(typeElement).generateReader(context, filer);
+                new ScaleReaderAnnotatedClass(typeElement).generateReader(context);
             } catch (ProcessingException e) {
-                error(typeElement, e.getMessage());
+                context.error(typeElement, e);
                 return true;
             } catch (IOException e) {
-                error(null, e.getMessage());
+                context.error(e);
                 return true;
             }
         }
 
         return true;
-    }
-
-    private void error(Element e, String message, Object... args) {
-        messager.printMessage(
-                Diagnostic.Kind.ERROR,
-                String.format(message, args),
-                e
-        );
     }
 }

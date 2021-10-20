@@ -1,1 +1,6 @@
-dependencies {}
+dependencies {
+    implementation project(':common')
+    implementation project(':scale')
+
+    testImplementation 'com.google.code.gson:gson:2.8.8'
+}

@@ -9,7 +9,8 @@ class ScannerTest {
 
     @Test
     void getSubTypesOf() {
-        val subtypes = Scanner.getSubTypesOf(TestInterface.class);
+        val subtypes = Scanner.forPrefixes(TestInterface.class.getPackage().getName())
+                .getSubTypesOf(TestInterface.class);
 
         assertNotNull(subtypes);
         assertEquals(1, subtypes.size());
