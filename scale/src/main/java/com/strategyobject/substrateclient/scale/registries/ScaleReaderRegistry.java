@@ -5,7 +5,9 @@ import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotations.AutoRegister;
 import com.strategyobject.substrateclient.scale.readers.*;
+import com.strategyobject.substrateclient.scale.readers.union.*;
 import com.strategyobject.substrateclient.types.Result;
+import com.strategyobject.substrateclient.types.union.*;
 import lombok.NonNull;
 import lombok.val;
 import org.slf4j.Logger;
@@ -43,6 +45,18 @@ public final class ScaleReaderRegistry {
         register(new U32Reader(), ScaleType.U32.class);
         register(new U64Reader(), ScaleType.U64.class);
         register(new U128Reader(), ScaleType.U128.class);
+        register(new Union1Reader(), Union1.class, ScaleType.Union1.class);
+        register(new Union2Reader(), Union2.class, ScaleType.Union2.class);
+        register(new Union3Reader(), Union3.class, ScaleType.Union3.class);
+        register(new Union4Reader(), Union4.class, ScaleType.Union4.class);
+        register(new Union5Reader(), Union5.class, ScaleType.Union5.class);
+        register(new Union6Reader(), Union6.class, ScaleType.Union6.class);
+        register(new Union7Reader(), Union7.class, ScaleType.Union7.class);
+        register(new Union8Reader(), Union8.class, ScaleType.Union8.class);
+        register(new Union9Reader(), Union9.class, ScaleType.Union9.class);
+        register(new Union10Reader(), Union10.class, ScaleType.Union10.class);
+        register(new Union11Reader(), Union11.class, ScaleType.Union11.class);
+        register(new Union12Reader(), Union12.class, ScaleType.Union12.class);
         register(new VecReader(), ScaleType.Vec.class, List.class);
         register(new VoidReader(), Void.class);
 
