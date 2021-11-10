@@ -1,8 +1,8 @@
 dependencies {
     implementation project(':types')
     implementation project(':scale')
-    implementation project(':rpc:core')
+    implementation project(':rpc:rpc-core')
     implementation project(':common')
-    annotationProcessor project(':rpc:codegen')
+    annotationProcessor project(':rpc:rpc-codegen')
     annotationProcessor project(':scale:scale-codegen')
 }

@@ -44,17 +44,16 @@ public class SystemTests {
             RpcEncoderRegistry encoderRegistry = mock(RpcEncoderRegistry.class);
             when(encoderRegistry.resolve(AccountId.class))
                     .thenReturn((source, encoders) -> "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY");
-            mockStatic(RpcEncoderRegistry.class)
-                    .when(RpcEncoderRegistry::getInstance)
-                    .thenReturn(encoderRegistry);
+            try (val utils = mockStatic(RpcEncoderRegistry.class)) {
+                utils.when(RpcEncoderRegistry::getInstance)
+                        .thenReturn(encoderRegistry);
+                val result = rpcSection.accountNextIndex(AccountId.fromBytes(
+                        new byte[]{
+                                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+                        })).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-
-            val result = rpcSection.accountNextIndex(AccountId.fromBytes(
-                    new byte[]{
-                    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-            })).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-
-            assertEquals(0, result);
+                assertEquals(0, result);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 dependencies {
     implementation project(':common')
-    implementation project(':rpc:core')
+    implementation project(':rpc:rpc-core')
     implementation project(':scale')
     implementation project(':scale:scale-codegen')
     implementation project(':transport')
@@ -12,7 +12,7 @@ dependencies {
     testImplementation 'com.google.testing.compile:compile-testing:0.19'
     testImplementation 'com.google.code.gson:gson:2.8.8'
 
-    testCompileOnly project(':rpc:codegen')
-    testAnnotationProcessor project(':rpc:codegen')
+    testCompileOnly project(':rpc:rpc-codegen')
+    testAnnotationProcessor project(':rpc:rpc-codegen')
     testAnnotationProcessor project(':scale:scale-codegen')
 }

@@ -1,5 +1,6 @@
 plugins {
     id 'io.freefair.lombok' version '6.1.0' apply false
+    id 'maven-publish'
 }
 
 allprojects {
@@ -15,6 +16,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.freefair.lombok'
+    apply plugin: 'maven-publish'
 
     targetCompatibility = '1.8'
     sourceCompatibility = '1.8'
@@ -33,5 +35,24 @@ subprojects {
 
     test {
         useJUnitPlatform()
+    }
+
+    publishing {
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/strategyobject/substrate-client-java"
+                credentials {
+                    username = System.getenv("USERNAME")
+                    password = System.getenv("TOKEN")
+                }
+            }
+        }
     }
 }
