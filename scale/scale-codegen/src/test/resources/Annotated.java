@@ -79,6 +79,17 @@ public class Annotated<T1, T2, T3> {
     private BigInteger testU128;
 
     @ScaleGeneric(
+            template = "Union<I32, Bool, String>",
+            types = {
+                    @Scale(value = Union3.class, name = "Union"),
+                    @Scale(I32.class),
+                    @Scale(Bool.class),
+                    @Scale(ScaleType.String.class)
+            }
+    )
+    private com.strategyobject.substrateclient.types.union.Union3<Integer, Boolean, String> testUnion;
+
+    @ScaleGeneric(
             template = "Vec<i32>",
             types = {
                     @Scale(value = I32.class, name = "i32"),
@@ -233,6 +244,14 @@ public class Annotated<T1, T2, T3> {
 
     public void setTestU128(BigInteger testU128) {
         this.testU128 = testU128;
+    }
+
+    public com.strategyobject.substrateclient.types.union.Union3<Integer, Boolean, String> getTestUnion() {
+        return testUnion;
+    }
+
+    public void setTestUnion(com.strategyobject.substrateclient.types.union.Union3<Integer, Boolean, String> testUnion) {
+        this.testUnion = testUnion;
     }
 
     public List<Integer> getTestVec() {

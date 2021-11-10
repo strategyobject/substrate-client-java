@@ -55,6 +55,39 @@ public interface ScaleType {
     class Vec<T> implements ScaleType {
     }
 
-    class Union implements ScaleType {
+    class Union1<T1> implements ScaleType {
+    }
+
+    class Union2<T1, T2> implements ScaleType {
+    }
+
+    class Union3<T1, T2, T3> implements ScaleType {
+    }
+
+    class Union4<T1, T2, T3, T4> implements ScaleType {
+    }
+
+    class Union5<T1, T2, T3, T4, T5> implements ScaleType {
+    }
+
+    class Union6<T1, T2, T3, T4, T5, T6> implements ScaleType {
+    }
+
+    class Union7<T1, T2, T3, T4, T5, T6, T7> implements ScaleType {
+    }
+
+    class Union8<T1, T2, T3, T4, T5, T6, T7, T8> implements ScaleType {
+    }
+
+    class Union9<T1, T2, T3, T4, T5, T6, T7, T8, T9> implements ScaleType {
+    }
+
+    class Union10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> implements ScaleType {
+    }
+
+    class Union11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> implements ScaleType {
+    }
+
+    class Union12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> implements ScaleType {
     }
 }
