@@ -12,7 +12,7 @@ public class EncoderPair<T> {
 
     public RpcEncoder<T> getEncoderOrThrow() {
         if (encoder == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("RpcEncoder is null.");
         }
 
         return encoder;
@@ -20,7 +20,7 @@ public class EncoderPair<T> {
 
     public ScaleWriter<T> getScaleWriterOrThrow() {
         if (scaleWriter == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("ScaleWriter is null.");
         }
 
         return scaleWriter;

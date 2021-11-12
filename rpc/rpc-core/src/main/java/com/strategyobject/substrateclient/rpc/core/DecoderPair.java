@@ -12,7 +12,7 @@ public class DecoderPair<T> {
 
     public RpcDecoder<T> getDecoderOrThrow() {
         if (decoder == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("RpcDecoder is null.");
         }
 
         return decoder;
@@ -20,7 +20,7 @@ public class DecoderPair<T> {
 
     public ScaleReader<T> getScaleReaderOrThrow() {
         if (scaleReader == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("ScaleReader is null.");
         }
 
         return scaleReader;
