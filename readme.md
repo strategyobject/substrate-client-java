@@ -148,7 +148,7 @@ api.pallete(MyPallet.class)
 
 ## To be implemented
 - [x] Transport - layer that interacts with a node. It provides async API for RPC requests.
-- [ ] Scale
+- [x] Scale
     - [x] Scale codec - implementation of the [SCALE](https://docs.substrate.io/v3/advanced/scale-codec/) for standard types.
     - [x] Scale code generation - approach to generate scale encoders/decoders for annotated classes.
 - [ ] Signing:
