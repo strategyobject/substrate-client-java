@@ -127,6 +127,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                 EMPTY_TYPE_VAR_MAP,
                 String.format("%s[$L].%s", DECODERS_ARG, DECODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", DECODERS_ARG, READER_UNSAFE_ACCESSOR),
+                READER_UNSAFE_ACCESSOR,
                 DECODER_REGISTRY,
                 SCALE_READER_REGISTRY);
 
@@ -184,6 +185,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                 EMPTY_TYPE_VAR_MAP,
                 String.format("%s[$L].%s", ENCODERS_ARG, ENCODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", ENCODERS_ARG, WRITER_UNSAFE_ACCESSOR),
+                WRITER_UNSAFE_ACCESSOR,
                 ENCODER_REGISTRY,
                 SCALE_WRITER_REGISTRY);
 
@@ -199,7 +201,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
         for (val param : method.getParameters()) {
             try {
                 processParameter(methodSpecBuilder, method, param, encoderCompositor, writerCompositor, scaleAnnotationParser, context);
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw new ProcessingException(e, param, e.getMessage());
             }
         }

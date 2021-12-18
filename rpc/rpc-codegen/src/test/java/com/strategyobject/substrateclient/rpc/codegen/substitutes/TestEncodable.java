@@ -7,26 +7,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+import java.util.Map;
+
 @RpcEncoder
 @Getter
 @Setter
+@AllArgsConstructor
 public class TestEncodable<T> {
     @Scale
-    public int a;
-    public String b;
-    public T c;
-    public boolean d;
-
-    public TestEncodable() {
-
-    }
-
-    public TestEncodable(int a, String b, T c, boolean d) {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-    }
+    private int a;
+    private String b;
+    private T c;
+    private boolean d;
+    private List<String> e;
+    private Map<String, Integer> f;
+    @Scale
+    private List<Integer> h;
 
     @Getter
     @Setter

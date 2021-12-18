@@ -7,6 +7,7 @@ public class Constants {
 
     public static final String AUTO_REGISTER_TYPES_ARG = "types";
     public static final String PAIR_FACTORY_METHOD = "of";
+    public static final String RESOLVE_AND_INJECT_METHOD = "resolveAndInjectOrNull";
 
     public static final String ENCODE_METHOD_NAME = "encode";
     public static final String DECODE_METHOD_NAME = "decode";

@@ -8,6 +8,12 @@ import com.strategyobject.substrateclient.rpc.core.registries.RpcDecoderRegistry
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,8 +62,20 @@ public class RpcDecoderProcessorTests {
         val decoder = registry.resolve(TestDecodable.class)
                 .inject(DecoderPair.of(registry.resolve(String.class), null));
 
-        Object source = gson.fromJson("{a: 4, b: \"123\", c: \"some\"}", Object.class);
-        val expected = new TestDecodable<>(4, "123", "some");
+        Object source = gson.fromJson("{\"a\":4,\"b\":\"123\",\"c\":\"some\"," +
+                        "\"d\":[\"1\",\"2\"],\"e\":{\"a\":1,\"b\":2},\"f\":\"0x04000000\"," +
+                        "\"g\":\"0x0c0500000002000000fdffffff\"}",
+                Object.class);
+        val expected = new TestDecodable<>(4,
+                "123",
+                "some",
+                Arrays.asList("1", "2"),
+                Stream.of(
+                                new AbstractMap.SimpleEntry<>("a", 1),
+                                new AbstractMap.SimpleEntry<>("b", 2))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
+                4,
+                Arrays.asList(5, 2, -3));
 
         val actual = decoder.decode(source);
 

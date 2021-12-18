@@ -4,7 +4,9 @@ import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.rpc.core.DecoderPair;
 import com.strategyobject.substrateclient.rpc.core.RpcDecoder;
+import com.strategyobject.substrateclient.rpc.core.RpcRegistryHelper;
 import com.strategyobject.substrateclient.scale.ScaleReader;
+import com.strategyobject.substrateclient.scale.ScaleRegistryHelper;
 import lombok.NonNull;
 import lombok.var;
 
@@ -16,12 +18,14 @@ import javax.lang.model.util.Types;
 import java.util.Map;
 
 import static com.strategyobject.substrateclient.rpc.codegen.Constants.PAIR_FACTORY_METHOD;
+import static com.strategyobject.substrateclient.rpc.codegen.Constants.RESOLVE_AND_INJECT_METHOD;
 
 public class DecoderCompositor extends TypeTraverser<CodeBlock> {
     private final Types typeUtils;
     private final Map<String, Integer> typeVarMap;
     private final String decoderAccessor;
     private final String readerAccessor;
+    private final String readerMethod;
     private final String decoderRegistryVarName;
     private final String scaleRegistryVarName;
 
@@ -29,6 +33,7 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
                              @NonNull Map<String, Integer> typeVarMap,
                              @NonNull String decoderAccessor,
                              @NonNull String readerAccessor,
+                             @NonNull String readerMethod,
                              @NonNull String decoderRegistryVarName,
                              @NonNull String scaleRegistryVarName) {
         super(CodeBlock.class);
@@ -36,6 +41,7 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
         this.typeVarMap = typeVarMap;
         this.decoderAccessor = decoderAccessor;
         this.readerAccessor = readerAccessor;
+        this.readerMethod = readerMethod;
         this.decoderRegistryVarName = decoderRegistryVarName;
         this.scaleRegistryVarName = scaleRegistryVarName;
     }
@@ -77,16 +83,17 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
 
         var builder = CodeBlock.builder()
                 .add("$T.$L(", DecoderPair.class, PAIR_FACTORY_METHOD)
-                .add("($T) $L.resolve($T.class).inject(", RpcDecoder.class, decoderRegistryVarName, resolveType);
+                .add("$T.$L($T.class, ", RpcRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);
         }
 
-        builder.add("), ($T) $L.resolve($T.class).inject(", ScaleReader.class, scaleRegistryVarName, resolveType);
+        builder.add("), $T.$L($T.class, ", ScaleRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);
+            builder.add(".$L", readerMethod);
         }
         builder.add(")");
 

@@ -121,6 +121,7 @@ public class RpcDecoderAnnotatedClass {
                 typeVarMap,
                 String.format("%s[$L].%s", DECODERS_ARG, DECODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", DECODERS_ARG, READER_UNSAFE_ACCESSOR),
+                READER_UNSAFE_ACCESSOR,
                 DECODER_REGISTRY,
                 SCALE_READER_REGISTRY);
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
