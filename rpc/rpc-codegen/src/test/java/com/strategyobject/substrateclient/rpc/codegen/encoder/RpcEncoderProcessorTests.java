@@ -6,10 +6,14 @@ import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestEncodable;
 import com.strategyobject.substrateclient.rpc.core.EncoderPair;
 import com.strategyobject.substrateclient.rpc.core.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.core.registries.RpcEncoderRegistry;
-import com.strategyobject.substrateclient.scale.ScaleUtils;
-import com.strategyobject.substrateclient.scale.writers.I32Writer;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
@@ -68,9 +72,19 @@ public class RpcEncoderProcessorTests {
                                         )),
                                 null));
 
-        val source = new TestEncodable<>(4, "some", new TestEncodable.Subclass<>(123), true);
+        val source = new TestEncodable<>(4,
+                "some",
+                new TestEncodable.Subclass<>(123),
+                true,
+                Arrays.asList("a", "b"),
+                Stream.of(
+                                new AbstractMap.SimpleEntry<>("a", 1),
+                                new AbstractMap.SimpleEntry<>("b", 2))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
+                Arrays.asList(2, 3));
         val expected = gson.fromJson(
-                "{\"a\":\"" + ScaleUtils.toHexString(4, new I32Writer()) + "\", \"b\": \"some\", \"c\": {\"a\": 123}, \"d\": true}",
+                "{\"a\":\"0x04000000\",\"b\":\"some\",\"c\":{\"a\":123},\"d\":true," +
+                        "\"e\":[\"a\",\"b\"],\"f\":{\"a\":1,\"b\":2},\"h\":\"0x080200000003000000\"}",
                 Object.class);
 
         val actual = gson.fromJson(
