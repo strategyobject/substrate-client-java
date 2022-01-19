@@ -59,7 +59,7 @@ public class StateTests {
             State rpcSection = sectionFactory.create(State.class, wsProvider);
 
             assertDoesNotThrow(() -> {
-                rpcSection.getMetadata().get(WAIT_TIMEOUT * 3, TimeUnit.SECONDS);
+                rpcSection.getMetadata().get(WAIT_TIMEOUT * 10, TimeUnit.SECONDS);
             });
         }
     }
