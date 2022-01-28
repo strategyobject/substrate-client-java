@@ -5,6 +5,7 @@ import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 import com.strategyobject.substrateclient.rpc.types.BlockHash;
 import com.strategyobject.substrateclient.rpc.types.Header;
+import com.strategyobject.substrateclient.rpc.types.SignedBlock;
 import com.strategyobject.substrateclient.scale.annotations.Scale;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,4 +24,7 @@ public interface Chain {
     @RpcCall(method = "getBlockHash")
     @Scale
     CompletableFuture<BlockHash> getBlockHash(long number);
+
+    @RpcCall(method = "getBlock")
+    CompletableFuture<SignedBlock> getBlock(@Scale BlockHash hash);
 }

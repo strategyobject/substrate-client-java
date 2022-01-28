@@ -21,8 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 public class ChainTests {
@@ -42,11 +41,11 @@ public class ChainTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider);
+            val rpcSection = sectionFactory.create(Chain.class, wsProvider);
 
-            BlockHash result = rpcSection.getFinalizedHead().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val result = rpcSection.getFinalizedHead().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertNotEquals(new BigInteger(result.getData()), BigInteger.ZERO);
+            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
         }
     }
 
@@ -59,7 +58,7 @@ public class ChainTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
-            Chain rpcSection = sectionFactory.create(Chain.class, wsProvider);
+            val rpcSection = sectionFactory.create(Chain.class, wsProvider);
 
             val blockCount = new AtomicInteger(0);
             val blockHash = new AtomicReference<BlockHash>(null);
@@ -76,7 +75,7 @@ public class ChainTests {
                     .atMost(WAIT_TIMEOUT * 2, TimeUnit.SECONDS)
                     .untilAtomic(blockCount, greaterThan(2));
 
-            assertNotEquals(new BigInteger(blockHash.get().getData()), BigInteger.ZERO);
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getData()));
 
             val result = unsubscribeFunc.get().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -93,11 +92,45 @@ public class ChainTests {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val sectionFactory = new RpcGeneratedSectionFactory();
+            val rpcSection = sectionFactory.create(Chain.class, wsProvider);
+
+            val result = rpcSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
+        }
+    }
+
+    @Test
+    void getBlock() throws ExecutionException, InterruptedException, TimeoutException, RpcInterfaceInitializationException {
+        try (WsProvider wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .disableAutoConnect()
+                .build()) {
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            val sectionFactory = new RpcGeneratedSectionFactory();
             Chain rpcSection = sectionFactory.create(Chain.class, wsProvider);
 
-            BlockHash result = rpcSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val height = new AtomicInteger(0);
+            rpcSection.subscribeNewHeads((e, header) -> {
+                if (header != null) {
+                    height.set(header.getNumber().getValue().intValue());
+                }
+            });
 
-            assertNotEquals(new BigInteger(result.getData()), BigInteger.ZERO);
+            await()
+                    .atMost(WAIT_TIMEOUT * 3, TimeUnit.SECONDS)
+                    .untilAtomic(height, greaterThan(1));
+
+            val number = height.get();
+            val blockHash = rpcSection.getBlockHash(number).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.getData()));
+
+            val block = rpcSection.getBlock(blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getData()));
+            assertEquals(number, block.getBlock().getHeader().getNumber().getValue().intValue());
         }
     }
 }
