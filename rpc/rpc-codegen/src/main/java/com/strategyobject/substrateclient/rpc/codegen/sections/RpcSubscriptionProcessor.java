@@ -83,7 +83,7 @@ class RpcSubscriptionProcessor extends RpcMethodProcessor<RpcSubscription> {
                                 PARAMS_VAR,
                                 CALL_BACK_PROXY)
                         .add(".$1L($2L -> () -> $3L.$4L($5S, $6S, $2L))",
-                                THEN_APPLY,
+                                THEN_APPLY_ASYNC,
                                 ID,
                                 PROVIDER_INTERFACE,
                                 UNSUBSCRIBE,

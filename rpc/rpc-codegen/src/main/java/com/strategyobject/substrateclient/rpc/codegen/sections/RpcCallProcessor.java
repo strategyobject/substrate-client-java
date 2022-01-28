@@ -56,7 +56,7 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
 
         val isReturnVoid = isReturnVoid(method, context);
         val code = CodeBlock.builder()
-                .add("return $L.$L($S$L).$L(", PROVIDER_INTERFACE, SEND, rpcMethodName, paramsArgument, THEN_APPLY);
+                .add("return $L.$L($S$L).$L(", PROVIDER_INTERFACE, SEND, rpcMethodName, paramsArgument, THEN_APPLY_ASYNC);
 
         if (isReturnVoid) {
             code.add("$L -> null", CALL_BACK_ARG);

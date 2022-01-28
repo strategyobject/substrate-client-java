@@ -219,12 +219,12 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.handlers.put(id, new WsStateAwaiting<>(callback, method, params, subscription));
 
         return CompletableFuture.runAsync(() -> this.webSocket.get().send(json))
-                .whenComplete((_res, ex) -> {
+                .whenCompleteAsync((_res, ex) -> {
                     if (ex != null) {
                         this.handlers.remove(id);
                     }
                 })
-                .thenCombine(whenResponseReceived, (_a, b) -> b);
+                .thenCombineAsync(whenResponseReceived, (_a, b) -> b);
     }
 
     /**

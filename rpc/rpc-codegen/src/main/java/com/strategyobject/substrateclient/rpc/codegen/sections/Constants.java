@@ -11,6 +11,6 @@ class Constants {
     static final String SEND = "send";
     static final String SUBSCRIBE = "subscribe";
     public static final String UNSUBSCRIBE = "unsubscribe";
-    static final String THEN_APPLY = "thenApply";
+    static final String THEN_APPLY_ASYNC = "thenApplyAsync";
     static final String ACCEPT = "accept";
 }
