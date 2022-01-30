@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.strategyobject.substrateclient.common.eventemitter.EventEmitter;
 import com.strategyobject.substrateclient.common.eventemitter.EventListener;
-import com.strategyobject.substrateclient.common.gc.WeakReferenceFinalizer;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import com.strategyobject.substrateclient.transport.ProviderInterfaceEmitted;
 import com.strategyobject.substrateclient.transport.SubscriptionHandler;
@@ -18,9 +17,6 @@ import org.java_websocket.framing.CloseFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.ref.Reference;
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -48,7 +44,7 @@ class WsStateSubscription extends SubscriptionHandler {
 @Getter
 @Setter
 class WsStateAwaiting<T> {
-    private WeakReference<CompletableFuture<T>> callBack;
+    private CompletableFuture<T> callback;
     private String method;
     private List<Object> params;
     private SubscriptionHandler subscription;
@@ -58,6 +54,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(WsProvider.class);
     private static final int RESUBSCRIBE_TIMEOUT = 20;
     private static final Map<String, String> ALIASES = new HashMap<>();
+    private static final ScheduledExecutorService timedOutHandlerCleaner = Executors
+            .newScheduledThreadPool(1);
 
     static {
         ALIASES.put("chain_finalisedHead", "chain_finalizedHead");
@@ -65,7 +63,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         ALIASES.put("chain_unsubscribeFinalisedHeads", "chain_unsubscribeFinalizedHeads");
     }
 
-    private final ReferenceQueue<CompletableFuture<?>> referenceQueue = new ReferenceQueue<>();
     private final RpcCoder coder = new RpcCoder();
     private final URI endpoint;
     private final Map<String, String> headers;
@@ -75,13 +72,15 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private final Map<String, JsonRpcResponseSubscription> waitingForId = new ConcurrentHashMap<>();
     private final int heartbeatInterval;
     private final AtomicReference<WebSocketClient> webSocket = new AtomicReference<>(null);
+    private final long responseTimeoutInMs;
     private int autoConnectMs;
     private volatile boolean isConnected = false;
 
     WsProvider(@NonNull URI endpoint,
                int autoConnectMs,
                Map<String, String> headers,
-               int heartbeatInterval) {
+               int heartbeatInterval,
+               long responseTimeoutInMs) {
         Preconditions.checkArgument(
                 endpoint.getScheme().matches("(?i)ws|wss"),
                 "Endpoint should start with 'ws://', received " + endpoint);
@@ -93,6 +92,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.autoConnectMs = autoConnectMs;
         this.headers = headers;
         this.heartbeatInterval = heartbeatInterval;
+        this.responseTimeoutInMs = responseTimeoutInMs;
 
         if (autoConnectMs > 0) {
             this.connect();
@@ -211,17 +211,14 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         logger.debug("Calling {} {}, {}, {}, {}", id, method, params, json, subscription);
 
         val whenResponseReceived = new CompletableFuture<T>();
-        val callback = new WeakReferenceFinalizer<>(
-                whenResponseReceived,
-                referenceQueue,
-                () -> this.handlers.remove(id));
-
-        this.handlers.put(id, new WsStateAwaiting<>(callback, method, params, subscription));
+        this.handlers.put(id, new WsStateAwaiting<>(whenResponseReceived, method, params, subscription));
 
         return CompletableFuture.runAsync(() -> this.webSocket.get().send(json))
                 .whenCompleteAsync((_res, ex) -> {
                     if (ex != null) {
                         this.handlers.remove(id);
+                    } else {
+                        scheduleCleanupIfNoResponseWithinTimeout(id);
                     }
                 })
                 .thenCombineAsync(whenResponseReceived, (_a, b) -> b);
@@ -299,6 +296,23 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return whenUnsubscribed;
     }
 
+    private void scheduleCleanupIfNoResponseWithinTimeout(int id) {
+        timedOutHandlerCleaner.schedule(() -> {
+                    val handler = this.handlers.remove(id);
+                    if (handler == null) {
+                        return;
+                    }
+
+                    handler
+                            .getCallback()
+                            .completeExceptionally(new TimeoutException(
+                                    String.format("The node didn't respond within %s milliseconds.",
+                                            responseTimeoutInMs)));
+                },
+                responseTimeoutInMs,
+                TimeUnit.MILLISECONDS);
+    }
+
     private void emit(ProviderInterfaceEmitted type, Object... args) {
         this.eventEmitter.emit(type, args);
     }
@@ -324,12 +338,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         // reject all hanging requests
         val wsClosedException = new WsClosedException(errorMessage);
-        this.handlers.values().forEach(x -> {
-            val callback = x.getCallBack().get();
-            if (callback != null) {
-                callback.completeExceptionally(wsClosedException);
-            }
-        });
+        this.handlers.values().forEach(x -> x.getCallback().completeExceptionally(wsClosedException));
         this.handlers.clear();
         this.waitingForId.clear();
 
@@ -346,7 +355,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
     private void onSocketMessage(String message) {
         logger.debug("Received {}", message);
-        this.cleanCollectedHandlers();
 
         JsonRpcResponse response = RpcCoder.decodeJson(message);
         if (Strings.isNullOrEmpty(response.getMethod())) {
@@ -365,12 +373,11 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             return;
         }
 
-        val callback = Optional.ofNullable(handler.getCallBack().get());
         try {
             val result = (T) response.getResult();
             // first send the result - in case of subs, we may have an update
             // immediately if we have some queued results already
-            callback.ifPresent(x -> x.complete(result));
+            handler.getCallback().complete(result);
 
             val subscription = handler.getSubscription();
             if (subscription != null) {
@@ -390,7 +397,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                 }
             }
         } catch (Exception ex) {
-            callback.ifPresent(x -> x.completeExceptionally(ex));
+            handler.getCallback().completeExceptionally(ex);
         }
 
         this.handlers.remove(id);
@@ -467,19 +474,12 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
     }
 
-    private void cleanCollectedHandlers() {
-        Reference<?> referenceFromQueue;
-        while ((referenceFromQueue = referenceQueue.poll()) != null) {
-            ((WeakReferenceFinalizer<?>) referenceFromQueue).finalizeResources();
-            referenceFromQueue.clear();
-        }
-    }
-
     public static class Builder {
         private URI endpoint;
         private int autoConnectMs = 2500;
         private Map<String, String> headers = null;
         private int heartbeatInterval = 60;
+        private long responseTimeoutInMs = 20000;
 
         Builder() {
             try {
@@ -527,8 +527,17 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             return this;
         }
 
+        public Builder setResponseTimeout(long timeout, TimeUnit timeUnit) {
+            this.responseTimeoutInMs = timeUnit.toMillis(timeout);
+            return this;
+        }
+
         public WsProvider build() {
-            return new WsProvider(this.endpoint, this.autoConnectMs, this.headers, this.heartbeatInterval);
+            return new WsProvider(this.endpoint,
+                    this.autoConnectMs,
+                    this.headers,
+                    this.heartbeatInterval,
+                    this.responseTimeoutInMs);
         }
     }
 }
