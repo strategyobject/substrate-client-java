@@ -44,12 +44,34 @@ public interface ProviderInterface {
     /**
      * Send data to the node
      *
+     * @param method      The RPC methods to execute
+     * @param params      Encoded parameters as applicable for the method
+     * @param isCacheable Request can be cached
+     * @return future containing result
+     */
+    CompletableFuture<Object> send(String method,
+                                   List<Object> params,
+                                   boolean isCacheable);
+
+    /**
+     * Send data to the node
+     *
      * @param method The RPC methods to execute
      * @param params Encoded parameters as applicable for the method
      * @return future containing result
      */
     CompletableFuture<Object> send(String method, // TODO replace `Object` to something like `JObject` to have more strict contract
                                    List<Object> params);
+
+    /**
+     * Send data to the node
+     *
+     * @param method      The RPC methods to execute
+     * @param isCacheable Request can be cached
+     * @return future containing result
+     */
+    CompletableFuture<Object> send(String method,
+                                   boolean isCacheable);
 
     /**
      * Send data to the node

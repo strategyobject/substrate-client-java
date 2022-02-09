@@ -38,29 +38,14 @@ class WsProviderTest {
     }
 
     @Test
-    void connectFailsWhenConnected() {
+    void connectReturnsSameFutureWhenCalledMultiple() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .build()) {
+            val connectA = wsProvider.connect();
+            val connectB = wsProvider.connect();
 
-            val executionException = assertThrows(
-                    ExecutionException.class,
-                    () -> wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS));
-            assertTrue(executionException.getCause() instanceof IllegalStateException);
-        }
-    }
-
-    @Test
-    void canAutoConnect() {
-        try (val wsProvider = WsProvider.builder()
-                .setEndpoint(substrate.getWsAddress())
-                .setAutoConnectDelay(5000)
-                .build()) {
-
-            assertDoesNotThrow(
-                    () -> await()
-                            .atMost(WAIT_TIMEOUT, TimeUnit.SECONDS)
-                            .until(wsProvider::isConnected));
+            assertEquals(connectA, connectB);
         }
     }
 
