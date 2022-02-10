@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ProviderInterfaceEmitted;
+import com.strategyobject.substrateclient.transport.ProviderStatus;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ class WsProviderTest {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .build()) {
+
             val connectA = wsProvider.connect();
             val connectB = wsProvider.connect();
 
@@ -95,6 +97,23 @@ class WsProviderTest {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             assertDoesNotThrow(wsProvider::disconnect);
             assertFalse(wsProvider.isConnected());
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void disconnectReturnsSameFutureWhenCalledMultiple() {
+        try (val wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .build()) {
+
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            assertTrue(wsProvider.isConnected());
+
+            val disconnectA = wsProvider.disconnect();
+            val disconnectB = wsProvider.disconnect();
+
+            assertEquals(disconnectA, disconnectB);
         }
     }
 
@@ -206,7 +225,29 @@ class WsProviderTest {
                 .setEndpoint(substrate.getWsAddress())
                 .disableAutoConnect()
                 .build()) {
+
             assertTrue(wsProvider.hasSubscriptions());
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void canReconnectManually() {
+        try (val wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .disableAutoConnect()
+                .build()) {
+
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            assertTrue(wsProvider.isConnected());
+
+            wsProvider.disconnect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            assertFalse(wsProvider.isConnected());
+            assertEquals(ProviderStatus.DISCONNECTED, wsProvider.getStatus());
+
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            assertTrue(wsProvider.isConnected());
+            assertEquals(ProviderStatus.CONNECTED, wsProvider.getStatus());
         }
     }
 }

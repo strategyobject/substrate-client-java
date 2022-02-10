@@ -2,11 +2,11 @@ package com.strategyobject.substrateclient.transport.ws;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.cache.CacheBuilder;
 import com.strategyobject.substrateclient.common.eventemitter.EventEmitter;
 import com.strategyobject.substrateclient.common.eventemitter.EventListener;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import com.strategyobject.substrateclient.transport.ProviderInterfaceEmitted;
+import com.strategyobject.substrateclient.transport.ProviderStatus;
 import com.strategyobject.substrateclient.transport.SubscriptionHandler;
 import com.strategyobject.substrateclient.transport.coder.JsonRpcResponse;
 import com.strategyobject.substrateclient.transport.coder.JsonRpcResponseSingle;
@@ -51,7 +51,6 @@ class WsStateAwaiting<T> {
 
 @Slf4j
 public class WsProvider implements ProviderInterface, AutoCloseable {
-    private static final int CALL_CACHE_CAPACITY = 384;
     private static final int RESUBSCRIBE_TIMEOUT = 20;
     private static final Map<String, String> ALIASES = new HashMap<>();
     private static final ScheduledExecutorService timedOutHandlerCleaner;
@@ -63,7 +62,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         ALIASES.put("chain_unsubscribeFinalisedHeads", "chain_unsubscribeFinalizedHeads");
     }
 
-    private final Map<String, CompletableFuture<?>> callCache;
     private final RpcCoder coder = new RpcCoder();
     private final URI endpoint;
     private final Map<String, String> headers;
@@ -73,10 +71,11 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private final Map<String, JsonRpcResponseSubscription> waitingForId = new ConcurrentHashMap<>();
     private final int heartbeatInterval;
     private final long responseTimeoutInMs;
-    private int autoConnectMs;
+    private volatile int autoConnectMs;
     private volatile WebSocketClient webSocket = null;
     private volatile CompletableFuture<Void> whenConnected = null;
-    private volatile boolean isConnected = false;
+    private volatile CompletableFuture<Void> whenDisconnected = null;
+    private volatile ProviderStatus status = ProviderStatus.DISCONNECTED;
 
     WsProvider(@NonNull URI endpoint,
                int autoConnectMs,
@@ -95,10 +94,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.headers = headers;
         this.heartbeatInterval = heartbeatInterval;
         this.responseTimeoutInMs = responseTimeoutInMs;
-        this.callCache = CacheBuilder.newBuilder()
-                .maximumSize(CALL_CACHE_CAPACITY)
-                .<String, CompletableFuture<?>>build()
-                .asMap();
     }
 
     public static Builder builder() {
@@ -115,6 +110,11 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return true;
     }
 
+    @Override
+    public ProviderStatus getStatus() {
+        return this.status;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -122,7 +122,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      */
     @Override
     public boolean isConnected() {
-        return this.isConnected;
+        return this.status == ProviderStatus.CONNECTED;
     }
 
     /**
@@ -131,12 +131,19 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      * however if you decided otherwise, you may connect manually using this method.
      */
     public synchronized CompletableFuture<Void> connect() {
-        var alreadyConnected = this.whenConnected;
-        if (alreadyConnected != null) {
-            return alreadyConnected;
+        Preconditions.checkState(
+                this.status == ProviderStatus.DISCONNECTED || this.status == ProviderStatus.CONNECTING,
+                "WebSocket is already connected");
+
+        var inProgress = this.whenConnected;
+        if (inProgress != null) {
+            return inProgress;
         }
 
+        this.status = ProviderStatus.CONNECTING;
+
         val whenConnected = new CompletableFuture<Void>();
+        this.whenConnected = whenConnected;
 
         try {
             val ws = WebSocket.builder()
@@ -150,14 +157,17 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             ws.setConnectionLostTimeout(this.heartbeatInterval);
 
             this.webSocket = ws;
-            this.whenConnected = whenConnected;
-            this.eventEmitter.once(ProviderInterfaceEmitted.CONNECTED, _x -> whenConnected.complete(null));
+            this.eventEmitter.once(ProviderInterfaceEmitted.CONNECTED, _x -> {
+                whenConnected.complete(null);
+                this.whenConnected = null;
+            });
             ws.connect();
         } catch (Exception ex) {
             log.error("Connect error", ex);
             whenConnected.completeExceptionally(ex);
-            this.whenConnected = null;
             this.emit(ProviderInterfaceEmitted.ERROR, ex);
+            this.whenConnected = null;
+            this.status = ProviderStatus.DISCONNECTED;
         }
 
         return whenConnected;
@@ -167,15 +177,35 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      * {@inheritDoc}
      */
     @Override
-    public void disconnect() {
-        this.isConnected = false;
+    public synchronized CompletableFuture<Void> disconnect() {
+        Preconditions.checkState(
+                this.status == ProviderStatus.CONNECTED || this.status == ProviderStatus.DISCONNECTING,
+                "WebSocket is not connected");
+
+        var inProgress = this.whenDisconnected;
+        if (inProgress != null) {
+            return inProgress;
+        }
+
+        this.status = ProviderStatus.DISCONNECTING;
+
+        val whenDisconnected = new CompletableFuture<Void>();
+        this.whenDisconnected = whenDisconnected;
+
         // switch off autoConnect, we are in manual mode now
         this.autoConnectMs = 0;
+
+        this.eventEmitter.once(ProviderInterfaceEmitted.DISCONNECTED, _x -> {
+            whenDisconnected.complete(null);
+            this.whenDisconnected = null;
+        });
 
         val ws = this.webSocket;
         if (ws != null) {
             ws.close(CloseFrame.NORMAL);
         }
+
+        return whenDisconnected;
     }
 
     /**
@@ -192,32 +222,23 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         return () -> this.eventEmitter.removeListener(type, sub);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> CompletableFuture<T> send(String method,
                                           List<Object> params,
-                                          boolean isCacheable,
                                           SubscriptionHandler subscription) {
-        val jsonRpcRequest = this.coder.encodeObject(method, params);
-        val json = RpcCoder.encodeJson(jsonRpcRequest);
-
-        var result = isCacheable ? (CompletableFuture<T>) this.callCache.get(json) : null;
-        if (result != null && !result.isCompletedExceptionally()) {
-            log.debug("Cached result for {}", json);
-            return result;
-        }
-
         val ws = this.webSocket;
         Preconditions.checkState(
-                ws != null && this.isConnected,
+                ws != null && this.isConnected(),
                 "WebSocket is not connected");
 
+        val jsonRpcRequest = this.coder.encodeObject(method, params);
+        val json = RpcCoder.encodeJson(jsonRpcRequest);
         val id = jsonRpcRequest.getId();
         log.debug("Calling {} {}, {}, {}, {}", id, method, params, json, subscription);
 
         val whenResponseReceived = new CompletableFuture<T>();
         this.handlers.put(id, new WsStateAwaiting<>(whenResponseReceived, method, params, subscription));
 
-        result = CompletableFuture.runAsync(() -> ws.send(json))
+        return CompletableFuture.runAsync(() -> ws.send(json))
                 .whenCompleteAsync((_res, ex) -> {
                     if (ex != null) {
                         this.handlers.remove(id);
@@ -227,25 +248,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                     }
                 })
                 .thenCombineAsync(whenResponseReceived, (_a, b) -> b);
-
-        if (isCacheable) {
-            callCache.put(json, result);
-        }
-
-        return result;
-    }
-
-    /**
-     * Send JSON data using WebSockets to configured endpoint
-     *
-     * @param method      The RPC methods to execute
-     * @param params      Encoded parameters as applicable for the method
-     * @param isCacheable Request can be cached
-     * @return future containing result
-     */
-    @Override
-    public CompletableFuture<Object> send(String method, List<Object> params, boolean isCacheable) {
-        return send(method, params, isCacheable, null);
     }
 
     /**
@@ -257,19 +259,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      */
     @Override
     public CompletableFuture<Object> send(String method, List<Object> params) {
-        return send(method, params, false, null);
-    }
-
-    /**
-     * Send JSON data using WebSockets to configured endpoint
-     *
-     * @param method      The RPC methods to execute
-     * @param isCacheable Request can be cached
-     * @return future containing result
-     */
-    @Override
-    public CompletableFuture<Object> send(String method, boolean isCacheable) {
-        return send(method, null, false, null);
+        return send(method, params, null);
     }
 
     /**
@@ -280,7 +270,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      */
     @Override
     public CompletableFuture<Object> send(String method) {
-        return send(method, null, false, null);
+        return send(method, null, null);
     }
 
     /**
@@ -296,7 +286,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                                                String method,
                                                List<Object> params,
                                                BiConsumer<Exception, Object> callback) {
-        return this.send(method, params, false, new SubscriptionHandler(callback, type));
+        return this.send(method, params, new SubscriptionHandler(callback, type));
     }
 
     /**
@@ -323,7 +313,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         } else {
             this.subscriptions.remove(subscription);
             if (this.isConnected() && this.webSocket != null) {
-                return this.send(method, Collections.singletonList(id), false, null);
+                return this.send(method, Collections.singletonList(id), null);
             }
 
             whenUnsubscribed.complete(true);
@@ -375,9 +365,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.handlers.clear();
         this.waitingForId.clear();
 
-        this.isConnected = false;
-        this.whenConnected = null;
         this.webSocket = null;
+        this.status = ProviderStatus.DISCONNECTED;
         this.emit(ProviderInterfaceEmitted.DISCONNECTED);
 
         if (this.autoConnectMs > 0) {
@@ -469,14 +458,20 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     public void onSocketOpen() {
         log.info("Connected to: {}", this.webSocket.getURI());
 
-        this.isConnected = true;
+        this.status = ProviderStatus.CONNECTED;
         this.emit(ProviderInterfaceEmitted.CONNECTED);
         this.resubscribe();
     }
 
     @Override
     public void close() {
-        this.disconnect();
+        try {
+            if (this.status == ProviderStatus.CONNECTED || this.status == ProviderStatus.DISCONNECTING) {
+                this.disconnect();
+            }
+        } catch (Exception ex) {
+            log.error("Error while automatic closing", ex);
+        }
     }
 
     private void resubscribe() {
