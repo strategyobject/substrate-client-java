@@ -131,8 +131,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      * however if you decided otherwise, you may connect manually using this method.
      */
     public synchronized CompletableFuture<Void> connect() {
+        val currentStatus = this.status;
         Preconditions.checkState(
-                this.status == ProviderStatus.DISCONNECTED || this.status == ProviderStatus.CONNECTING,
+                currentStatus == ProviderStatus.DISCONNECTED || currentStatus == ProviderStatus.CONNECTING,
                 "WebSocket is already connected");
 
         var inProgress = this.whenConnected;
@@ -178,27 +179,24 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
      */
     @Override
     public synchronized CompletableFuture<Void> disconnect() {
+        val currentStatus = this.status;
+        var inProgress = this.whenDisconnected;
+
         Preconditions.checkState(
-                this.status == ProviderStatus.CONNECTED || this.status == ProviderStatus.DISCONNECTING,
+                currentStatus == ProviderStatus.CONNECTED ||
+                        (currentStatus == ProviderStatus.DISCONNECTING && inProgress != null),
                 "WebSocket is not connected");
 
-        var inProgress = this.whenDisconnected;
         if (inProgress != null) {
             return inProgress;
         }
-
-        this.status = ProviderStatus.DISCONNECTING;
 
         val whenDisconnected = new CompletableFuture<Void>();
         this.whenDisconnected = whenDisconnected;
 
         // switch off autoConnect, we are in manual mode now
         this.autoConnectMs = 0;
-
-        this.eventEmitter.once(ProviderInterfaceEmitted.DISCONNECTED, _x -> {
-            whenDisconnected.complete(null);
-            this.whenDisconnected = null;
-        });
+        this.status = ProviderStatus.DISCONNECTING;
 
         val ws = this.webSocket;
         if (ws != null) {
@@ -343,7 +341,12 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.eventEmitter.emit(type, args);
     }
 
-    private void onSocketClose(int code, String reason) {
+    private synchronized void onSocketClose(int code, String reason) {
+        val currentStatus = this.status;
+        if (currentStatus == ProviderStatus.CONNECTED || currentStatus == ProviderStatus.CONNECTING) {
+            this.status = ProviderStatus.DISCONNECTING;
+        }
+
         if (Strings.isNullOrEmpty(reason)) {
             reason = ErrorCodes.getWSErrorString(code);
         }
@@ -368,6 +371,11 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.webSocket = null;
         this.status = ProviderStatus.DISCONNECTED;
         this.emit(ProviderInterfaceEmitted.DISCONNECTED);
+        val whenDisconnected = this.whenDisconnected;
+        if (whenDisconnected != null) {
+            whenDisconnected.complete(null);
+            this.whenDisconnected = null;
+        }
 
         if (this.autoConnectMs > 0) {
             log.info("Trying to reconnect to {}", this.endpoint);
@@ -455,7 +463,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
     }
 
-    public void onSocketOpen() {
+    public synchronized void onSocketOpen() {
         log.info("Connected to: {}", this.webSocket.getURI());
 
         this.status = ProviderStatus.CONNECTED;
@@ -466,7 +474,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     @Override
     public void close() {
         try {
-            if (this.status == ProviderStatus.CONNECTED || this.status == ProviderStatus.DISCONNECTING) {
+            val currentStatus = this.status;
+            if (currentStatus == ProviderStatus.CONNECTED || currentStatus == ProviderStatus.DISCONNECTING) {
                 this.disconnect();
             }
         } catch (Exception ex) {
