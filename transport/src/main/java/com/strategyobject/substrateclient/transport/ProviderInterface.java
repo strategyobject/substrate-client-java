@@ -14,6 +14,12 @@ public interface ProviderInterface {
      */
     boolean hasSubscriptions();
 
+
+    /**
+     * @return Current status
+     */
+    ProviderStatus getStatus();
+
     /**
      * Whether the node is connected or not
      *
@@ -30,7 +36,7 @@ public interface ProviderInterface {
     /**
      * Manually disconnect from the connection, clearing auto-connect logic
      */
-    void disconnect();
+    CompletableFuture<Void> disconnect();
 
     /**
      * Subscribe to provider events

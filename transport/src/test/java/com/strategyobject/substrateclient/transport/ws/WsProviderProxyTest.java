@@ -32,19 +32,19 @@ public class WsProviderProxyTest {
             .withNetwork(network)
             .withNetworkAliases("toxiproxy");
     private static final int HEARTBEAT_INTERVAL = 5;
-    private static final int WAIT_TIMEOUT = HEARTBEAT_INTERVAL * 2;
+    private static final int WAIT_TIMEOUT = HEARTBEAT_INTERVAL * 3;
     final ToxiproxyContainer.ContainerProxy proxy = toxiproxy.getProxy(substrate, 9944);
 
     @Test
+    @SneakyThrows
     void canReconnect() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(getWsAddress())
                 .setHeartbeatsInterval(HEARTBEAT_INTERVAL)
                 .build()) {
 
-            await()
-                    .atMost(WAIT_TIMEOUT, TimeUnit.SECONDS)
-                    .until(wsProvider::isConnected);
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            assertTrue(wsProvider.isConnected());
 
             proxy.setConnectionCut(true);
             await()
@@ -68,7 +68,9 @@ public class WsProviderProxyTest {
                 .disableHeartbeats()
                 .build()) {
 
-            Thread.sleep(WAIT_TIMEOUT * 1000);
+            assertThrows(
+                    TimeoutException.class,
+                    () -> wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS));
             assertFalse(wsProvider.isConnected());
 
             proxy.setConnectionCut(false);
