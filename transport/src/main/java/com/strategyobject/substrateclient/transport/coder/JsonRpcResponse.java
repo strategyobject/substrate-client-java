@@ -1,18 +1,19 @@
 package com.strategyobject.substrateclient.transport.coder;
 
+import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.Getter;
 
 @Getter
-public class JsonRpcResponse extends JsonRpcObject {
+public class JsonRpcResponse extends JsonRpcContract {
     static class SubscriptionParam {
         JsonRpcResponseBaseError error;
-        Object result;
+        RpcObject result;
         String subscription;
     }
 
     // JsonRpcResponseSingle
     JsonRpcResponseBaseError error;
-    Object result;
+    RpcObject result;
 
     // JsonRpcResponseSubscription
     String method;

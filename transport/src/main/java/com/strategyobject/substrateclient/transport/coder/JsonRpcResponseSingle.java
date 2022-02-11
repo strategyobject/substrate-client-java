@@ -1,16 +1,17 @@
 package com.strategyobject.substrateclient.transport.coder;
 
+import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.Getter;
 
 @Getter
-public class JsonRpcResponseSingle extends JsonRpcObject {
+public class JsonRpcResponseSingle extends JsonRpcContract {
     private final JsonRpcResponseBaseError error;
-    private final Object result;
+    private final RpcObject result;
 
     private JsonRpcResponseSingle(int id,
                                   String jsonrpc,
                                   JsonRpcResponseBaseError error,
-                                  Object result) {
+                                  RpcObject result) {
         this.id = id;
         this.jsonrpc = jsonrpc;
         this.error = error;
@@ -25,7 +26,7 @@ public class JsonRpcResponseSingle extends JsonRpcObject {
         }
     }
 
-    public Object getResult() {
+    public RpcObject getResult() {
         this.validate();
         return this.result;
     }

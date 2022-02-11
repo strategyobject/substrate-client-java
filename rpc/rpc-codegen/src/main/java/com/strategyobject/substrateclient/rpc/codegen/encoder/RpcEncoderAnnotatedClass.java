@@ -92,6 +92,7 @@ public class RpcEncoderAnnotatedClass {
                         ENCODERS_ARG)
                 .varargs(true);
 
+        shortcutIfNull(methodSpec);
         addValidationRules(methodSpec, context);
         addMethodBody(methodSpec, context);
 
@@ -100,7 +101,6 @@ public class RpcEncoderAnnotatedClass {
 
     private void addMethodBody(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
         methodSpec
-                .addStatement("if ($L == null) { return null; }", SOURCE_ARG)
                 .addStatement("$1T $2L = $1T.getInstance()", RpcEncoderRegistry.class, ENCODER_REGISTRY)
                 .addStatement("$1T $2L = $1T.getInstance()", ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
                 .addStatement("$1T<$2T, $3T> $4L = new $1T<>()", HashMap.class, String.class, Object.class, RESULT_VAR)
@@ -222,5 +222,9 @@ public class RpcEncoderAnnotatedClass {
                 methodSpec.addStatement("if ($L[$L] == null) throw new $T()", ENCODERS_ARG, i, NullPointerException.class);
             }
         }
+    }
+
+    private void shortcutIfNull(MethodSpec.Builder methodSpec) {
+        methodSpec.addStatement("if ($L == null) { return null; }", SOURCE_ARG);
     }
 }

@@ -13,11 +13,11 @@ public class MapEncoder implements RpcEncoder<Map<?, ?>> {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Object encode(Map<?, ?> source, EncoderPair<?>... encoders) {
-        Preconditions.checkArgument(encoders != null && encoders.length == 2);
         if (source == null) {
             return null;
         }
 
+        Preconditions.checkArgument(encoders != null && encoders.length == 2);
         Preconditions.checkNotNull(encoders[0]);
         Preconditions.checkNotNull(encoders[1]);
         val keyEncoder = (RpcEncoder) encoders[0].getEncoderOrThrow();

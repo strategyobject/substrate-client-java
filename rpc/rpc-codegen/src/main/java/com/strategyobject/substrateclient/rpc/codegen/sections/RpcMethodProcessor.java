@@ -158,7 +158,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
         return CodeBlock.builder()
                 .add("($T) (", resultType)
                 .add("$T.$L(", ScaleUtils.class, FROM_HEX_STRING)
-                .add("($T) $L, ($T) ", String.class, arg, ScaleReader.class)
+                .add("$L.asString(), ($T) ", arg, ScaleReader.class)
                 .add(readerCode)
                 .add("))")
                 .build();

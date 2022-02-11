@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import lombok.Getter;
 
 @Getter
-public abstract class JsonRpcObject {
+public abstract class JsonRpcContract {
     private static final String JSONRPC = "2.0";
 
     protected int id;

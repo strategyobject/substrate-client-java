@@ -20,9 +20,10 @@ public class TestDecodable<T> {
     private String b;
     private T c;
     private List<String> d;
-    private Map<String, Integer> e;
+    private Map<String, Float> e;
     @Scale
     private int f;
     @Scale
     private List<Integer> g;
+    private float h;
 }

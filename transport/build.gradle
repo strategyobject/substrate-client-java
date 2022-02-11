@@ -2,12 +2,12 @@ dependencies {
     implementation project(':common')
 
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
     testImplementation project(':tests')
-    testImplementation 'ch.qos.logback:logback-classic:1.2.6'
-    testImplementation 'org.testcontainers:testcontainers:1.16.0'
-    testImplementation 'org.testcontainers:junit-jupiter:1.16.0'
-    testImplementation "org.testcontainers:toxiproxy:1.16.0"
-    testImplementation 'org.awaitility:awaitility:4.1.0'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.10'
+    testImplementation 'org.testcontainers:testcontainers:1.16.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+    testImplementation "org.testcontainers:toxiproxy:1.16.3"
+    testImplementation 'org.awaitility:awaitility:4.1.1'
 }

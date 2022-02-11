@@ -2,19 +2,20 @@ package com.strategyobject.substrateclient.transport.coder;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.Getter;
 import lombok.val;
 
 @Getter
-public class JsonRpcResponseSubscription extends JsonRpcObject {
+public class JsonRpcResponseSubscription extends JsonRpcContract {
     @Getter
     public static class SubscriptionParam {
         private final JsonRpcResponseBaseError error;
-        private final Object result;
+        private final RpcObject result;
         private final String subscription;
 
         private SubscriptionParam(JsonRpcResponseBaseError error,
-                                  Object result,
+                                  RpcObject result,
                                   String subscription) {
             this.error = error;
             this.result = result;
@@ -48,7 +49,7 @@ public class JsonRpcResponseSubscription extends JsonRpcObject {
         }
     }
 
-    public Object getResult() {
+    public RpcObject getResult() {
         this.validate();
         return this.params.result;
     }

@@ -147,7 +147,9 @@ class WsProviderTest {
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            val version = (String) wsProvider.send("system_version").get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val version = wsProvider.send("system_version")
+                    .get(WAIT_TIMEOUT, TimeUnit.SECONDS)
+                    .asString();
             assertFalse(Strings.isNullOrEmpty(version));
         }
     }

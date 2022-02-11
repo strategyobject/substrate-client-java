@@ -16,6 +16,7 @@ import com.strategyobject.substrateclient.scale.annotations.ScaleGeneric;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
 import com.strategyobject.substrateclient.scale.codegen.reader.ReaderCompositor;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
+import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
@@ -83,7 +84,7 @@ public class RpcDecoderAnnotatedClass {
                 .addAnnotation(suppressWarnings("unchecked"))
                 .addModifiers(Modifier.PUBLIC)
                 .returns(classWildcardTyped)
-                .addParameter(Object.class, VALUE_ARG)
+                .addParameter(RpcObject.class, VALUE_ARG)
                 .addParameter(ArrayTypeName.of(
                                 ParameterizedTypeName.get(
                                         ClassName.get(DecoderPair.class),
@@ -91,6 +92,7 @@ public class RpcDecoderAnnotatedClass {
                         DECODERS_ARG)
                 .varargs(true);
 
+        shortcutIfNull(methodSpec);
         addValidationRules(methodSpec);
         addMethodBody(methodSpec, context);
 
@@ -100,10 +102,9 @@ public class RpcDecoderAnnotatedClass {
     private void addMethodBody(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
         val resultType = JavaPoet.setEachGenericParameterAs(classElement, TypeName.OBJECT);
         methodSpec
-                .addStatement("if ($L == null) { return null; }", VALUE_ARG)
                 .addStatement("$1T $2L = $1T.getInstance()", RpcDecoderRegistry.class, DECODER_REGISTRY)
                 .addStatement("$1T $2L = $1T.getInstance()", ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
-                .addStatement("$1T<$2T, ?> $3L = ($1T<$2T, ?>)$4L", Map.class, String.class, MAP_VAR, VALUE_ARG)
+                .addStatement("$T<$T, $T> $L = $L.asMap()", Map.class, String.class, RpcObject.class, MAP_VAR, VALUE_ARG)
                 .addStatement("$1T $2L = new $1T()", resultType, RESULT_VAR)
                 .beginControlFlow("try");
 
@@ -166,13 +167,8 @@ public class RpcDecoderAnnotatedClass {
                     readerCompositor.traverse(fieldType);
             methodSpec
                     .addStatement(code
-                            .add("$T.$L(",
-                                    ScaleUtils.class,
-                                    FROM_HEX_STRING)
-                            .add("($T)$L.get($S), ",
-                                    String.class,
-                                    MAP_VAR,
-                                    field)
+                            .add("$T.$L(", ScaleUtils.class, FROM_HEX_STRING)
+                            .add("$L.get($S).asString(), ", MAP_VAR, field)
                             .add("($T)", ScaleReader.class)
                             .add(readerCode)
                             .add("))")
@@ -224,5 +220,9 @@ public class RpcDecoderAnnotatedClass {
                 methodSpec.addStatement("if ($L[$L] == null) throw new $T()", DECODERS_ARG, i, NullPointerException.class);
             }
         }
+    }
+
+    private void shortcutIfNull(MethodSpec.Builder methodSpec) {
+        methodSpec.addStatement("if ($L.isNull()) { return null; }", VALUE_ARG);
     }
 }
