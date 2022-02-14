@@ -54,7 +54,7 @@ public interface ProviderInterface {
      * @param params Encoded parameters as applicable for the method
      * @return future containing result
      */
-    CompletableFuture<Object> send(String method, // TODO replace `Object` to something like `JObject` to have more strict contract
+    CompletableFuture<RpcObject> send(String method,
                                    List<Object> params);
 
     /**
@@ -63,7 +63,7 @@ public interface ProviderInterface {
      * @param method The RPC methods to execute
      * @return future containing result
      */
-    CompletableFuture<Object> send(String method);
+    CompletableFuture<RpcObject> send(String method);
 
 
     /**
@@ -78,7 +78,7 @@ public interface ProviderInterface {
     CompletableFuture<String> subscribe(String type,
                                         String method,
                                         List<Object> params,
-                                        BiConsumer<Exception, Object> callback);
+                                        BiConsumer<Exception, RpcObject> callback);
 
     /**
      * Allows unsubscribing to subscriptions made with {@link #subscribe(String, String, List, BiConsumer)}

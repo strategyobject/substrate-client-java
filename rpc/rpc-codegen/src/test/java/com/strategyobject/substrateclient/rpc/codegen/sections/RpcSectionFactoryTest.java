@@ -2,6 +2,8 @@ package com.strategyobject.substrateclient.rpc.codegen.sections;
 
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestSection;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
+import com.strategyobject.substrateclient.transport.RpcBoolean;
+import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +21,7 @@ public class RpcSectionFactoryTest {
     @Test
     void createsRpcSectionAndCallsMethod() throws ExecutionException, InterruptedException, RpcInterfaceInitializationException {
         val expected = true;
-        val sendFuture = CompletableFuture.completedFuture((Object) Boolean.valueOf(expected));
+        val sendFuture = CompletableFuture.completedFuture((RpcObject) new RpcBoolean(expected));
         val provider = mock(ProviderInterface.class);
         when(provider.send(anyString(), anyList()))
                 .thenReturn(sendFuture);

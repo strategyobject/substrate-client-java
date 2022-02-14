@@ -6,6 +6,7 @@ import com.squareup.javapoet.MethodSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.NonNull;
 import lombok.val;
 
@@ -58,7 +59,7 @@ class RpcSubscriptionProcessor extends RpcMethodProcessor<RpcSubscription> {
                 .add("$1T<$2T, $3T> $4L = ($5L, $6L) -> { $7N.$8L($5L, ",
                         BiConsumer.class,
                         Exception.class,
-                        Object.class,
+                        RpcObject.class,
                         CALL_BACK_PROXY,
                         CALL_BACK_EX_ARG,
                         CALL_BACK_ARG,

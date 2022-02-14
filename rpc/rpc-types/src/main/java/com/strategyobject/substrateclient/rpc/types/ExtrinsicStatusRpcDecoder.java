@@ -4,6 +4,7 @@ import com.strategyobject.substrateclient.rpc.core.DecoderPair;
 import com.strategyobject.substrateclient.rpc.core.annotations.AutoRegister;
 import com.strategyobject.substrateclient.rpc.core.decoders.AbstractDecoder;
 import com.strategyobject.substrateclient.rpc.core.registries.RpcDecoderRegistry;
+import com.strategyobject.substrateclient.transport.RpcObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,13 +30,12 @@ public class ExtrinsicStatusRpcDecoder extends AbstractDecoder<ExtrinsicStatus> 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected ExtrinsicStatus decodeNonNull(Object value, DecoderPair<?>[] decoders) {
+    protected ExtrinsicStatus decodeNonNull(RpcObject value, DecoderPair<?>[] decoders) {
         Optional<ExtrinsicStatus> decoded;
-        if (value instanceof String) {
-            decoded = Optional.ofNullable(STATUS_TO_VALUE.get((String) value));
-        } else if (value instanceof Map) {
-            decoded = ((Map<String, ?>) value).entrySet().stream()
+        if (value.isString()) {
+            decoded = Optional.ofNullable(STATUS_TO_VALUE.get(value.asString()));
+        } else if (value.isMap()) {
+            decoded = (value.asMap()).entrySet().stream()
                     .filter(e -> STATUS_TO_CLASS.containsKey(e.getKey()))
                     .findFirst()
                     .map(e ->

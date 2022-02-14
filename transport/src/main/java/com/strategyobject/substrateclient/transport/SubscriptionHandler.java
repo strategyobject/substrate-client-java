@@ -10,6 +10,6 @@ import java.util.function.BiConsumer;
 @Getter
 @Setter
 public class SubscriptionHandler {
-    BiConsumer<Exception, Object> callBack;
+    BiConsumer<Exception, RpcObject> callBack;
     String type;
 }

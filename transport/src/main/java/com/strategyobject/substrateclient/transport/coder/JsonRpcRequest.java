@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class JsonRpcRequest extends JsonRpcObject {
+public class JsonRpcRequest extends JsonRpcContract {
     protected final String method;
     protected final List<Object> params;
 

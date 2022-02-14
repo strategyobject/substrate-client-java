@@ -12,12 +12,11 @@ public class ListEncoder implements RpcEncoder<List<?>> {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Object encode(List<?> source, EncoderPair<?>... encoders) {
-        Preconditions.checkArgument(encoders != null && encoders.length == 1);
-
         if (source == null) {
             return null;
         }
 
+        Preconditions.checkArgument(encoders != null && encoders.length == 1);
         Preconditions.checkNotNull(encoders[0]);
         val nestedEncoder = (RpcEncoder) encoders[0].getEncoderOrThrow();
 

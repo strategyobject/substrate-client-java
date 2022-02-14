@@ -4,6 +4,8 @@ dependencies {
     implementation project(':rpc:rpc-core')
     implementation project(':common')
     implementation project(':crypto')
+    implementation project(':transport')
+
     annotationProcessor project(':rpc:rpc-codegen')
     annotationProcessor project(':scale:scale-codegen')
 }
