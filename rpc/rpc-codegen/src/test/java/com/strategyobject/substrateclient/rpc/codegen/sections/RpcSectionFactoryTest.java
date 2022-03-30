@@ -1,6 +1,8 @@
 package com.strategyobject.substrateclient.rpc.codegen.sections;
 
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestSection;
+import com.strategyobject.substrateclient.rpc.core.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.core.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import com.strategyobject.substrateclient.transport.RpcBoolean;
 import com.strategyobject.substrateclient.transport.RpcObject;
@@ -26,8 +28,7 @@ public class RpcSectionFactoryTest {
         when(provider.send(anyString(), anyList()))
                 .thenReturn(sendFuture);
 
-        val factory = new RpcGeneratedSectionFactory();
-        val rpcSection = factory.create(TestSection.class, provider);
+        val rpcSection = RpcGeneratedSectionFactory.create(TestSection.class, provider);
 
         val actual = rpcSection.doNothing("some").get();
 

@@ -6,11 +6,11 @@ import com.strategyobject.substrateclient.rpc.sections.State;
 import com.strategyobject.substrateclient.rpc.sections.System;
 
 public interface Rpc {
-    Author getAuthor();
+    Author author();
 
-    Chain getChain();
+    Chain chain();
 
-    State getState();
+    State state();
 
-    System getSystem();
+    System system();
 }

@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.rpc.codegen.sections;
+package com.strategyobject.substrateclient.rpc.core;
 
 public class RpcInterfaceInitializationException extends Exception {
     public RpcInterfaceInitializationException(Throwable ex) {
