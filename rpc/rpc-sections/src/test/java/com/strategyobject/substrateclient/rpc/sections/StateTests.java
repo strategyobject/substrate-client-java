@@ -18,8 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 public class StateTests {
@@ -100,8 +99,26 @@ public class StateTests {
             val key = "0xc2261276cc9d1f8598ea4b6a74b15c2f308ce9615de0775a82f8a94dc3d285a1"; // TODO implement and use `xxhash`
             val storageData = rpcSection.getStorage(StorageKey.valueOf(HexConverter.toBytes(key))).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertTrue(storageData != null);
+            assertNotNull(storageData);
             assertTrue(storageData.getData().length > 0);
+        }
+    }
+
+    @Test
+    void getStorageHandlesNullResponse() throws ExecutionException, InterruptedException, TimeoutException, RpcInterfaceInitializationException {
+        try (WsProvider wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .disableAutoConnect()
+                .build()) {
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            val sectionFactory = new RpcGeneratedSectionFactory();
+            State rpcSection = sectionFactory.create(State.class, wsProvider);
+
+            val emptyKey = new byte[32];
+            val storageData = rpcSection.getStorage(StorageKey.valueOf(emptyKey)).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNull(storageData);
         }
     }
 
@@ -123,7 +140,7 @@ public class StateTests {
 
             assertTrue(changes.size() > 0);
             assertTrue(changes.get(0).getChanges().size() > 0);
-            assertTrue(changes.get(0).getChanges().get(0).getValue0().getData() != null);
+            assertNotNull(changes.get(0).getChanges().get(0).getValue0().getData());
             assertTrue(changes.get(0).getChanges().get(0).getValue0().getData().length > 0);
         }
     }

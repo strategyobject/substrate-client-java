@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RpcCoder {
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(RpcObject.class, new RpcObjectDeserializer())
+            .registerTypeAdapter(RpcObject.class, new RpcObjectTypeAdapter())
             .create();
 
     private final AtomicInteger id = new AtomicInteger(0);

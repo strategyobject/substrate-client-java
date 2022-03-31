@@ -13,6 +13,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RpcCoderTest {
 
     @Test
+    void decodeNullResult() {
+        val json = "{\n" +
+                "    \"result\": null,\n" +
+                "    \"id\": 0,\n" +
+                "    \"jsonrpc\": \"3.0\"\n" +
+                "}";
+        val actual = RpcCoder.decodeJson(json);
+
+        val expected = new JsonRpcResponse();
+        expected.jsonrpc = "3.0";
+        expected.id = 0;
+        expected.result = RpcObject.ofNull();
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
+    }
+
+    @Test
     void decodeJson() {
         val json = "{\n" +
                 "    \"result\": {\n" +
