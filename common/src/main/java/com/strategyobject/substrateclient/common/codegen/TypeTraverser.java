@@ -101,6 +101,29 @@ public abstract class TypeTraverser<T> {
                         .toArray(x -> (T[]) Array.newInstance(clazz, typeArguments.size())));
     }
 
+    @SuppressWarnings({"unchecked"})
+    public T traverse(@NonNull TypeTraverser.TypeTreeNode typeOverride) {
+        if (typeOverride.type.getKind().isPrimitive()) {
+            return whenPrimitiveType((PrimitiveType) typeOverride.type, typeOverride.type);
+        }
+
+        if (!(typeOverride.type instanceof DeclaredType)) {
+            throw new IllegalArgumentException("Type is not supported: " + typeOverride.type);
+        }
+
+        val declaredType = (DeclaredType) typeOverride.type;
+        if (typeOverride.children.size() == 0) {
+            return whenNonGenericType(declaredType, typeOverride.type);
+        }
+
+        return whenGenericType(
+                declaredType,
+                typeOverride.type,
+                typeOverride.children.stream()
+                        .map(this::traverse)
+                        .toArray(x -> (T[]) Array.newInstance(clazz, typeOverride.children.size())));
+    }
+
     private List<? extends TypeMirror> getTypeArgumentsOrDefault(DeclaredType declaredType, TypeMirror override) {
         return (doTraverseArguments(declaredType, override) ?
                 declaredType.getTypeArguments() :
@@ -125,6 +148,7 @@ public abstract class TypeTraverser<T> {
 
 
     public static class TypeTreeNode {
+        @Getter
         private final TypeMirror type;
         private final List<TypeTreeNode> children;
 

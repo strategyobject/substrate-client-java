@@ -7,8 +7,8 @@ import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.annotations.AutoRegister;
 import com.strategyobject.substrateclient.scale.annotations.Ignore;
-import com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
+import com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
 import lombok.val;
@@ -109,7 +109,10 @@ public class ScaleReaderAnnotatedClass {
                 .beginControlFlow("try");
 
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val compositor = new ReaderCompositor(context, typeVarMap, String.format("%s[$L]", READERS_ARG), REGISTRY);
+        val compositor = ReaderCompositor.forAnyType(context,
+                typeVarMap,
+                String.format("%s[$L]", READERS_ARG),
+                REGISTRY);
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;

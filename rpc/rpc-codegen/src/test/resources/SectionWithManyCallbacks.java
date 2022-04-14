@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-@RpcInterface(section = "empty")
+@RpcInterface("empty")
 public interface SectionWithManyCallbacks {
     @RpcSubscription(type = "nothing", subscribeMethod = "doNothing", unsubscribeMethod = "undoNothing")
     CompletableFuture<Supplier<CompletableFuture<Boolean>>> doNothing(

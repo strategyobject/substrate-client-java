@@ -3,8 +3,8 @@ package com.strategyobject.substrateclient.rpc.sections;
 import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
 import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 
-@RpcInterface(section = "empty")
+@RpcInterface("empty")
 public interface SectionWithIncorrectReturnOfMethod {
-    @RpcCall(method = "doNothing")
+    @RpcCall("doNothing")
     boolean doNothing(boolean a);
 }

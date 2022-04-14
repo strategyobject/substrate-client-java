@@ -12,19 +12,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-@RpcInterface(section = "chain")
+@RpcInterface("chain")
 public interface Chain {
-    @RpcCall(method = "getFinalizedHead")
+    @RpcCall("getFinalizedHead")
     @Scale
     CompletableFuture<BlockHash> getFinalizedHead();
 
     @RpcSubscription(type = "newHead", subscribeMethod = "subscribeNewHead", unsubscribeMethod = "unsubscribeNewHead")
     CompletableFuture<Supplier<CompletableFuture<Boolean>>> subscribeNewHeads(BiConsumer<Exception, Header> callback);
 
-    @RpcCall(method = "getBlockHash")
+    @RpcCall("getBlockHash")
     @Scale
     CompletableFuture<BlockHash> getBlockHash(long number);
 
-    @RpcCall(method = "getBlock")
+    @RpcCall("getBlock")
     CompletableFuture<SignedBlock> getBlock(@Scale BlockHash hash);
 }

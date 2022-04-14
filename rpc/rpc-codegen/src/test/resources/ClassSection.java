@@ -5,8 +5,8 @@ import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
 
 import java.util.concurrent.CompletableFuture;
 
-@RpcInterface(section = "empty")
+@RpcInterface("empty")
 public class ClassSection {
-    @RpcCall(method = "doNothing")
+    @RpcCall("doNothing")
     CompletableFuture<Boolean> doNothing();
 }

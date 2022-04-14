@@ -6,9 +6,9 @@ import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 
 import java.util.concurrent.CompletableFuture;
 
-@RpcInterface(section = "empty")
+@RpcInterface("empty")
 public interface SectionWithAmbiguousAnnotatedMethod {
-    @RpcCall(method = "a")
+    @RpcCall("a")
     @RpcSubscription(type = "b", subscribeMethod = "subscribeB", unsubscribeMethod = "unsubscribeB")
     CompletableFuture<Boolean> doNothing();
 }

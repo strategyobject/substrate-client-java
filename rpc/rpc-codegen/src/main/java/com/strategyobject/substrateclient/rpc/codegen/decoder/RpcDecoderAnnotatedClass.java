@@ -126,7 +126,7 @@ public class RpcDecoderAnnotatedClass {
                 DECODER_REGISTRY,
                 SCALE_READER_REGISTRY);
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val scaleReaderCompositor = new ReaderCompositor(context,
+        val scaleReaderCompositor = ReaderCompositor.forAnyType(context,
                 typeVarMap,
                 String.format("%s[$L].%s", DECODERS_ARG, READER_ACCESSOR),
                 SCALE_READER_REGISTRY);

@@ -45,6 +45,23 @@ public class ScaleAnnotationParser {
         return null;
     }
 
+    public TypeTraverser.TypeTreeNode parse(AnnotationMirror annotation) {
+        if (context.isSameType(annotation.getAnnotationType(), context.getType(Scale.class))) {
+            val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotation, "value");
+
+            return new TypeTraverser.TypeTreeNode(scaleType);
+        }
+
+        if (context.isSameType(annotation.getAnnotationType(), context.getType(ScaleGeneric.class))) {
+            val template = AnnotationUtils.<String>getValueFromAnnotation(annotation, "template");
+            val typesMap = getTypesMap(annotation);
+
+            return parseTemplate(template, typesMap);
+        }
+
+        return null;
+    }
+
     private TypeTraverser.TypeTreeNode parseTemplate(String template, Map<String, TypeMirror> typesMap) {
         val indexes = StringUtils.allIndexesOfAny(template, "<,>");
         if (indexes.size() == 0 || indexes.get(0) == 0) {
@@ -92,7 +109,7 @@ public class ScaleAnnotationParser {
 
     private TypeMirror getMappedType(Map<String, TypeMirror> typesMap, String name) {
         val type = typesMap.get(name);
-        return type == null || context.isSubtypeOf(type, context.getType(SCALE_ANNOTATIONS_DEFAULT)) ? null : type;
+        return type == null || context.isAssignable(type, context.getType(SCALE_ANNOTATIONS_DEFAULT)) ? null : type;
     }
 
     private Map<String, TypeMirror> getTypesMap(AnnotationMirror scaleGeneric) {

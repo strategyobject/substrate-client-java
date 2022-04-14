@@ -63,7 +63,7 @@ public class StorageNMapImplTests {
     @Test
     public void keys() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storage = newSystemBlockHashStorage(rpc);
 
             val collection = storage.keys().get();
@@ -90,7 +90,7 @@ public class StorageNMapImplTests {
     @Test
     public void multiToDifferentStorages() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storageValue = StorageNMapImpl.with(
                     rpc,
                     ScaleReaderRegistry.getInstance().resolve(AccountId.class),
@@ -120,7 +120,7 @@ public class StorageNMapImplTests {
     @Test
     public void entries() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storage = newSystemBlockHashStorage(rpc);
 
             val collection = storage.entries().get();
@@ -142,7 +142,7 @@ public class StorageNMapImplTests {
     @Test
     public void multi() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storage = newSystemBlockHashStorage(rpc);
 
             val collection = storage.multi(Arg.of(0), Arg.of(1)).get();
@@ -164,7 +164,7 @@ public class StorageNMapImplTests {
     @Test
     public void keysPaged() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             waitForNewBlocks(rpc);
 
             val storage = newSystemBlockHashStorage(rpc);
@@ -190,7 +190,7 @@ public class StorageNMapImplTests {
     @Test
     public void entriesPaged() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             waitForNewBlocks(rpc);
 
             val storage = newSystemBlockHashStorage(rpc);
@@ -223,7 +223,7 @@ public class StorageNMapImplTests {
     @Test
     public void subscribe() throws Exception {
         val wsProvider = getConnectedProvider();
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val blockNumber = 2;
             val storage = newSystemBlockHashStorage(rpc);
             val blockHash = new AtomicReference<BlockHash>();

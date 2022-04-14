@@ -33,7 +33,7 @@ public class StorageMapImplTests {
                 .disableAutoConnect()
                 .build();
         wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storage = StorageMapImpl.with(
                     rpc,
                     (ScaleReader<BlockHash>) ScaleReaderRegistry.getInstance().resolve(BlockHash.class),

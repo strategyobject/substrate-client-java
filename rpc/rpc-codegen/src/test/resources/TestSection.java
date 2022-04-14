@@ -8,9 +8,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-@RpcInterface(section = "empty")
+@RpcInterface("empty")
 public interface TestSection {
-    @RpcCall(method = "doNothing")
+    @RpcCall("doNothing")
     CompletableFuture<Boolean> doNothing(boolean a);
 
     @RpcSubscription(type = "nothing", subscribeMethod = "subscribeNothing", unsubscribeMethod = "unsubscribeNothing")

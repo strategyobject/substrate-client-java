@@ -13,15 +13,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-@RpcInterface(section = "author")
+@RpcInterface("author")
 public interface Author {
-    @RpcCall(method = "hasKey")
+    @RpcCall("hasKey")
     CompletableFuture<Boolean> hasKey(@Scale PublicKey publicKey, String keyType);
 
-    @RpcCall(method = "insertKey")
+    @RpcCall("insertKey")
     CompletableFuture<Void> insertKey(String keyType, String secretUri, @Scale PublicKey publicKey);
 
-    @RpcCall(method = "submitExtrinsic")
+    @RpcCall("submitExtrinsic")
     @Scale
     CompletableFuture<Hash> submitExtrinsic(@Scale Extrinsic<?, ?, ?, ?> extrinsic);
 
