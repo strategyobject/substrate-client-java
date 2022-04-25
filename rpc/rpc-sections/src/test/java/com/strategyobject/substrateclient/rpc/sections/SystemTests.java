@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
 import com.strategyobject.substrateclient.common.utils.HexConverter;
-import com.strategyobject.substrateclient.rpc.codegen.sections.RpcGeneratedSectionFactory;
-import com.strategyobject.substrateclient.rpc.codegen.sections.RpcInterfaceInitializationException;
+import com.strategyobject.substrateclient.rpc.core.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.core.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.rpc.types.AccountId;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
@@ -32,8 +32,7 @@ public class SystemTests {
         try (WsProvider wsProvider = WsProvider.builder().setEndpoint(substrate.getWsAddress()).disableAutoConnect().build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcGeneratedSectionFactory();
-            System rpcSection = sectionFactory.create(System.class, wsProvider);
+            System rpcSection = RpcGeneratedSectionFactory.create(System.class, wsProvider);
 
             val alicePublicKey = HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d");
             val result = rpcSection.accountNextIndex(AccountId.fromBytes(alicePublicKey))

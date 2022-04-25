@@ -2,5 +2,4 @@ dependencies {
     implementation project(':transport')
     implementation project(':rpc:rpc-sections')
     implementation project(':rpc:rpc-core')
-    implementation project(':rpc:rpc-codegen')
 }

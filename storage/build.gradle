@@ -1,0 +1,19 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':scale')
+    implementation project(':crypto')
+    implementation project(':types')
+    implementation project(':rpc')
+    implementation project(':rpc:rpc-types')
+    implementation project(':rpc:rpc-sections')
+
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+    implementation 'net.openhft:zero-allocation-hashing:0.15'
+
+    testImplementation project(':tests')
+    testCompileOnly project(':transport')
+
+    testImplementation 'org.testcontainers:testcontainers:1.16.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.6'
+}

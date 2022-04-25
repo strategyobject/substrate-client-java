@@ -2,8 +2,8 @@ package com.strategyobject.substrateclient.rpc.sections;
 
 import com.strategyobject.substrateclient.common.utils.HexConverter;
 import com.strategyobject.substrateclient.crypto.KeyRing;
-import com.strategyobject.substrateclient.rpc.codegen.sections.RpcGeneratedSectionFactory;
-import com.strategyobject.substrateclient.rpc.codegen.sections.RpcInterfaceInitializationException;
+import com.strategyobject.substrateclient.rpc.core.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.core.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.rpc.sections.substitutes.BalanceTransfer;
 import com.strategyobject.substrateclient.rpc.types.*;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
@@ -58,8 +58,7 @@ public class AuthorTests {
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcGeneratedSectionFactory();
-            Author rpcSection = sectionFactory.create(Author.class, wsProvider);
+            Author rpcSection = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
 
             val publicKey = PublicKey.fromBytes(
                     HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"));
@@ -83,8 +82,7 @@ public class AuthorTests {
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcGeneratedSectionFactory();
-            Author rpcSection = sectionFactory.create(Author.class, wsProvider);
+            Author rpcSection = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
 
             assertDoesNotThrow(() -> rpcSection.insertKey("aura",
                             "alice",
@@ -102,11 +100,10 @@ public class AuthorTests {
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcGeneratedSectionFactory();
-            Chain chainSection = sectionFactory.create(Chain.class, wsProvider);
+            Chain chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
 
             val genesis = chainSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            Author authorSection = sectionFactory.create(Author.class, wsProvider);
+            Author authorSection = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
 
             assertDoesNotThrow(() -> authorSection.submitExtrinsic(createBalanceTransferExtrinsic(genesis, NONCE.getAndIncrement()))
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS));
@@ -121,11 +118,10 @@ public class AuthorTests {
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val sectionFactory = new RpcGeneratedSectionFactory();
-            Chain chainSection = sectionFactory.create(Chain.class, wsProvider);
+            Chain chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
 
             val genesis = chainSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            Author authorSection = sectionFactory.create(Author.class, wsProvider);
+            Author authorSection = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
 
             val updateCount = new AtomicInteger(0);
             val status = new AtomicReference<ExtrinsicStatus>();

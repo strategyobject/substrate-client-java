@@ -7,7 +7,6 @@ dependencies {
     implementation project(':rpc:rpc-types')
     implementation project(':scale')
 
-    testImplementation project(':rpc:rpc-codegen')
     testImplementation project(':tests')
     testCompileOnly project(':rpc:rpc-core')
     testCompileOnly project(':common')
