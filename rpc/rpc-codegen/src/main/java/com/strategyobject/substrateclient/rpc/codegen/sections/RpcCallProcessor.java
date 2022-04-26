@@ -29,10 +29,10 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
     @Override
     protected void ensureAnnotationIsFilled(ExecutableElement method, RpcCall methodAnnotation)
             throws ProcessingException {
-        if (Strings.isNullOrEmpty(methodAnnotation.method())) {
+        if (Strings.isNullOrEmpty(methodAnnotation.value())) {
             throw new ProcessingException(
                     interfaceElement,
-                    "`@%s` of `%s.%s` contains null or empty `method`.",
+                    "`@%s` of `%s.%s` contains null or empty `value`.",
                     methodAnnotation.getClass().getSimpleName(),
                     interfaceElement.getQualifiedName().toString(),
                     method.getSimpleName());
@@ -51,7 +51,7 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
                                          RpcCall annotation,
                                          ProcessorContext context,
                                          BiFunction<TypeMirror, String, CodeBlock> decoder) {
-        val rpcMethodName = String.format(RPC_METHOD_NAME_TEMPLATE, section, annotation.method());
+        val rpcMethodName = String.format(RPC_METHOD_NAME_TEMPLATE, section, annotation.value());
         val paramsArgument = method.getParameters().size() == 0 ? "" : String.format(", %s", PARAMS_VAR);
 
         val isReturnVoid = isReturnVoid(method, context);

@@ -6,8 +6,8 @@ import com.strategyobject.substrateclient.rpc.types.AccountId;
 
 import java.util.concurrent.CompletableFuture;
 
-@RpcInterface(section = "system")
+@RpcInterface("system")
 public interface System {
-    @RpcCall(method = "accountNextIndex")
+    @RpcCall("accountNextIndex")
     CompletableFuture<Integer> accountNextIndex(AccountId accountId);
 }

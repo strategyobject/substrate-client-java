@@ -90,7 +90,7 @@ public class ScaleWriterAnnotatedClass {
         methodSpec.addStatement("if (value == null) throw new IllegalArgumentException(\"value is null\")");
 
         val classTypeParametersSize = classElement.getTypeParameters().size();
-        if (classTypeParametersSize == 0 || context.isSubtypeOf(classElement.asType(), context.erasure(context.getType(SCALE_SELF_WRITABLE)))) {
+        if (classTypeParametersSize == 0 || context.isAssignable(classElement.asType(), context.erasure(context.getType(SCALE_SELF_WRITABLE)))) {
             methodSpec.addStatement("if (writers != null && writers.length > 0) throw new IllegalArgumentException()");
         } else {
             methodSpec
@@ -109,7 +109,10 @@ public class ScaleWriterAnnotatedClass {
                 .beginControlFlow("try");
 
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val compositor = new WriterCompositor(context, typeVarMap, String.format("%s[$L]", WRITERS_ARG), REGISTRY);
+        val compositor = WriterCompositor.forAnyType(context,
+                typeVarMap,
+                String.format("%s[$L]", WRITERS_ARG),
+                REGISTRY);
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;

@@ -146,9 +146,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                                             String arg,
                                             ScaleAnnotationParser scaleAnnotationParser,
                                             ProcessorContext context) {
-        val readerCompositor = new ReaderCompositor(context,
-                EMPTY_TYPE_VAR_MAP,
-                String.format("%s[$L].%s", DECODERS_ARG, READER_ACCESSOR),
+        val readerCompositor = ReaderCompositor.disallowOpenGeneric(context,
                 SCALE_READER_REGISTRY);
         val typeOverride = scaleAnnotationParser.parse(annotated);
         val readerCode = typeOverride != null ?
@@ -176,9 +174,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
             return;
         }
 
-        val writerCompositor = new WriterCompositor(context,
-                EMPTY_TYPE_VAR_MAP,
-                String.format("%s[$L].%s", ENCODERS_ARG, WRITER_ACCESSOR),
+        val writerCompositor = WriterCompositor.disallowOpenGeneric(context,
                 SCALE_WRITER_REGISTRY);
         val encoderCompositor = new EncoderCompositor(
                 context,

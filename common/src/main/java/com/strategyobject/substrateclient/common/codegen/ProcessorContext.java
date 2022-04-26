@@ -26,8 +26,12 @@ public class ProcessorContext {
         return elementUtils.getPackageOf(classElement).getQualifiedName().toString();
     }
 
-    public boolean isSubtypeOf(@NonNull TypeMirror candidate, @NonNull TypeMirror supertype) {
+    public boolean isAssignable(@NonNull TypeMirror candidate, @NonNull TypeMirror supertype) {
         return typeUtils.isAssignable(candidate, supertype);
+    }
+
+    public boolean isSubtype(@NonNull TypeMirror candidate, @NonNull TypeMirror supertype) {
+        return typeUtils.isSubtype(candidate, supertype);
     }
     
     public boolean isGeneric(@NonNull TypeMirror type) {

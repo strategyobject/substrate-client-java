@@ -1,0 +1,16 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':rpc')
+    implementation project(':types')
+    implementation project(':scale')
+    implementation project(':scale:scale-codegen')
+    implementation project(':storage')
+    implementation project(':pallet')
+
+    implementation 'com.squareup:javapoet:1.13.0'
+
+    compileOnly 'com.google.auto.service:auto-service-annotations:1.0.1'
+    annotationProcessor 'com.google.auto.service:auto-service:1.0.1'
+
+    testImplementation 'com.google.testing.compile:compile-testing:0.19'
+}

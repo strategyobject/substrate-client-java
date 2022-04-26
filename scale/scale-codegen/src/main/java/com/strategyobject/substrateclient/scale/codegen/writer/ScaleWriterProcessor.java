@@ -71,12 +71,12 @@ public class ScaleWriterProcessor extends AbstractProcessor {
 
     private boolean validateScaleSelfWritable(TypeElement typeElement) {
         val selfWritable = context.erasure(context.getType(SCALE_SELF_WRITABLE));
-        if (!context.isSubtypeOf(typeElement.asType(), selfWritable)) {
+        if (!context.isAssignable(typeElement.asType(), selfWritable)) {
             return true;
         }
 
         val typeParameters = typeElement.getTypeParameters();
         return typeParameters.size() == 0 ||
-                typeParameters.stream().allMatch(x -> context.isSubtypeOf(x.asType(), selfWritable));
+                typeParameters.stream().allMatch(x -> context.isAssignable(x.asType(), selfWritable));
     }
 }

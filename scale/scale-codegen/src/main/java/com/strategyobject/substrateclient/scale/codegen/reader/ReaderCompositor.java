@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.scale.codegen.reader;
 
+import com.google.common.base.Strings;
 import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
@@ -18,19 +19,36 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
     private final String readerAccessor;
     private final String registryVarName;
 
-    public ReaderCompositor(@NonNull ProcessorContext context,
-                            @NonNull Map<String, Integer> typeVarMap,
-                            @NonNull String readerAccessor,
-                            @NonNull String registryVarName) {
+    private ReaderCompositor(ProcessorContext context,
+                             Map<String, Integer> typeVarMap,
+                             String readerAccessor,
+                             String registryVarName) {
         super(CodeBlock.class);
+
         this.context = context;
         this.typeVarMap = typeVarMap;
         this.readerAccessor = readerAccessor;
         this.registryVarName = registryVarName;
     }
 
+    public static ReaderCompositor forAnyType(@NonNull ProcessorContext context,
+                                              @NonNull Map<String, Integer> typeVarMap,
+                                              @NonNull String readerAccessor,
+                                              @NonNull String registryVarName) {
+        return new ReaderCompositor(context, typeVarMap, readerAccessor, registryVarName);
+    }
+
+    public static ReaderCompositor disallowOpenGeneric(@NonNull ProcessorContext context,
+                                                       @NonNull String registryVarName) {
+        return new ReaderCompositor(context, null, null, registryVarName);
+    }
+
     @Override
     protected CodeBlock whenTypeVar(@NonNull TypeVariable type, TypeMirror _override) {
+        if (Strings.isNullOrEmpty(readerAccessor)) {
+            throw new IllegalStateException("The compositor doesn't support open generics.");
+        }
+
         return CodeBlock.builder()
                 .add(readerAccessor, typeVarMap.get(type.toString()))
                 .build();

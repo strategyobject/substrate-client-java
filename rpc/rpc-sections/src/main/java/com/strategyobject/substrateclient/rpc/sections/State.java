@@ -11,65 +11,65 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-@RpcInterface(section = "state")
+@RpcInterface("state")
 public interface State {
-    @RpcCall(method = "getRuntimeVersion")
+    @RpcCall("getRuntimeVersion")
     CompletableFuture<RuntimeVersion> getRuntimeVersion();
 
-    @RpcCall(method = "getMetadata")
+    @RpcCall("getMetadata")
     @Scale
     CompletableFuture<Metadata> getMetadata();
 
-    @RpcCall(method = "getKeys")
+    @RpcCall("getKeys")
     CompletableFuture<List<StorageKey>> getKeys(StorageKey key);
 
-    @RpcCall(method = "getKeys")
+    @RpcCall("getKeys")
     CompletableFuture<List<StorageKey>> getKeys(StorageKey key, @Scale BlockHash at);
 
-    @RpcCall(method = "getKeysPaged")
+    @RpcCall("getKeysPaged")
     CompletableFuture<List<StorageKey>> getKeysPaged(StorageKey key, int count);
 
-    @RpcCall(method = "getKeysPaged")
+    @RpcCall("getKeysPaged")
     CompletableFuture<List<StorageKey>> getKeysPaged(StorageKey key, int count, StorageKey startKey);
 
-    @RpcCall(method = "getKeysPaged")
+    @RpcCall("getKeysPaged")
     CompletableFuture<List<StorageKey>> getKeysPaged(StorageKey key,
                                                      int count,
                                                      StorageKey startKey,
                                                      @Scale BlockHash at);
 
-    @RpcCall(method = "getStorage")
+    @RpcCall("getStorage")
     CompletableFuture<StorageData> getStorage(StorageKey key);
 
-    @RpcCall(method = "getStorage")
+    @RpcCall("getStorage")
     CompletableFuture<StorageData> getStorage(StorageKey key, @Scale BlockHash at);
 
-    @RpcCall(method = "getStorageHash")
+    @RpcCall("getStorageHash")
     @Scale
     CompletableFuture<Hash> getStorageHash(StorageKey key);
 
-    @RpcCall(method = "getStorageHash")
+    @RpcCall("getStorageHash")
     @Scale
     CompletableFuture<Hash> getStorageHash(StorageKey key, @Scale BlockHash at);
 
-    @RpcCall(method = "getStorageSize")
+    @RpcCall("getStorageSize")
     CompletableFuture<Long> getStorageSize(StorageKey key);
 
-    @RpcCall(method = "getStorageSize")
+    @RpcCall("getStorageSize")
     CompletableFuture<Long> getStorageSize(StorageKey key, @Scale BlockHash at);
 
-    @RpcCall(method = "queryStorage")
+    @RpcCall("queryStorage")
     CompletableFuture<List<StorageChangeSet>> queryStorage(List<StorageKey> keys, @Scale BlockHash fromBlock);
 
-    @RpcCall(method = "queryStorage")
+    @RpcCall("queryStorage")
     CompletableFuture<List<StorageChangeSet>> queryStorage(List<StorageKey> keys,
                                                            @Scale BlockHash fromBlock,
                                                            @Scale BlockHash toBlock);
 
-    @RpcCall(method = "queryStorageAt")
+    @RpcCall("queryStorageAt")
     CompletableFuture<List<StorageChangeSet>> queryStorageAt(List<StorageKey> keys);
 
-    @RpcCall(method = "queryStorageAt")
+    @RpcCall("queryStorageAt")
     CompletableFuture<List<StorageChangeSet>> queryStorageAt(List<StorageKey> keys, @Scale BlockHash at);
 
     @RpcSubscription(type = "storage", subscribeMethod = "subscribeStorage", unsubscribeMethod = "unsubscribeStorage")

@@ -34,7 +34,7 @@ public class StorageValueImplTests {
                 .disableAutoConnect()
                 .build();
         wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storage = StorageValueImpl.with(
                     rpc,
                     ScaleReaderRegistry.getInstance().resolve(AccountId.class),
@@ -58,7 +58,7 @@ public class StorageValueImplTests {
                 .disableAutoConnect()
                 .build();
         wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val blockHash = rpc.chain().getBlockHash(0).get();
             val storage = StorageValueImpl.with(
                     rpc,

@@ -37,10 +37,10 @@ public class RpcAnnotatedInterface {
                     interfaceElement.getQualifiedName().toString());
         }
 
-        if (Strings.isNullOrEmpty(section = annotation.section())) {
+        if (Strings.isNullOrEmpty(section = annotation.value())) {
             throw new ProcessingException(
                     interfaceElement,
-                    "`@%s` of `%s` contains null or empty `section`.",
+                    "`@%s` of `%s` contains null or empty `value`.",
                     annotation.getClass().getSimpleName(),
                     interfaceElement.getQualifiedName().toString());
         }

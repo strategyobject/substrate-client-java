@@ -33,7 +33,7 @@ public class StorageDoubleMapImplTests {
                 .disableAutoConnect()
                 .build();
         wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-        try (val rpc = new RpcImpl(wsProvider)) {
+        try (val rpc = RpcImpl.with(wsProvider)) {
             val storage = StorageDoubleMapImpl.with(
                     rpc,
                     (ScaleReader<Void>) ScaleReaderRegistry.getInstance().resolve(Void.class),

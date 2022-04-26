@@ -20,7 +20,7 @@ class RpcInterfaceProcessorTest {
 
         assertThat(compilation).failed();
         assertThat(compilation)
-                .hadErrorContaining("null or empty `section`");
+                .hadErrorContaining("null or empty `value`");
     }
 
     @Test

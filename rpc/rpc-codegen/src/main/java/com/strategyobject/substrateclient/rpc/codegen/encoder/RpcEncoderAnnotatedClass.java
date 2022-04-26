@@ -124,7 +124,7 @@ public class RpcEncoderAnnotatedClass {
                 ENCODER_REGISTRY,
                 SCALE_WRITER_REGISTRY);
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val scaleWriterCompositor = new WriterCompositor(context,
+        val scaleWriterCompositor = WriterCompositor.forAnyType(context,
                 typeVarMap,
                 String.format("%s[$L].%s", ENCODERS_ARG, WRITER_ACCESSOR),
                 SCALE_WRITER_REGISTRY);
@@ -212,7 +212,7 @@ public class RpcEncoderAnnotatedClass {
 
     private void addValidationRules(MethodSpec.Builder methodSpec, ProcessorContext context) {
         val classTypeParametersSize = classElement.getTypeParameters().size();
-        if (classTypeParametersSize == 0 || context.isSubtypeOf(classElement.asType(), context.erasure(context.getType(RPC_SELF_ENCODABLE)))) {
+        if (classTypeParametersSize == 0 || context.isAssignable(classElement.asType(), context.erasure(context.getType(RPC_SELF_ENCODABLE)))) {
             methodSpec.addStatement("if ($1L != null && $1L.length > 0) throw new $2T()", ENCODERS_ARG, IllegalArgumentException.class);
         } else {
             methodSpec

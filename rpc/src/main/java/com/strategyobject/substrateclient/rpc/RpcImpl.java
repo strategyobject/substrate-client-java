@@ -7,46 +7,53 @@ import com.strategyobject.substrateclient.rpc.sections.Chain;
 import com.strategyobject.substrateclient.rpc.sections.State;
 import com.strategyobject.substrateclient.rpc.sections.System;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
-import lombok.RequiredArgsConstructor;
+import lombok.NonNull;
 
-@RequiredArgsConstructor
 public class RpcImpl implements Rpc, AutoCloseable {
     private final ProviderInterface providerInterface;
+    private final Author author;
+    private final Chain chain;
+    private final State state;
+    private final System system;
 
-    @Override
-    public Author author() {
+    private RpcImpl(ProviderInterface providerInterface) {
+        this.providerInterface = providerInterface;
+        author = resolveSection(Author.class);
+        chain = resolveSection(Chain.class);
+        state = resolveSection(State.class);
+        system = resolveSection(System.class);
+    }
+
+    private <T> T resolveSection(Class<T> clazz) {
         try {
-            return RpcGeneratedSectionFactory.create(Author.class, providerInterface);
+            return RpcGeneratedSectionFactory.create(clazz, providerInterface);
         } catch (RpcInterfaceInitializationException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static RpcImpl with(@NonNull ProviderInterface providerInterface) {
+        return new RpcImpl(providerInterface);
+    }
+
+    @Override
+    public Author author() {
+        return author;
     }
 
     @Override
     public Chain chain() {
-        try {
-            return RpcGeneratedSectionFactory.create(Chain.class, providerInterface);
-        } catch (RpcInterfaceInitializationException e) {
-            throw new RuntimeException(e);
-        }
+        return chain;
     }
 
     @Override
     public State state() {
-        try {
-            return RpcGeneratedSectionFactory.create(State.class, providerInterface);
-        } catch (RpcInterfaceInitializationException e) {
-            throw new RuntimeException(e);
-        }
+        return state;
     }
 
     @Override
     public System system() {
-        try {
-            return RpcGeneratedSectionFactory.create(System.class, providerInterface);
-        } catch (RpcInterfaceInitializationException e) {
-            throw new RuntimeException(e);
-        }
+        return system;
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-@RpcInterface(section = "empty")
+@RpcInterface("empty")
 public interface SectionWithoutCallback {
     @RpcSubscription(type = "nothing", subscribeMethod = "doNothing", unsubscribeMethod = "undoNothing")
     CompletableFuture<Supplier<CompletableFuture<Boolean>>> doNothing(boolean a);

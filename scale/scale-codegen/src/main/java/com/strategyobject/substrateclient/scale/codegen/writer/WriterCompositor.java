@@ -21,11 +21,12 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
     private final String writerAccessor;
     private final String registryVarName;
 
-    public WriterCompositor(ProcessorContext context,
-                            Map<String, Integer> typeVarMap,
-                            String writerAccessor,
-                            String registryVarName) {
+    private WriterCompositor(ProcessorContext context,
+                             Map<String, Integer> typeVarMap,
+                             String writerAccessor,
+                             String registryVarName) {
         super(CodeBlock.class);
+
         this.context = context;
         this.typeVarMap = typeVarMap;
         this.selfWritable = context.erasure(context.getType(SCALE_SELF_WRITABLE));
@@ -33,9 +34,21 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         this.registryVarName = registryVarName;
     }
 
+    public static WriterCompositor forAnyType(@NonNull ProcessorContext context,
+                                              @NonNull Map<String, Integer> typeVarMap,
+                                              @NonNull String writerAccessor,
+                                              @NonNull String registryVarName) {
+        return new WriterCompositor(context, typeVarMap, writerAccessor, registryVarName);
+    }
+
+    public static WriterCompositor disallowOpenGeneric(@NonNull ProcessorContext context,
+                                                       @NonNull String registryVarName) {
+        return new WriterCompositor(context, null, null, registryVarName);
+    }
+
     @Override
     protected CodeBlock whenTypeVar(@NonNull TypeVariable type, TypeMirror _override) {
-        return context.isSubtypeOf(type, selfWritable) ?
+        return context.isAssignable(type, selfWritable) ?
                 CodeBlock.builder()
                         .add("$L.resolve($T.class)", registryVarName, selfWritable)
                         .build() :
@@ -60,7 +73,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
                         registryVarName,
                         override != null ?
                                 override :
-                                context.isSubtypeOf(type, selfWritable) ?
+                                context.isAssignable(type, selfWritable) ?
                                         selfWritable :
                                         type)
                 .build();
@@ -80,7 +93,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         } else {
             resolveType = context.erasure(type);
 
-            if (context.isSubtypeOf(resolveType, selfWritable)) {
+            if (context.isAssignable(resolveType, selfWritable)) {
                 return CodeBlock.builder().add("$L.resolve($T.class)", registryVarName, selfWritable).build();
             }
         }
@@ -96,6 +109,6 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
 
     @Override
     protected boolean doTraverseArguments(@NonNull DeclaredType type, TypeMirror override) {
-        return override != null || !context.isSubtypeOf(context.erasure(type), selfWritable);
+        return override != null || !context.isAssignable(context.erasure(type), selfWritable);
     }
 }
