@@ -8,6 +8,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
@@ -33,11 +34,16 @@ public class ProcessorContext {
     public boolean isSubtype(@NonNull TypeMirror candidate, @NonNull TypeMirror supertype) {
         return typeUtils.isSubtype(candidate, supertype);
     }
-    
-    public boolean isGeneric(@NonNull TypeMirror type) {
-        return ((TypeElement) typeUtils.asElement(type))
-                .getTypeParameters()
-                .size() > 0;
+
+    public boolean isNonGeneric(@NonNull TypeMirror type) {
+        if (type instanceof ArrayType) {
+            return isNonGeneric(((ArrayType) type).getComponentType());
+        }
+
+        return type.getKind().isPrimitive() ||
+                ((TypeElement) typeUtils.asElement(type))
+                        .getTypeParameters()
+                        .size() == 0;
     }
 
     public TypeMirror erasure(@NonNull TypeMirror type) {

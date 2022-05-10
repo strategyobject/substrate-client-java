@@ -17,7 +17,7 @@ public class I32Reader implements ScaleReader<Integer> {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
         val bytes = Streamer.readBytes(4, stream);
-        ByteBuffer buf = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
+        val buf = ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN);
         buf.put(bytes);
         buf.flip();
         return buf.getInt();

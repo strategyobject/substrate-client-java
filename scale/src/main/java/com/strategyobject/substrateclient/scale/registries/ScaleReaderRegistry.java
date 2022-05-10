@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.scale.registries;
 
+import com.strategyobject.substrateclient.common.CommonType;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleType;
@@ -26,7 +27,7 @@ public final class ScaleReaderRegistry {
     private final Map<Class<?>, ScaleReader<?>> readers;
 
     private ScaleReaderRegistry() {
-        readers = new ConcurrentHashMap<>(34);
+        readers = new ConcurrentHashMap<>(128);
 
         register(new BoolReader(), ScaleType.Bool.class, Boolean.class, boolean.class);
         register(new CompactBigIntegerReader(), ScaleType.CompactBigInteger.class);
@@ -58,6 +59,12 @@ public final class ScaleReaderRegistry {
         register(new Union11Reader(), Union11.class, ScaleType.Union11.class);
         register(new Union12Reader(), Union12.class, ScaleType.Union12.class);
         register(new VecReader(), ScaleType.Vec.class, List.class);
+        register(new ArrayReader(), CommonType.Array.class);
+        register(new BooleanArrayReader(), boolean[].class);
+        register(new ByteArrayReader(), byte[].class);
+        register(new ShortArrayReader(), short[].class);
+        register(new IntArrayReader(), int[].class);
+        register(new LongArrayReader(), long[].class);
         register(new VoidReader(), Void.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);

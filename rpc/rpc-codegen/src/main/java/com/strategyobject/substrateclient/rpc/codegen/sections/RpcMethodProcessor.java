@@ -123,7 +123,8 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
     }
 
     private CodeBlock getRpcDecodeCodeBlock(TypeMirror resultType, String arg, ProcessorContext context) {
-        val decoderCompositor = new DecoderCompositor(context.getTypeUtils(),
+        val decoderCompositor = new DecoderCompositor(
+                context,
                 EMPTY_TYPE_VAR_MAP,
                 String.format("%s[$L].%s", DECODERS_ARG, DECODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", DECODERS_ARG, READER_UNSAFE_ACCESSOR),

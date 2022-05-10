@@ -2,15 +2,13 @@ package com.strategyobject.substrateclient.scale.codegen.reader;
 
 import com.google.common.base.Strings;
 import com.squareup.javapoet.CodeBlock;
+import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import lombok.NonNull;
 import lombok.var;
 
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
+import javax.lang.model.type.*;
 import java.util.Map;
 
 public class ReaderCompositor extends TypeTraverser<CodeBlock> {
@@ -18,6 +16,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
     private final Map<String, Integer> typeVarMap;
     private final String readerAccessor;
     private final String registryVarName;
+    private final TypeMirror arrayType;
 
     private ReaderCompositor(ProcessorContext context,
                              Map<String, Integer> typeVarMap,
@@ -29,6 +28,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
         this.typeVarMap = typeVarMap;
         this.readerAccessor = readerAccessor;
         this.registryVarName = registryVarName;
+        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
     }
 
     public static ReaderCompositor forAnyType(@NonNull ProcessorContext context,
@@ -43,8 +43,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
         return new ReaderCompositor(context, null, null, registryVarName);
     }
 
-    @Override
-    protected CodeBlock whenTypeVar(@NonNull TypeVariable type, TypeMirror _override) {
+    private CodeBlock getTypeVarCodeBlock(TypeVariable type) {
         if (Strings.isNullOrEmpty(readerAccessor)) {
             throw new IllegalStateException("The compositor doesn't support open generics.");
         }
@@ -54,27 +53,16 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
                 .build();
     }
 
-    @Override
-    protected CodeBlock whenPrimitiveType(@NonNull PrimitiveType type, TypeMirror override) {
-        return getNonGenericCodeBlock(type, override);
-    }
-
-    @Override
-    protected CodeBlock whenNonGenericType(@NonNull DeclaredType type, TypeMirror override) {
-        return getNonGenericCodeBlock(type, override);
-    }
-
     private CodeBlock getNonGenericCodeBlock(TypeMirror type, TypeMirror override) {
         return CodeBlock.builder()
                 .add("$L.resolve($T.class)", registryVarName, override != null ? override : type)
                 .build();
     }
 
-    @Override
-    protected CodeBlock whenGenericType(@NonNull DeclaredType type, TypeMirror override, @NonNull CodeBlock[] subtypes) {
+    private CodeBlock getGenericCodeBlock(TypeMirror type, TypeMirror override, CodeBlock[] subtypes) {
         TypeMirror resolveType;
         if (override != null) {
-            if (!context.isGeneric(override)) {
+            if (context.isNonGeneric(override)) {
                 return CodeBlock.builder()
                         .add("$L.resolve($T.class)", registryVarName, override)
                         .build();
@@ -92,5 +80,36 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
         }
 
         return builder.add(")").build();
+    }
+
+
+    @Override
+    protected CodeBlock whenTypeVar(@NonNull TypeVariable type, TypeMirror _override) {
+        return getTypeVarCodeBlock(type);
+    }
+
+    @Override
+    protected CodeBlock whenPrimitiveType(@NonNull PrimitiveType type, TypeMirror override) {
+        return getNonGenericCodeBlock(type, override);
+    }
+
+    @Override
+    protected CodeBlock whenNonGenericType(@NonNull DeclaredType type, TypeMirror override) {
+        return getNonGenericCodeBlock(type, override);
+    }
+
+    @Override
+    protected CodeBlock whenGenericType(@NonNull DeclaredType type, TypeMirror override, @NonNull CodeBlock[] subtypes) {
+        return getGenericCodeBlock(type, override, subtypes);
+    }
+
+    @Override
+    protected CodeBlock whenArrayPrimitiveType(@NonNull ArrayType type, TypeMirror override) {
+        return getNonGenericCodeBlock(type, override);
+    }
+
+    @Override
+    protected CodeBlock whenArrayType(@NonNull ArrayType type, TypeMirror override, @NonNull CodeBlock subtype) {
+        return getGenericCodeBlock(arrayType, override, new CodeBlock[]{subtype});
     }
 }

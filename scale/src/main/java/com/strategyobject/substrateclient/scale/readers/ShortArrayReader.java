@@ -11,15 +11,18 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class I64Reader implements ScaleReader<Long> {
+public class ShortArrayReader implements ScaleReader<short[]> {
     @Override
-    public Long read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
+    public short[] read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
-        val bytes = Streamer.readBytes(8, stream);
-        val buf = ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN);
-        buf.put(bytes);
+        val len = CompactIntegerReader.readInternal(stream);
+        val result = new short[len];
+        val src = Streamer.readBytes(len * 2, stream);
+        val buf = ByteBuffer.allocate(src.length).order(ByteOrder.LITTLE_ENDIAN);
+        buf.put(src);
         buf.flip();
-        return buf.getLong();
+        buf.asShortBuffer().get(result);
+        return result;
     }
 }

@@ -1,3 +1,4 @@
 dependencies {
-    implementation 'org.testcontainers:testcontainers:1.16.3'
+    implementation 'org.testcontainers:testcontainers:1.17.1'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 }

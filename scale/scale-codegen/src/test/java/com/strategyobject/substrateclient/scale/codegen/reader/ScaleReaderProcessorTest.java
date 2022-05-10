@@ -53,4 +53,15 @@ class ScaleReaderProcessorTest {
 
         assertThat(compilation).succeeded();
     }
+
+    @Test
+    void compilesArrays() {
+        val clazz = JavaFileObjects.forResource("Arrays.java");
+
+        val compilation = javac()
+                .withProcessors(new ScaleReaderProcessor())
+                .compile(clazz);
+
+        assertThat(compilation).succeeded();
+    }
 }

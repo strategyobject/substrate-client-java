@@ -26,6 +26,10 @@ public abstract class TypeTraverser<T> {
 
     protected abstract T whenGenericType(@NonNull DeclaredType type, TypeMirror override, @NonNull T[] subtypes);
 
+    protected abstract T whenArrayPrimitiveType(@NonNull ArrayType type, TypeMirror override);
+
+    protected abstract T whenArrayType(@NonNull ArrayType type, TypeMirror override, @NonNull T subtype);
+
     protected boolean doTraverseArguments(@NonNull DeclaredType type, TypeMirror override) {
         return true;
     }
@@ -40,20 +44,32 @@ public abstract class TypeTraverser<T> {
             return whenPrimitiveType((PrimitiveType) type, null);
         }
 
+        if (type instanceof ArrayType) {
+            val arrayType = (ArrayType) type;
+            return arrayType.getComponentType().getKind().isPrimitive() ?
+                    whenArrayPrimitiveType(arrayType, null) :
+                    whenArrayType(
+                            arrayType,
+                            null,
+                            traverse(arrayType.getComponentType()));
+        }
+
         if (!(type instanceof DeclaredType)) {
-            throw new IllegalArgumentException("Type is not supported: " + type);
+            throw new TypeNotSupportedException(type);
         }
 
         val declaredType = (DeclaredType) type;
         val typeArguments = getTypeArgumentsOrDefault(declaredType, null);
-        return typeArguments.size() == 0 ?
-                whenNonGenericType(declaredType, null) :
-                whenGenericType(
-                        declaredType,
-                        null,
-                        typeArguments.stream()
-                                .map(this::traverse)
-                                .toArray(x -> (T[]) Array.newInstance(clazz, typeArguments.size())));
+        if (typeArguments.size() == 0) {
+            return whenNonGenericType(declaredType, null);
+        }
+
+        return whenGenericType(
+                declaredType,
+                null,
+                typeArguments.stream()
+                        .map(this::traverse)
+                        .toArray(x -> (T[]) Array.newInstance(clazz, typeArguments.size())));
     }
 
     @SuppressWarnings({"unchecked", "UnstableApiUsage"})
@@ -66,8 +82,30 @@ public abstract class TypeTraverser<T> {
             return whenPrimitiveType((PrimitiveType) type, typeOverride.type);
         }
 
+        if (type instanceof ArrayType) {
+            val arrayType = (ArrayType) type;
+            if (arrayType.getComponentType().getKind().isPrimitive()) {
+                return whenArrayPrimitiveType(arrayType, typeOverride.type);
+            }
+
+            switch (typeOverride.children.size()) {
+                case 0:
+                    return whenArrayType(
+                            arrayType,
+                            typeOverride.type,
+                            traverse(arrayType.getComponentType()));
+                case 1:
+                    return whenArrayType(
+                            arrayType,
+                            typeOverride.type,
+                            traverse(arrayType.getComponentType(), typeOverride.children.get(0)));
+                default:
+                    throw new IllegalArgumentException("Array type cannot be overridden by a generic type with more than one parameter");
+            }
+        }
+
         if (!(type instanceof DeclaredType)) {
-            throw new IllegalArgumentException("Type is not supported: " + type);
+            throw new TypeNotSupportedException(type);
         }
 
         val declaredType = (DeclaredType) type;
@@ -107,8 +145,18 @@ public abstract class TypeTraverser<T> {
             return whenPrimitiveType((PrimitiveType) typeOverride.type, typeOverride.type);
         }
 
+        if (typeOverride.type instanceof ArrayType) {
+            val arrayType = (ArrayType) typeOverride.type;
+            return arrayType.getComponentType().getKind().isPrimitive() ?
+                    whenArrayPrimitiveType(arrayType, arrayType) :
+                    whenArrayType(
+                            arrayType,
+                            arrayType,
+                            traverse(arrayType.getComponentType()));
+        }
+
         if (!(typeOverride.type instanceof DeclaredType)) {
-            throw new IllegalArgumentException("Type is not supported: " + typeOverride.type);
+            throw new TypeNotSupportedException(typeOverride.type);
         }
 
         val declaredType = (DeclaredType) typeOverride.type;
