@@ -17,7 +17,7 @@ public class I16Reader implements ScaleReader<Short> {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
         val bytes = Streamer.readBytes(2, stream);
-        ByteBuffer buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
+        val buf = ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN);
         buf.put(bytes);
         buf.flip();
         return buf.getShort();

@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.google.testing.compile.JavaFileObjects;
+import com.strategyobject.substrateclient.scale.codegen.reader.ScaleReaderProcessor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -81,6 +82,17 @@ class ScaleWriterProcessorTest {
     @Test
     void compilesComplexGeneric() {
         val clazz = JavaFileObjects.forResource("ComplexGeneric.java");
+
+        val compilation = javac()
+                .withProcessors(new ScaleWriterProcessor())
+                .compile(clazz);
+
+        assertThat(compilation).succeeded();
+    }
+
+    @Test
+    void compilesArrays() {
+        val clazz = JavaFileObjects.forResource("Arrays.java");
 
         val compilation = javac()
                 .withProcessors(new ScaleWriterProcessor())

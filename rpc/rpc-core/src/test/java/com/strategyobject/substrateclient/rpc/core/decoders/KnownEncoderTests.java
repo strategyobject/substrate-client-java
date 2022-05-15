@@ -6,40 +6,21 @@ import com.strategyobject.substrateclient.rpc.core.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.core.encoders.ListEncoder;
 import com.strategyobject.substrateclient.rpc.core.encoders.MapEncoder;
 import com.strategyobject.substrateclient.rpc.core.encoders.PlainEncoder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.strategyobject.substrateclient.tests.TestSuite;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.val;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class KnownEncoderTests {
-    private final TestCase<?>[] testCases = {
-            new TestCase<>(new PlainEncoder<>(), false, false),
-            new TestCase<>(new PlainEncoder<>(), (byte) 5, (byte) 5),
-            new TestCase<>(new PlainEncoder<>(), 15.25, 15.25),
-            new TestCase<>(new PlainEncoder<>(), 19.5f, 19.5f),
-            new TestCase<>(new PlainEncoder<>(), -5, -5),
-            new TestCase<>(new PlainEncoder<>(), 2147483648L, 2147483648L),
-            new TestCase<>(new PlainEncoder<>(), (short) 290, (short) 290),
-            new TestCase<>(new PlainEncoder<>(), "some", "some"),
-            new TestCase<>(new PlainEncoder<>(), (Void) null, null),
-
-            new TestCase<>(
-                    new ListEncoder().inject(EncoderPair.of((source, encoders) -> source.toString(), null)),
-                    Arrays.asList(1, 2, 3),
-                    Arrays.asList("1", "2", "3")),
-            new TestCase<>(
-                    new MapEncoder().inject(
-                            EncoderPair.of(new PlainEncoder<>(), null),
-                            EncoderPair.of((source, encoders) -> source.toString(), null)),
-                    getSourceMap(),
-                    getExpectedMap()),
-    };
 
     private static Map<String, Integer> getSourceMap() {
         val result = new HashMap<String, Integer>();
@@ -59,22 +40,60 @@ public class KnownEncoderTests {
         return result;
     }
 
-    @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void encode() {
-        Gson gson = new Gson();
-
-        Arrays.stream(testCases)
-                .forEach(c -> assertEquals(
-                        gson.toJson(c.getExpected()),
-                        gson.toJson(((RpcEncoder)c.encoder).encode(c.source))));
+    @TestFactory
+    public Stream<DynamicTest> encode() {
+        return TestSuite.of(
+                Test.encode(new PlainEncoder<>(), false, false),
+                Test.encode(new PlainEncoder<>(), (byte) 5, (byte) 5),
+                Test.encode(new PlainEncoder<>(), 15.25, 15.25),
+                Test.encode(new PlainEncoder<>(), 19.5f, 19.5f),
+                Test.encode(new PlainEncoder<>(), -5, -5),
+                Test.encode(new PlainEncoder<>(), 2147483648L, 2147483648L),
+                Test.encode(new PlainEncoder<>(), (short) 290, (short) 290),
+                Test.encode(new PlainEncoder<>(), "some", "some"),
+                Test.encode(new PlainEncoder<>(), (Void) null, null),
+                Test.encode(
+                                new ListEncoder().inject(EncoderPair.of((source, encoders) -> source.toString(), null)),
+                                Arrays.asList(1, 2, 3),
+                                Arrays.asList("1", "2", "3"))
+                        .withEncoderName(ListEncoder.class.getSimpleName()),
+                Test.encode(
+                                new MapEncoder().inject(
+                                        EncoderPair.of(new PlainEncoder<>(), null),
+                                        EncoderPair.of((source, encoders) -> source.toString(), null)),
+                                getSourceMap(),
+                                getExpectedMap())
+                        .withEncoderName(MapEncoder.class.getSimpleName())
+        );
     }
 
-    @RequiredArgsConstructor
-    @Getter
-    static class TestCase<T> {
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    static class Test<T> extends TestSuite.TestCase {
+        private static final Gson GSON = new Gson();
+
         private final RpcEncoder<T> encoder;
-        private final T source;
+        private final T given;
         private final Object expected;
+        private String encoderName;
+
+        @Override
+        public String getDisplayName() {
+            return String.format("Encode %s with %s", given, encoderName);
+        }
+
+        @Override
+        public void execute() {
+            val actual = encoder.encode(given);
+            assertEquals(GSON.toJson(expected), GSON.toJson(actual));
+        }
+
+        public Test<T> withEncoderName(String encoderName) {
+            this.encoderName = encoderName;
+            return this;
+        }
+
+        public static <T> Test<T> encode(RpcEncoder<T> encoder, T given, Object expected) {
+            return new Test<>(encoder, given, expected, encoder.getClass().getSimpleName());
+        }
     }
 }

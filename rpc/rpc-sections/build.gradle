@@ -1,11 +1,12 @@
 dependencies {
+    implementation project(':common')
     compileOnly project(':rpc:rpc-codegen')
-    annotationProcessor project(':rpc:rpc-codegen')
     compileOnly project(':rpc:rpc-core')
-    compileOnly project(':transport')
-    implementation project(':types')
     implementation project(':rpc:rpc-types')
     implementation project(':scale')
+    compileOnly project(':transport')
+    implementation project(':types')
+    annotationProcessor project(':rpc:rpc-codegen')
 
     testImplementation project(':tests')
     testCompileOnly project(':rpc:rpc-core')
@@ -14,8 +15,8 @@ dependencies {
     testImplementation project(':crypto')
     testAnnotationProcessor project(':scale:scale-codegen')
 
-    testImplementation 'org.testcontainers:testcontainers:1.16.3'
-    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+    testImplementation 'org.testcontainers:testcontainers:1.17.1'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
     testImplementation 'ch.qos.logback:logback-classic:1.2.11'
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'org.bouncycastle:bcprov-jdk15on:1.70'

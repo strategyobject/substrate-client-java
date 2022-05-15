@@ -118,7 +118,8 @@ public class RpcDecoderAnnotatedClass {
     }
 
     private void setFields(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
-        val decoderCompositor = new DecoderCompositor(context.getTypeUtils(),
+        val decoderCompositor = new DecoderCompositor(
+                context,
                 typeVarMap,
                 String.format("%s[$L].%s", DECODERS_ARG, DECODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", DECODERS_ARG, READER_UNSAFE_ACCESSOR),
@@ -126,7 +127,8 @@ public class RpcDecoderAnnotatedClass {
                 DECODER_REGISTRY,
                 SCALE_READER_REGISTRY);
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val scaleReaderCompositor = ReaderCompositor.forAnyType(context,
+        val scaleReaderCompositor = ReaderCompositor.forAnyType(
+                context,
                 typeVarMap,
                 String.format("%s[$L].%s", DECODERS_ARG, READER_ACCESSOR),
                 SCALE_READER_REGISTRY);

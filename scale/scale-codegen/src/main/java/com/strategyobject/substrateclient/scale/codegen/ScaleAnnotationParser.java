@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
+import com.strategyobject.substrateclient.common.codegen.TypeUtils;
 import com.strategyobject.substrateclient.common.utils.StringUtils;
 import com.strategyobject.substrateclient.scale.annotations.Scale;
 import com.strategyobject.substrateclient.scale.annotations.ScaleGeneric;
@@ -13,7 +14,6 @@ import lombok.var;
 
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +125,7 @@ public class ScaleAnnotationParser {
             }
 
             if (Strings.isNullOrEmpty(name)) {
-                name = ((DeclaredType) type).asElement().getSimpleName().toString();
+                name = TypeUtils.getSimpleName(type);
             }
 
             result.put(name, type);

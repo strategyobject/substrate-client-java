@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.encoder;
 
 import com.squareup.javapoet.CodeBlock;
+import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.rpc.core.EncoderPair;
@@ -12,10 +13,7 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
+import javax.lang.model.type.*;
 import java.util.Map;
 
 import static com.strategyobject.substrateclient.rpc.codegen.Constants.*;
@@ -29,6 +27,7 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
     private final String writerMethod;
     private final String encoderRegistryVarName;
     private final String scaleRegistryVarName;
+    private final TypeMirror arrayType;
 
     public EncoderCompositor(@NonNull ProcessorContext context,
                              @NonNull Map<String, Integer> typeVarMap,
@@ -46,6 +45,47 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
         this.writerMethod = writerMethod;
         this.encoderRegistryVarName = encoderRegistryVarName;
         this.scaleRegistryVarName = scaleRegistryVarName;
+        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
+    }
+
+    private CodeBlock getNonGenericCodeBlock(TypeMirror type) {
+        return CodeBlock.builder()
+                .add("$T.$L(($T) ", EncoderPair.class, PAIR_FACTORY_METHOD, RpcEncoder.class)
+                .add("$L.resolve($T.class)",
+                        encoderRegistryVarName,
+                        context.isAssignable(type, selfEncodable) ?
+                                selfEncodable :
+                                type)
+                .add(", ($T) ", ScaleWriter.class)
+                .add("$L.resolve($T.class)", scaleRegistryVarName, type)
+                .add(")")
+                .build();
+    }
+
+    private CodeBlock getGenericCodeBlock(TypeMirror type, CodeBlock[] subtypes) {
+        TypeMirror resolveType = context.erasure(type);
+        val builder = CodeBlock.builder()
+                .add("$T.$L(", EncoderPair.class, PAIR_FACTORY_METHOD);
+
+        if (context.isAssignable(resolveType, selfEncodable)) {
+            builder.add("($T) registry.resolve($T.class)", selfEncodable, RpcEncoder.class);
+        } else {
+            builder.add("$T.$L($T.class, ", RpcRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
+            for (var i = 0; i < subtypes.length; i++) {
+                if (i > 0) builder.add(", ");
+                builder.add(subtypes[i]);
+            }
+        }
+
+        builder.add("), $T.$L($T.class, ", ScaleRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
+        for (var i = 0; i < subtypes.length; i++) {
+            if (i > 0) builder.add(", ");
+            builder.add(subtypes[i]);
+            builder.add(".$L", writerMethod);
+        }
+        builder.add(")");
+
+        return builder.add(")").build();
     }
 
     @Override
@@ -75,45 +115,19 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
         return getNonGenericCodeBlock(type);
     }
 
-    private CodeBlock getNonGenericCodeBlock(TypeMirror type) {
-        return CodeBlock.builder()
-                .add("$T.$L(($T) ", EncoderPair.class, PAIR_FACTORY_METHOD, RpcEncoder.class)
-                .add("$L.resolve($T.class)",
-                        encoderRegistryVarName,
-                        context.isAssignable(type, selfEncodable) ?
-                                selfEncodable :
-                                type)
-                .add(", ($T) ", ScaleWriter.class)
-                .add("$L.resolve($T.class)", scaleRegistryVarName, type)
-                .add(")")
-                .build();
+    @Override
+    protected CodeBlock whenGenericType(@NonNull DeclaredType type, TypeMirror _override, @NonNull CodeBlock[] subtypes) {
+        return getGenericCodeBlock(type, subtypes);
     }
 
     @Override
-    protected CodeBlock whenGenericType(@NonNull DeclaredType type, TypeMirror _override, @NonNull CodeBlock[] subtypes) {
-        TypeMirror resolveType = context.erasure(type);
-        val builder = CodeBlock.builder()
-                .add("$T.$L(", EncoderPair.class, PAIR_FACTORY_METHOD);
+    protected CodeBlock whenArrayPrimitiveType(@NonNull ArrayType type, TypeMirror _override) {
+        return getNonGenericCodeBlock(type);
+    }
 
-        if (context.isAssignable(resolveType, selfEncodable)) {
-            builder.add("($T) registry.resolve($T.class)", selfEncodable, RpcEncoder.class);
-        } else {
-            builder.add("$T.$L($T.class, ", RpcRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
-            for (var i = 0; i < subtypes.length; i++) {
-                if (i > 0) builder.add(", ");
-                builder.add(subtypes[i]);
-            }
-        }
-
-        builder.add("), $T.$L($T.class, ", ScaleRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
-        for (var i = 0; i < subtypes.length; i++) {
-            if (i > 0) builder.add(", ");
-            builder.add(subtypes[i]);
-            builder.add(".$L", writerMethod);
-        }
-        builder.add(")");
-
-        return builder.add(")").build();
+    @Override
+    protected CodeBlock whenArrayType(@NonNull ArrayType type, TypeMirror _override, @NonNull CodeBlock subtype) {
+        return getGenericCodeBlock(arrayType, new CodeBlock[]{subtype});
     }
 
     @Override

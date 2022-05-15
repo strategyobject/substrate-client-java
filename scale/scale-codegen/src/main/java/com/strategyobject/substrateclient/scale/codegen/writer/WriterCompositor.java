@@ -1,15 +1,13 @@
 package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.squareup.javapoet.CodeBlock;
+import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import lombok.NonNull;
 import lombok.var;
 
-import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.PrimitiveType;
-import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
+import javax.lang.model.type.*;
 import java.util.Map;
 
 import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_SELF_WRITABLE;
@@ -20,6 +18,8 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
     private final TypeMirror selfWritable;
     private final String writerAccessor;
     private final String registryVarName;
+    private final TypeMirror arrayType;
+
 
     private WriterCompositor(ProcessorContext context,
                              Map<String, Integer> typeVarMap,
@@ -32,6 +32,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         this.selfWritable = context.erasure(context.getType(SCALE_SELF_WRITABLE));
         this.writerAccessor = writerAccessor;
         this.registryVarName = registryVarName;
+        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
     }
 
     public static WriterCompositor forAnyType(@NonNull ProcessorContext context,
@@ -44,6 +45,45 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
     public static WriterCompositor disallowOpenGeneric(@NonNull ProcessorContext context,
                                                        @NonNull String registryVarName) {
         return new WriterCompositor(context, null, null, registryVarName);
+    }
+
+    private CodeBlock getNonGenericCodeBlock(TypeMirror type, TypeMirror override) {
+        return CodeBlock.builder()
+                .add("$L.resolve($T.class)",
+                        registryVarName,
+                        override != null ?
+                                override :
+                                context.isAssignable(type, selfWritable) ?
+                                        selfWritable :
+                                        type)
+                .build();
+    }
+
+    private CodeBlock getGenericCodeBlock(TypeMirror type, TypeMirror override, CodeBlock[] subtypes) {
+        TypeMirror resolveType;
+        if (override != null) {
+            if (context.isNonGeneric(override)) {
+                return CodeBlock.builder()
+                        .add("$L.resolve($T.class)", registryVarName, override)
+                        .build();
+            }
+
+            resolveType = override;
+        } else {
+            resolveType = context.erasure(type);
+
+            if (context.isAssignable(resolveType, selfWritable)) {
+                return CodeBlock.builder().add("$L.resolve($T.class)", registryVarName, selfWritable).build();
+            }
+        }
+
+        var builder = CodeBlock.builder().add("$L.resolve($T.class).inject(", registryVarName, resolveType);
+        for (var i = 0; i < subtypes.length; i++) {
+            if (i > 0) builder.add(", ");
+            builder.add(subtypes[i]);
+        }
+
+        return builder.add(")").build();
     }
 
     @Override
@@ -67,23 +107,11 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         return getNonGenericCodeBlock(type, override);
     }
 
-    private CodeBlock getNonGenericCodeBlock(TypeMirror type, TypeMirror override) {
-        return CodeBlock.builder()
-                .add("$L.resolve($T.class)",
-                        registryVarName,
-                        override != null ?
-                                override :
-                                context.isAssignable(type, selfWritable) ?
-                                        selfWritable :
-                                        type)
-                .build();
-    }
-
     @Override
     protected CodeBlock whenGenericType(@NonNull DeclaredType type, TypeMirror override, @NonNull CodeBlock[] subtypes) {
         TypeMirror resolveType;
         if (override != null) {
-            if (!context.isGeneric(override)) {
+            if (context.isNonGeneric(override)) {
                 return CodeBlock.builder()
                         .add("$L.resolve($T.class)", registryVarName, override)
                         .build();
@@ -105,6 +133,16 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         }
 
         return builder.add(")").build();
+    }
+
+    @Override
+    protected CodeBlock whenArrayPrimitiveType(@NonNull ArrayType type, TypeMirror override) {
+        return getNonGenericCodeBlock(type, override);
+    }
+
+    @Override
+    protected CodeBlock whenArrayType(@NonNull ArrayType type, TypeMirror override, @NonNull CodeBlock subtype) {
+        return getGenericCodeBlock(arrayType, override, new CodeBlock[]{subtype});
     }
 
     @Override

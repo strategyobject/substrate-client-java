@@ -1,4 +1,6 @@
 dependencies {
     implementation 'org.reflections:reflections:0.10.2'
     implementation 'com.squareup:javapoet:1.13.0'
+
+    testImplementation project(':tests')
 }

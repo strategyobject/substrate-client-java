@@ -3,5 +3,7 @@ dependencies {
     implementation project(':scale')
     implementation project(':transport')
 
+    testImplementation project(':tests')
+
     testImplementation 'com.google.code.gson:gson:2.9.0'
 }

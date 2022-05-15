@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.scale.registries;
 
+import com.strategyobject.substrateclient.common.CommonType;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 import com.strategyobject.substrateclient.scale.ScaleType;
@@ -29,7 +30,7 @@ public final class ScaleWriterRegistry {
     private final Map<Class<?>, ScaleWriter<?>> writers;
 
     private ScaleWriterRegistry() {
-        writers = new ConcurrentHashMap<>(35);
+        writers = new ConcurrentHashMap<>(128);
 
         register(new BoolWriter(), ScaleType.Bool.class, Boolean.class, boolean.class);
         register(new CompactBigIntegerWriter(), ScaleType.CompactBigInteger.class);
@@ -61,6 +62,12 @@ public final class ScaleWriterRegistry {
         register(new Union11Writer(), Union11.class, ScaleType.Union11.class);
         register(new Union12Writer(), Union12.class, ScaleType.Union12.class);
         register(new VecWriter(), ScaleType.Vec.class, List.class);
+        register(new ArrayWriter(), CommonType.Array.class);
+        register(new BooleanArrayWriter(), boolean[].class);
+        register(new ByteArrayWriter(), byte[].class);
+        register(new ShortArrayWriter(), short[].class);
+        register(new IntArrayWriter(), int[].class);
+        register(new LongArrayWriter(), long[].class);
         register(new VoidWriter(), Void.class);
         register(new SelfWriter(), ScaleSelfWritable.class);
         register(new PublicKeyWriter(), PublicKey.class);

@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.rpc.core.registries;
 
+import com.strategyobject.substrateclient.common.CommonType;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.rpc.core.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.core.annotations.AutoRegister;
@@ -20,7 +21,8 @@ public final class RpcDecoderRegistry {
     private final Map<Class<?>, RpcDecoder<?>> decoders;
 
     private RpcDecoderRegistry() {
-        decoders = new ConcurrentHashMap<>();
+        decoders = new ConcurrentHashMap<>(128);
+
         register(new ListDecoder(), List.class);
         register(new MapDecoder(), Map.class);
         register(new VoidDecoder(), Void.class);
@@ -32,6 +34,7 @@ public final class RpcDecoderRegistry {
         register(new LongDecoder(), Long.class, long.class);
         register(new ShortDecoder(), Short.class, short.class);
         register(new StringDecoder(), String.class);
+        register(new ArrayDecoder(), CommonType.Array.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);
     }

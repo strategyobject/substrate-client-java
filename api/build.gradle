@@ -1,18 +1,19 @@
 dependencies {
+    implementation project(':common')
+    implementation project(':pallet')
     implementation project(':rpc')
     implementation project(':rpc:rpc-core')
     implementation project(':rpc:rpc-sections')
-    implementation project(':transport')
-    implementation project(':pallet')
-    implementation project(':scale')
-    implementation project(':types')
     implementation project(':rpc:rpc-types')
+    implementation project(':scale')
     implementation project(':storage')
+    implementation project(':transport')
+    implementation project(':types')
 
     testImplementation project(':tests')
 
-    testImplementation 'org.testcontainers:testcontainers:1.16.3'
-    testImplementation 'org.testcontainers:junit-jupiter:1.16.3'
+    testImplementation 'org.testcontainers:testcontainers:1.17.1'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
 
     testAnnotationProcessor project(':pallet:pallet-codegen')
 }

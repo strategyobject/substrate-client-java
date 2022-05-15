@@ -41,7 +41,6 @@ public class Annotated<T1, T2, T3> {
     @Scale(OptionBool.class)
     private Optional<Boolean> testOptionBool;
 
-
     @ScaleGeneric(
             template = "Option<I32>",
             types = {

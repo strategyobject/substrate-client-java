@@ -32,4 +32,7 @@ public class Constants {
 
     public static final String SCALE_WRITER_REGISTRY = "scaleWriterRegistry";
     public static final String SCALE_READER_REGISTRY = "scaleReaderRegistry";
+
+    private Constants() {
+    }
 }
