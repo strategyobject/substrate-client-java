@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.squareup.javapoet.CodeBlock;
-import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
+import com.strategyobject.substrateclient.types.Array;
 import lombok.NonNull;
 import lombok.var;
 
@@ -32,7 +32,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         this.selfWritable = context.erasure(context.getType(SCALE_SELF_WRITABLE));
         this.writerAccessor = writerAccessor;
         this.registryVarName = registryVarName;
-        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
+        this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     public static WriterCompositor forAnyType(@NonNull ProcessorContext context,

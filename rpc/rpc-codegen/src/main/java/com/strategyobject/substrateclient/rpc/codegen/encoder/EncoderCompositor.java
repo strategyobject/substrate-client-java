@@ -1,7 +1,6 @@
 package com.strategyobject.substrateclient.rpc.codegen.encoder;
 
 import com.squareup.javapoet.CodeBlock;
-import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.rpc.core.EncoderPair;
@@ -9,6 +8,7 @@ import com.strategyobject.substrateclient.rpc.core.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.core.RpcRegistryHelper;
 import com.strategyobject.substrateclient.scale.ScaleRegistryHelper;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
+import com.strategyobject.substrateclient.types.Array;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
@@ -45,7 +45,7 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
         this.writerMethod = writerMethod;
         this.encoderRegistryVarName = encoderRegistryVarName;
         this.scaleRegistryVarName = scaleRegistryVarName;
-        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
+        this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     private CodeBlock getNonGenericCodeBlock(TypeMirror type) {

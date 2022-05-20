@@ -1,13 +1,11 @@
 package com.strategyobject.substrateclient.rpc.core.registries;
 
-import com.strategyobject.substrateclient.common.CommonType;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.rpc.core.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.core.annotations.AutoRegister;
-import com.strategyobject.substrateclient.rpc.core.encoders.ArrayEncoder;
-import com.strategyobject.substrateclient.rpc.core.encoders.ListEncoder;
-import com.strategyobject.substrateclient.rpc.core.encoders.MapEncoder;
-import com.strategyobject.substrateclient.rpc.core.encoders.PlainEncoder;
+import com.strategyobject.substrateclient.rpc.core.encoders.*;
+import com.strategyobject.substrateclient.types.Array;
+import com.strategyobject.substrateclient.types.Unit;
 import lombok.NonNull;
 import lombok.val;
 import org.slf4j.Logger;
@@ -29,9 +27,10 @@ public final class RpcEncoderRegistry {
         register(new PlainEncoder<>(),
                 Void.class, String.class, Boolean.class, boolean.class, Byte.class, byte.class, Double.class, double.class,
                 Float.class, float.class, Integer.class, int.class, Long.class, long.class, Short.class, short.class);
+        register(new UnitEncoder(), Unit.class);
         register(new ListEncoder(), List.class);
         register(new MapEncoder(), Map.class);
-        register(new ArrayEncoder(), CommonType.Array.class);
+        register(new ArrayEncoder(), Array.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);
     }

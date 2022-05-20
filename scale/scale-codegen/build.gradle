@@ -1,6 +1,7 @@
 dependencies {
-    implementation project(':scale')
     implementation project(':common')
+    implementation project(':scale')
+    implementation project(':types')
 
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0.1'
     annotationProcessor 'com.google.auto.service:auto-service:1.0.1'

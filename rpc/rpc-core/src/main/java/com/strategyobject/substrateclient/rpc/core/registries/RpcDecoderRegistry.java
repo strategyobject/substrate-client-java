@@ -1,10 +1,11 @@
 package com.strategyobject.substrateclient.rpc.core.registries;
 
-import com.strategyobject.substrateclient.common.CommonType;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.rpc.core.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.core.annotations.AutoRegister;
 import com.strategyobject.substrateclient.rpc.core.decoders.*;
+import com.strategyobject.substrateclient.types.Array;
+import com.strategyobject.substrateclient.types.Unit;
 import lombok.NonNull;
 import lombok.val;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public final class RpcDecoderRegistry {
         register(new ListDecoder(), List.class);
         register(new MapDecoder(), Map.class);
         register(new VoidDecoder(), Void.class);
+        register(new UnitDecoder(), Unit.class);
         register(new BooleanDecoder(), Boolean.class, boolean.class);
         register(new ByteDecoder(), Byte.class, byte.class);
         register(new DoubleDecoder(), Double.class, double.class);
@@ -34,7 +36,7 @@ public final class RpcDecoderRegistry {
         register(new LongDecoder(), Long.class, long.class);
         register(new ShortDecoder(), Short.class, short.class);
         register(new StringDecoder(), String.class);
-        register(new ArrayDecoder(), CommonType.Array.class);
+        register(new ArrayDecoder(), Array.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);
     }

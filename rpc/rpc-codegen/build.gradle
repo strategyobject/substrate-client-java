@@ -4,6 +4,7 @@ dependencies {
     implementation project(':scale')
     implementation project(':scale:scale-codegen')
     implementation project(':transport')
+    implementation project(':types')
 
     compileOnly 'com.google.auto.service:auto-service-annotations:1.0.1'
     annotationProcessor 'com.google.auto.service:auto-service:1.0.1'

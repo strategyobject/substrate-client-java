@@ -1,5 +1,5 @@
 plugins {
-    id 'io.freefair.lombok' version '6.1.0' apply false
+    id 'io.freefair.lombok' version '6.4.3' apply false
     id 'maven-publish'
 }
 

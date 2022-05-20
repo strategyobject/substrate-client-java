@@ -2,6 +2,7 @@ dependencies {
     implementation project(':common')
     implementation project(':scale')
     implementation project(':transport')
+    implementation project(':types')
 
     testImplementation project(':tests')
 

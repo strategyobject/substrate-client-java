@@ -2,9 +2,9 @@ package com.strategyobject.substrateclient.scale.codegen.reader;
 
 import com.google.common.base.Strings;
 import com.squareup.javapoet.CodeBlock;
-import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
+import com.strategyobject.substrateclient.types.Array;
 import lombok.NonNull;
 import lombok.var;
 
@@ -28,7 +28,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
         this.typeVarMap = typeVarMap;
         this.readerAccessor = readerAccessor;
         this.registryVarName = registryVarName;
-        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
+        this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     public static ReaderCompositor forAnyType(@NonNull ProcessorContext context,
