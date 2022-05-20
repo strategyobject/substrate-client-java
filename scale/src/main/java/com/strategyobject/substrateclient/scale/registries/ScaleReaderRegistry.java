@@ -1,13 +1,14 @@
 package com.strategyobject.substrateclient.scale.registries;
 
-import com.strategyobject.substrateclient.common.CommonType;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotations.AutoRegister;
 import com.strategyobject.substrateclient.scale.readers.*;
 import com.strategyobject.substrateclient.scale.readers.union.*;
+import com.strategyobject.substrateclient.types.Array;
 import com.strategyobject.substrateclient.types.Result;
+import com.strategyobject.substrateclient.types.Unit;
 import com.strategyobject.substrateclient.types.union.*;
 import lombok.NonNull;
 import lombok.val;
@@ -59,13 +60,14 @@ public final class ScaleReaderRegistry {
         register(new Union11Reader(), Union11.class, ScaleType.Union11.class);
         register(new Union12Reader(), Union12.class, ScaleType.Union12.class);
         register(new VecReader(), ScaleType.Vec.class, List.class);
-        register(new ArrayReader(), CommonType.Array.class);
+        register(new ArrayReader(), Array.class);
         register(new BooleanArrayReader(), boolean[].class);
         register(new ByteArrayReader(), byte[].class);
         register(new ShortArrayReader(), short[].class);
         register(new IntArrayReader(), int[].class);
         register(new LongArrayReader(), long[].class);
         register(new VoidReader(), Void.class);
+        register(new UnitReader(), Unit.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);
     }

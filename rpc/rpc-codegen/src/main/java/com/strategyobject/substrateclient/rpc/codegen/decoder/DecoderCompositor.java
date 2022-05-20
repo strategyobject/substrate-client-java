@@ -1,7 +1,6 @@
 package com.strategyobject.substrateclient.rpc.codegen.decoder;
 
 import com.squareup.javapoet.CodeBlock;
-import com.strategyobject.substrateclient.common.codegen.Constants;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.rpc.core.DecoderPair;
@@ -9,6 +8,7 @@ import com.strategyobject.substrateclient.rpc.core.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.core.RpcRegistryHelper;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleRegistryHelper;
+import com.strategyobject.substrateclient.types.Array;
 import lombok.NonNull;
 import lombok.var;
 
@@ -44,7 +44,7 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
         this.readerMethod = readerMethod;
         this.decoderRegistryVarName = decoderRegistryVarName;
         this.scaleRegistryVarName = scaleRegistryVarName;
-        this.arrayType = context.erasure(context.getType(Constants.ARRAY_TYPE));
+        this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     private CodeBlock getTypeVarCodeBlock(TypeVariable type) {
