@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.scale.writers.union;
 
 import com.google.common.base.Preconditions;
+import com.strategyobject.substrateclient.common.types.union.Union;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.types.union.Union;
 import lombok.NonNull;
 import lombok.val;
 

@@ -1,6 +1,6 @@
-import com.strategyobject.substrateclient.pallet.annotations.Pallet;
-import com.strategyobject.substrateclient.pallet.annotations.Storage;
-import com.strategyobject.substrateclient.storage.StorageNMap;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.pallet.annotation.Storage;
+import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 
 @Pallet("Test")
 public interface UnnamedStorage {

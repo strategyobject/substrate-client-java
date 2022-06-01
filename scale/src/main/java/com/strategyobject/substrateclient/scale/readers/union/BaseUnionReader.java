@@ -2,8 +2,8 @@ package com.strategyobject.substrateclient.scale.readers.union;
 
 import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.io.Streamer;
+import com.strategyobject.substrateclient.common.types.union.Union;
 import com.strategyobject.substrateclient.scale.ScaleReader;
-import com.strategyobject.substrateclient.types.union.Union;
 import lombok.NonNull;
 import lombok.val;
 

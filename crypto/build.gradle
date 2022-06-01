@@ -1,8 +1,9 @@
 dependencies {
+    implementation project(":common")
+
     implementation 'com.github.multiformats:java-multibase:1.1.0'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
-    implementation project(":common")
-    implementation project(":types")
+    implementation 'net.openhft:zero-allocation-hashing:0.15'
 }
 
 test {

@@ -1,38 +1,38 @@
 package com.strategyobject.substrateclient.pallet;
 
-import com.strategyobject.substrateclient.rpc.Rpc;
+import com.strategyobject.substrateclient.rpc.api.section.State;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-public class GeneratedPalletResolverTests {
+class GeneratedPalletResolverTests {
     @Test
-    public void throwsWhenPalletIsNotAnnotated() {
-        val rpc = mock(Rpc.class);
+    void throwsWhenPalletIsNotAnnotated() {
+        val state = mock(State.class);
 
-        val resolver = GeneratedPalletResolver.with(rpc);
+        val resolver = GeneratedPalletResolver.with(state);
 
         assertThrows(IllegalArgumentException.class,
                 () -> resolver.resolve(TestPalletNotAnnotated.class));
     }
 
     @Test
-    public void throwsWhenPalletImplementationDoesNotHaveAppropriateConstructor() {
-        val rpc = mock(Rpc.class);
+    void throwsWhenPalletImplementationDoesNotHaveAppropriateConstructor() {
+        val state = mock(State.class);
 
-        val resolver = GeneratedPalletResolver.with(rpc);
+        val resolver = GeneratedPalletResolver.with(state);
 
         assertThrows(RuntimeException.class,
                 () -> resolver.resolve(TestPalletWithoutConstructor.class));
     }
 
     @Test
-    public void resolve() {
-        val rpc = mock(Rpc.class);
+    void resolve() {
+        val state = mock(State.class);
 
-        val resolver = GeneratedPalletResolver.with(rpc);
+        val resolver = GeneratedPalletResolver.with(state);
         val pallet = resolver.resolve(TestPallet.class);
 
         assertNotNull(pallet);

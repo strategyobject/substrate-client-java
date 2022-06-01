@@ -7,10 +7,11 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.annotation.RpcInterface;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import lombok.NonNull;
 import lombok.val;
+import lombok.var;
 
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
@@ -60,7 +61,7 @@ public class RpcAnnotatedInterface {
                 .addField(ProviderInterface.class, PROVIDER_INTERFACE)
                 .addMethod(createConstructor());
 
-        for (val method : interfaceElement.getEnclosedElements()) {
+        for (var method : interfaceElement.getEnclosedElements()) {
             methodProcessor.process(section, (ExecutableElement) method, typeSpecBuilder, context);
         }
 

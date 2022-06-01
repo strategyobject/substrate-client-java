@@ -3,12 +3,12 @@ package com.strategyobject.substrateclient.rpc.codegen.decoder;
 import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
-import com.strategyobject.substrateclient.rpc.core.DecoderPair;
-import com.strategyobject.substrateclient.rpc.core.RpcDecoder;
-import com.strategyobject.substrateclient.rpc.core.RpcRegistryHelper;
+import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.rpc.DecoderPair;
+import com.strategyobject.substrateclient.rpc.RpcDecoder;
+import com.strategyobject.substrateclient.rpc.RpcRegistryHelper;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleRegistryHelper;
-import com.strategyobject.substrateclient.types.Array;
 import lombok.NonNull;
 import lombok.var;
 

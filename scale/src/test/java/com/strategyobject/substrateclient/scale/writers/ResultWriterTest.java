@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers;
 
-import com.strategyobject.substrateclient.types.Result;
+import com.strategyobject.substrateclient.common.types.Result;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;

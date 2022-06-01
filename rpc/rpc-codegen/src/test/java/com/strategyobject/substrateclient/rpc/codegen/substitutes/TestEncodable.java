@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.substitutes;
 
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcEncoder;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
+import com.strategyobject.substrateclient.rpc.annotation.RpcEncoder;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

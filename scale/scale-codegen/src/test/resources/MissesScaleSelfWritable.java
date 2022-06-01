@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale;
 
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 
 @ScaleWriter
 public class MissesScaleSelfWritable<T> implements ScaleSelfWritable<T> {

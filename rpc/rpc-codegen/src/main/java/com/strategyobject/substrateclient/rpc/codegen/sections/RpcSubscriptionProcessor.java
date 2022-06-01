@@ -5,7 +5,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
 import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.NonNull;
 import lombok.val;

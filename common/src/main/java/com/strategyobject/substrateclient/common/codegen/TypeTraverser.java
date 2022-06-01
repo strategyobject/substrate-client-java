@@ -160,7 +160,7 @@ public abstract class TypeTraverser<T> {
         }
 
         val declaredType = (DeclaredType) typeOverride.type;
-        if (typeOverride.children.size() == 0) {
+        if (typeOverride.children.isEmpty()) {
             return whenNonGenericType(declaredType, typeOverride.type);
         }
 

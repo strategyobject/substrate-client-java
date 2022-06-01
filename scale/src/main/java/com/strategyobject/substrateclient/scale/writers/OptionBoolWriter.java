@@ -15,7 +15,7 @@ public class OptionBoolWriter implements ScaleWriter<Optional<Boolean>> {
 
         if (!value.isPresent()) {
             stream.write(0);
-        } else if (value.get()) {
+        } else if (Boolean.TRUE.equals(value.get())) {
             stream.write(1);
         } else {
             stream.write(2);

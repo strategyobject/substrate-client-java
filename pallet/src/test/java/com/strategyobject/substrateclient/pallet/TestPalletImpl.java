@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.pallet;
 
-import com.strategyobject.substrateclient.rpc.Rpc;
+import com.strategyobject.substrateclient.rpc.api.section.State;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TestPalletImpl implements TestPallet {
-    private final Rpc rpc;
+    private final State state;
 }

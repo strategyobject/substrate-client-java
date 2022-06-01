@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.sections;
 
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcInterface;
+import com.strategyobject.substrateclient.rpc.annotation.RpcInterface;
 
 import java.util.concurrent.CompletableFuture;
 

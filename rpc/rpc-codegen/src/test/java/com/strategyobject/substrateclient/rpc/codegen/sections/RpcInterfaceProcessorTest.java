@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.rpc.codegen.sections;
 
 import com.google.testing.compile.JavaFileObjects;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.rpc.annotation.RpcCall;
+import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 

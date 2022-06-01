@@ -1,0 +1,31 @@
+package com.strategyobject.substrateclient.rpc.encoders;
+
+import com.google.common.base.Preconditions;
+import com.strategyobject.substrateclient.rpc.EncoderPair;
+import com.strategyobject.substrateclient.rpc.RpcEncoder;
+import lombok.val;
+
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
+
+public class MapEncoder implements RpcEncoder<Map<?, ?>> {
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Object encode(Map<?, ?> source, EncoderPair<?>... encoders) {
+        if (source == null) {
+            return null;
+        }
+
+        Preconditions.checkArgument(encoders != null && encoders.length == 2);
+        Preconditions.checkNotNull(encoders[0]);
+        Preconditions.checkNotNull(encoders[1]);
+        val keyEncoder = (RpcEncoder) encoders[0].getEncoderOrThrow();
+        val valueEncoder = (RpcEncoder) encoders[1].getEncoderOrThrow();
+
+        return source.entrySet()
+                .stream()
+                .collect(toMap(e -> keyEncoder.encode(e.getKey()),
+                        e -> valueEncoder.encode(e.getValue())));
+    }
+}

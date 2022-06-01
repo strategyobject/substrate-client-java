@@ -1,5 +1,8 @@
 dependencies {
+    implementation project(':common')
+    implementation project(':scale')
     implementation project(':transport')
-    implementation project(':rpc:rpc-sections')
-    implementation project(':rpc:rpc-core')
+
+    testImplementation project(':tests')
+    testImplementation 'com.google.code.gson:gson:2.9.0'
 }

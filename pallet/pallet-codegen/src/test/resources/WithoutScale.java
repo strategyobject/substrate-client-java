@@ -1,13 +1,13 @@
-import com.strategyobject.substrateclient.pallet.annotations.Pallet;
-import com.strategyobject.substrateclient.pallet.annotations.Storage;
-import com.strategyobject.substrateclient.pallet.annotations.StorageHasher;
-import com.strategyobject.substrateclient.pallet.annotations.StorageKey;
-import com.strategyobject.substrateclient.storage.StorageNMap;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.pallet.annotation.Storage;
+import com.strategyobject.substrateclient.pallet.annotation.StorageHasher;
+import com.strategyobject.substrateclient.pallet.annotation.StorageKey;
+import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 
 @Pallet("Test")
 public interface WithoutScale {
     @Storage(value = "Test", keys = {
-            @StorageKey(hasher = StorageHasher.Blake2B128Concat)
+            @StorageKey(hasher = StorageHasher.BLAKE2_128_CONCAT)
     })
     StorageNMap<String> test();
 }

@@ -1,0 +1,121 @@
+package com.strategyobject.substrateclient.rpc.api.section;
+
+import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.section.Chain;
+import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
+import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
+import com.strategyobject.substrateclient.transport.ws.WsProvider;
+import lombok.val;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.Network;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+@Testcontainers
+class ChainTests {
+    private static final int WAIT_TIMEOUT = 10;
+    private static final Network network = Network.newNetwork();
+
+    @Container
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0)
+            .withNetwork(network);
+
+    @Test
+    void getFinalizedHead() throws Exception {
+        try (val wsProvider = connect()) {
+            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val result = chain.getFinalizedHead().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
+        }
+    }
+
+    @Test
+    void subscribeNewHeads() throws Exception {
+        try (val wsProvider = connect()) {
+            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+
+            val blockCount = new AtomicInteger(0);
+            val blockHash = new AtomicReference<BlockHash>(null);
+
+            val unsubscribeFunc = chain
+                    .subscribeNewHeads((e, h) -> {
+                        if (blockCount.incrementAndGet() > 1) {
+                            blockHash.compareAndSet(null, h.getParentHash());
+                        }
+                    })
+                    .get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            await()
+                    .atMost(WAIT_TIMEOUT * 2, TimeUnit.SECONDS)
+                    .untilAtomic(blockCount, greaterThan(2));
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getData()));
+
+            val result = unsubscribeFunc.get().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            Assertions.assertTrue(result);
+        }
+    }
+
+    @Test
+    void getBlockHash() throws Exception {
+        try (val wsProvider = connect()) {
+            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val result = chain.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
+        }
+    }
+
+    @Test
+    void getBlock() throws Exception {
+        try (val wsProvider = connect()) {
+            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+
+            val height = new AtomicInteger(0);
+            chain.subscribeNewHeads((e, header) -> {
+                if (header != null) {
+                    height.set(header.getNumber().getValue().intValue());
+                }
+            });
+
+            await()
+                    .atMost(WAIT_TIMEOUT * 3, TimeUnit.SECONDS)
+                    .untilAtomic(height, greaterThan(1));
+
+            val number = height.get();
+            val blockHash = chain.getBlockHash(number).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.getData()));
+
+            val block = chain.getBlock(blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getData()));
+            Assertions.assertEquals(number, block.getBlock().getHeader().getNumber().getValue().intValue());
+        }
+    }
+
+    private WsProvider connect() throws ExecutionException, InterruptedException, TimeoutException {
+        val wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .disableAutoConnect()
+                .build();
+
+        wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+        return wsProvider;
+    }
+}

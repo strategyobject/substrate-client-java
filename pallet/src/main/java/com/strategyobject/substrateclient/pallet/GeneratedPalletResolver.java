@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.pallet;
 
-import com.strategyobject.substrateclient.pallet.annotations.Pallet;
-import com.strategyobject.substrateclient.rpc.Rpc;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.rpc.api.section.State;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -9,7 +9,7 @@ import lombok.val;
 @RequiredArgsConstructor(staticName = "with")
 public class GeneratedPalletResolver implements PalletResolver {
     private static final String CLASS_NAME_TEMPLATE = "%sImpl";
-    private final @NonNull Rpc rpc;
+    private final @NonNull State state;
 
     @Override
     public <T> T resolve(Class<T> interfaceClass) {
@@ -23,9 +23,9 @@ public class GeneratedPalletResolver implements PalletResolver {
         Class<?> implClazz;
         try {
             implClazz = Class.forName(String.format(CLASS_NAME_TEMPLATE, interfaceClass.getCanonicalName()));
-            val ctor = implClazz.getConstructor(Rpc.class);
+            val ctor = implClazz.getConstructor(State.class);
 
-            return interfaceClass.cast(ctor.newInstance(rpc));
+            return interfaceClass.cast(ctor.newInstance(state));
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

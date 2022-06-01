@@ -1,12 +1,12 @@
 package com.strategyobject.substrateclient.api;
 
-import com.strategyobject.substrateclient.pallet.annotations.Pallet;
-import com.strategyobject.substrateclient.pallet.annotations.Storage;
-import com.strategyobject.substrateclient.pallet.annotations.StorageHasher;
-import com.strategyobject.substrateclient.pallet.annotations.StorageKey;
-import com.strategyobject.substrateclient.rpc.types.BlockHash;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
-import com.strategyobject.substrateclient.storage.StorageNMap;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.pallet.annotation.Storage;
+import com.strategyobject.substrateclient.pallet.annotation.StorageHasher;
+import com.strategyobject.substrateclient.pallet.annotation.StorageKey;
+import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
+import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
 
 @Pallet("System")
 public interface SystemPallet {
@@ -15,7 +15,7 @@ public interface SystemPallet {
             keys = {
                     @StorageKey(
                             type = @Scale(Integer.class),
-                            hasher = StorageHasher.TwoX64Concat
+                            hasher = StorageHasher.TWOX_64_CONCAT
                     )
             })
     StorageNMap<BlockHash> blockHash();

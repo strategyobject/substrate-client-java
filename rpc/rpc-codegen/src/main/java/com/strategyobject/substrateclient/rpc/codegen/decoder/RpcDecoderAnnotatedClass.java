@@ -4,15 +4,15 @@ import com.squareup.javapoet.*;
 import com.strategyobject.substrateclient.common.codegen.JavaPoet;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.DecoderPair;
-import com.strategyobject.substrateclient.rpc.core.RpcDecoder;
-import com.strategyobject.substrateclient.rpc.core.annotations.AutoRegister;
-import com.strategyobject.substrateclient.rpc.core.annotations.Ignore;
-import com.strategyobject.substrateclient.rpc.core.registries.RpcDecoderRegistry;
+import com.strategyobject.substrateclient.rpc.DecoderPair;
+import com.strategyobject.substrateclient.rpc.RpcDecoder;
+import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
+import com.strategyobject.substrateclient.rpc.annotation.Ignore;
+import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
-import com.strategyobject.substrateclient.scale.annotations.ScaleGeneric;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
 import com.strategyobject.substrateclient.scale.codegen.reader.ReaderCompositor;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
@@ -39,7 +39,7 @@ import static com.strategyobject.substrateclient.rpc.codegen.Constants.*;
 import static java.util.stream.Collectors.toMap;
 
 public class RpcDecoderAnnotatedClass {
-    private final static String DECODER_NAME_TEMPLATE = "%sDecoder";
+    private static final String DECODER_NAME_TEMPLATE = "%sDecoder";
     private static final String VALUE_ARG = "value";
     private static final String RESULT_VAR = "result";
     private static final String MAP_VAR = "sourceMap";
@@ -56,7 +56,7 @@ public class RpcDecoderAnnotatedClass {
                 .collect(toMap(i -> typeParameters.get(i).toString(), Function.identity()));
         this.fields = classElement.getEnclosedElements().stream()
                 .filter(e -> e.getKind() == ElementKind.FIELD)
-                .map(e -> (VariableElement) e)
+                .map(VariableElement.class::cast)
                 .collect(Collectors.toList());
     }
 

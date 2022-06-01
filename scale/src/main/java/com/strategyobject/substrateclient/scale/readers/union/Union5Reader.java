@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers.union;
 
-import com.strategyobject.substrateclient.types.union.Union5;
+import com.strategyobject.substrateclient.common.types.union.Union5;
 
 public class Union5Reader extends BaseUnionReader<Union5<?, ?, ?, ?, ?>> {
     public Union5Reader() {

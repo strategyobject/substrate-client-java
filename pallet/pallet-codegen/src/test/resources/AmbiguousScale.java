@@ -1,17 +1,17 @@
-import com.strategyobject.substrateclient.pallet.annotations.Pallet;
-import com.strategyobject.substrateclient.pallet.annotations.Storage;
-import com.strategyobject.substrateclient.pallet.annotations.StorageHasher;
-import com.strategyobject.substrateclient.pallet.annotations.StorageKey;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.pallet.annotation.Storage;
+import com.strategyobject.substrateclient.pallet.annotation.StorageHasher;
+import com.strategyobject.substrateclient.pallet.annotation.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleType;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
-import com.strategyobject.substrateclient.scale.annotations.ScaleGeneric;
-import com.strategyobject.substrateclient.storage.StorageNMap;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
+import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 
 @Pallet("Test")
 public interface AmbiguousScale {
     @Storage(value = "Test", keys = {
             @StorageKey(
-                    hasher = StorageHasher.Blake2B128Concat,
+                    hasher = StorageHasher.BLAKE2_128_CONCAT,
                     type = @Scale(ScaleType.I32.class),
                     generic = @ScaleGeneric(
                             template = "Option<I32>",

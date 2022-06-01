@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers.union;
 
-import com.strategyobject.substrateclient.types.union.Union11;
+import com.strategyobject.substrateclient.common.types.union.Union11;
 
 public class Union11Writer extends BaseUnionWriter<Union11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> {
     public Union11Writer() {

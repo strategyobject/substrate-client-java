@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.scale;
 
-import com.strategyobject.substrateclient.scale.annotations.ScaleReader;
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
-import com.strategyobject.substrateclient.types.Result;
+import com.strategyobject.substrateclient.common.types.Result;
+import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 
 import java.math.BigInteger;
 import java.util.List;

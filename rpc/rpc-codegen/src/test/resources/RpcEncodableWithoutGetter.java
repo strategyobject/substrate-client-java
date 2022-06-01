@@ -1,5 +1,5 @@
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcEncoder;
-import com.strategyobject.substrateclient.rpc.core.annotations.Scale;
+import com.strategyobject.substrateclient.rpc.annotation.RpcEncoder;
+import com.strategyobject.substrateclient.rpc.annotation.Scale;
 
 @RpcEncoder
 public class RpcEncodableWithoutGetter<T> {

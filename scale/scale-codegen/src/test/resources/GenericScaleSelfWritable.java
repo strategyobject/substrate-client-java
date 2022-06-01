@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale;
 
-import com.strategyobject.substrateclient.scale.annotations.Scale;
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 
 @ScaleWriter
 public class GenericScaleSelfWritable<

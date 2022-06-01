@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-public class ArrayReadersTest {
+class ArrayReadersTest {
 
     @TestFactory
     Stream<DynamicTest> read() {

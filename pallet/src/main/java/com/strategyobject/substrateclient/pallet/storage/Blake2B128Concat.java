@@ -1,0 +1,51 @@
+package com.strategyobject.substrateclient.pallet.storage;
+
+import com.strategyobject.substrateclient.common.types.Size;
+import com.strategyobject.substrateclient.crypto.Hasher;
+import lombok.NonNull;
+
+import java.nio.ByteBuffer;
+
+/**
+ * Blake2 128 Concat hash algorithm.
+ * This algorithm is cryptographic and transparent.
+ * It's used to generate storage map's key.
+ */
+public class Blake2B128Concat implements KeyHashingAlgorithm {
+    private static final int BLAKE_128_HASH_SIZE = 16;
+    private static volatile Blake2B128Concat instance;
+
+    /**
+     * @return the instance of the algorithm.
+     */
+    public static Blake2B128Concat getInstance() {
+        if (instance == null) {
+            synchronized (Blake2B128Concat.class) {
+                if (instance == null) {
+                    instance = new Blake2B128Concat();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * @param encodedKey binary data that represents the encoded key.
+     * @return hash for given key.
+     */
+    @Override
+    public byte[] getHash(byte @NonNull [] encodedKey) {
+        return ByteBuffer.allocate(BLAKE_128_HASH_SIZE + encodedKey.length)
+                .put(Hasher.blake2(Size.of128, encodedKey))
+                .put(encodedKey)
+                .array();
+    }
+
+    /**
+     * @return size of the algorithm.
+     */
+    @Override
+    public int hashSize() {
+        return BLAKE_128_HASH_SIZE;
+    }
+}

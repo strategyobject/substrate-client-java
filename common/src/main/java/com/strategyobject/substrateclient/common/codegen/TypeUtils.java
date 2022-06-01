@@ -48,4 +48,7 @@ public class TypeUtils {
 
         throw new IllegalArgumentException(String.format("Cannot populate the name of %s", type));
     }
+
+    private TypeUtils() {
+    }
 }

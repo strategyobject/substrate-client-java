@@ -43,7 +43,7 @@ public class ProcessorContext {
         return type.getKind().isPrimitive() ||
                 ((TypeElement) typeUtils.asElement(type))
                         .getTypeParameters()
-                        .size() == 0;
+                        .isEmpty();
     }
 
     public TypeMirror erasure(@NonNull TypeMirror type) {
