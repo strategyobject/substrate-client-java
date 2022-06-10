@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.readers;
 
+import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.common.utils.HexConverter;
-import com.strategyobject.substrateclient.types.Result;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;

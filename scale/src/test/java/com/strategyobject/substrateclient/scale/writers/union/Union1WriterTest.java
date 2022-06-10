@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.writers.union;
 
+import com.strategyobject.substrateclient.common.types.union.Union1;
 import com.strategyobject.substrateclient.scale.writers.I8Writer;
-import com.strategyobject.substrateclient.types.union.Union1;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;

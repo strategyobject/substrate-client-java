@@ -3,8 +3,8 @@ package com.strategyobject.substrateclient.rpc.codegen.sections;
 import com.squareup.javapoet.TypeSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcSubscription;
+import com.strategyobject.substrateclient.rpc.annotation.RpcCall;
+import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
 import lombok.NonNull;
 import lombok.val;
 

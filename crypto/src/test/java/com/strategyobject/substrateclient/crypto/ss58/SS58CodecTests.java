@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SS58CodecTests {
+class SS58CodecTests {
     @ParameterizedTest
     @CsvSource(value = {
             "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY:0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d:42",

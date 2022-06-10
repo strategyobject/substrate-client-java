@@ -1,15 +1,15 @@
 package com.strategyobject.substrateclient.scale.registries;
 
 import com.strategyobject.substrateclient.common.reflection.Scanner;
+import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.common.types.Result;
+import com.strategyobject.substrateclient.common.types.Unit;
+import com.strategyobject.substrateclient.common.types.union.*;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleType;
-import com.strategyobject.substrateclient.scale.annotations.AutoRegister;
+import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.readers.*;
 import com.strategyobject.substrateclient.scale.readers.union.*;
-import com.strategyobject.substrateclient.types.Array;
-import com.strategyobject.substrateclient.types.Result;
-import com.strategyobject.substrateclient.types.Unit;
-import com.strategyobject.substrateclient.types.union.*;
 import lombok.NonNull;
 import lombok.val;
 import org.slf4j.Logger;
@@ -66,7 +66,7 @@ public final class ScaleReaderRegistry {
         register(new ShortArrayReader(), short[].class);
         register(new IntArrayReader(), int[].class);
         register(new LongArrayReader(), long[].class);
-        register(new VoidReader(), Void.class);
+        register(new VoidReader(), Void.class, void.class);
         register(new UnitReader(), Unit.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);

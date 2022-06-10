@@ -1,6 +1,5 @@
 dependencies {
     implementation project(':common')
-    implementation project(':types')
 
     testImplementation project(':tests')
 }

@@ -43,7 +43,7 @@ class EventEmitterTest {
 
         emitter.emit(TestEvents.TWO);
 
-        assertEquals(hitCount[0], 0);
+        assertEquals(0, hitCount[0]);
     }
 
     @Test

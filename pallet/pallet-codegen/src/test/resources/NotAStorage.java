@@ -1,15 +1,15 @@
-import com.strategyobject.substrateclient.pallet.annotations.Pallet;
-import com.strategyobject.substrateclient.pallet.annotations.Storage;
-import com.strategyobject.substrateclient.pallet.annotations.StorageHasher;
-import com.strategyobject.substrateclient.pallet.annotations.StorageKey;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.pallet.annotation.Storage;
+import com.strategyobject.substrateclient.pallet.annotation.StorageHasher;
+import com.strategyobject.substrateclient.pallet.annotation.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleType;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
 
 @Pallet("Test")
 public interface NotAStorage {
     @Storage(value = "Test", keys = {
             @StorageKey(
-                    hasher = StorageHasher.Blake2B128Concat,
+                    hasher = StorageHasher.BLAKE2_128_CONCAT,
                     type = @Scale(ScaleType.I32.class)
             )
     })

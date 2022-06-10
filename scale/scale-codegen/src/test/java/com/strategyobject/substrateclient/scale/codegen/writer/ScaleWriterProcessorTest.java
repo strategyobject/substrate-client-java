@@ -1,7 +1,6 @@
 package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.google.testing.compile.JavaFileObjects;
-import com.strategyobject.substrateclient.scale.codegen.reader.ScaleReaderProcessor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 

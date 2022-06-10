@@ -1,4 +1,4 @@
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcEncoder;
+import com.strategyobject.substrateclient.rpc.annotation.RpcEncoder;
 
 @RpcEncoder
 public interface RpcEncodableInterface {

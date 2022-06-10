@@ -85,4 +85,7 @@ class Native {
     static native boolean verify(byte[] signature, byte[] message, byte[] publicKey) throws NativeException;
 
     static native byte[] agree(byte[] publicKey, byte[] secretKey) throws NativeException;
+
+    private Native() {
+    }
 }

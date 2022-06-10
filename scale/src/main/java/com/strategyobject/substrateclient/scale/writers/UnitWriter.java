@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.scale.writers;
 
 import com.google.common.base.Preconditions;
+import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.types.Unit;
 import lombok.NonNull;
 
 import java.io.OutputStream;

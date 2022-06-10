@@ -3,8 +3,8 @@ package com.strategyobject.substrateclient.rpc.codegen.decoder;
 import com.google.gson.Gson;
 import com.google.testing.compile.JavaFileObjects;
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestDecodable;
-import com.strategyobject.substrateclient.rpc.core.DecoderPair;
-import com.strategyobject.substrateclient.rpc.core.registries.RpcDecoderRegistry;
+import com.strategyobject.substrateclient.rpc.DecoderPair;
+import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
 import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RpcDecoderProcessorTests {
+class RpcDecoderProcessorTests {
     private final Gson gson = new Gson();
 
     @Test

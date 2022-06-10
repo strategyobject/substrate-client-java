@@ -20,7 +20,7 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-public class WsProviderProxyTest {
+class WsProviderProxyTest {
     static final Network network = Network.newNetwork();
 
     @Container

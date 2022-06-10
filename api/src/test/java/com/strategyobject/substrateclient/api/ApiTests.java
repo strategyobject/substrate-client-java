@@ -15,14 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Testcontainers
-public class ApiTests {
+class ApiTests {
     private static final int WAIT_TIMEOUT = 1000;
 
     @Container
     private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
 
     @Test
-    public void getSystemPalletAndCall() throws Exception { // TODO move the test out of the project
+    void getSystemPalletAndCall() throws Exception { // TODO move the test out of the project
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .build();

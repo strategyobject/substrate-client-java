@@ -10,11 +10,11 @@ import static com.google.testing.compile.Compiler.javac;
 class ScaleReaderProcessorTest {
     @Test
     void failsWhenWrongTemplate() {
-        val nameless = JavaFileObjects.forResource("WrongTemplate.java");
+        val clazz = JavaFileObjects.forResource("WrongTemplate.java");
 
         val compilation = javac()
                 .withProcessors(new ScaleReaderProcessor())
-                .compile(nameless);
+                .compile(clazz);
 
         assertThat(compilation).failed();
         assertThat(compilation)

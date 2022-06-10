@@ -5,7 +5,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.MethodSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcCall;
+import com.strategyobject.substrateclient.rpc.annotation.RpcCall;
 import lombok.NonNull;
 import lombok.val;
 
@@ -41,7 +41,7 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
 
     @Override
     protected void onProcessStarting(ProcessorContext context) {
-
+        // This should be empty
     }
 
     @Override
@@ -52,7 +52,7 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
                                          ProcessorContext context,
                                          BiFunction<TypeMirror, String, CodeBlock> decoder) {
         val rpcMethodName = String.format(RPC_METHOD_NAME_TEMPLATE, section, annotation.value());
-        val paramsArgument = method.getParameters().size() == 0 ? "" : String.format(", %s", PARAMS_VAR);
+        val paramsArgument = method.getParameters().isEmpty() ? "" : String.format(", %s", PARAMS_VAR);
 
         val isReturnVoid = isReturnVoid(method, context);
         val code = CodeBlock.builder()
@@ -82,6 +82,7 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
 
     @Override
     protected void onParametersVisited(ExecutableElement method) {
+        // This should be empty
     }
 
     @Override

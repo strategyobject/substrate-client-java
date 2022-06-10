@@ -1,5 +1,5 @@
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcDecoder;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
+import com.strategyobject.substrateclient.rpc.annotation.RpcDecoder;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
 
 @RpcDecoder
 public class RpcDecodable<T> {

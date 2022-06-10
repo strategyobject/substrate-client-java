@@ -3,11 +3,12 @@ package com.strategyobject.substrateclient.scale.codegen.writer;
 import com.google.auto.service.AutoService;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 import lombok.val;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.Set;
 
 import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_SELF_WRITABLE;
 
-@SupportedAnnotationTypes("com.strategyobject.substrateclient.scale.annotations.ScaleWriter")
+@SupportedAnnotationTypes("com.strategyobject.substrateclient.scale.annotation.ScaleWriter")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class ScaleWriterProcessor extends AbstractProcessor {
@@ -36,7 +37,7 @@ public class ScaleWriterProcessor extends AbstractProcessor {
             return false;
         }
 
-        for (val annotatedElement : roundEnv.getElementsAnnotatedWith(ScaleWriter.class)) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(ScaleWriter.class)) {
             if (annotatedElement.getKind() != ElementKind.CLASS) {
                 context.error(
                         annotatedElement,

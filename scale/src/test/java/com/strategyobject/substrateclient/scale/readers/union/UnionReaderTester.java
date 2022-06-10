@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.scale.readers.union;
 
+import com.strategyobject.substrateclient.common.types.union.Union;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.readers.U8Reader;
 import com.strategyobject.substrateclient.scale.readers.VoidReader;
-import com.strategyobject.substrateclient.types.union.Union;
 import lombok.SneakyThrows;
 import lombok.val;
 import lombok.var;

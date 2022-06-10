@@ -1,20 +1,19 @@
 rootProject.name = 'substrate-client'
 
-include 'api'
 include 'common'
+include 'tests'
+
 include 'crypto'
-include 'rpc'
-include 'rpc:rpc-codegen'
-include 'rpc:rpc-core'
-include 'rpc:rpc-types'
-include 'rpc:rpc-sections'
-include 'types'
 include 'scale'
 include 'scale:scale-codegen'
-include 'tests'
 include 'transport'
-include 'types'
-include 'storage'
+
+include 'rpc'
+include 'rpc:rpc-codegen'
+
+include 'rpc:rpc-api'
+
 include 'pallet'
 include 'pallet:pallet-codegen'
 
+include 'api'

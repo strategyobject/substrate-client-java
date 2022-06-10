@@ -3,17 +3,18 @@ package com.strategyobject.substrateclient.rpc.codegen.encoder;
 import com.google.auto.service.AutoService;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcEncoder;
+import com.strategyobject.substrateclient.rpc.annotation.RpcEncoder;
 import lombok.val;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
 import java.util.Set;
 
-@SupportedAnnotationTypes("com.strategyobject.substrateclient.rpc.core.annotations.RpcEncoder")
+@SupportedAnnotationTypes("com.strategyobject.substrateclient.rpc.annotation.RpcEncoder")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
 public class RpcEncoderProcessor extends AbstractProcessor {
@@ -34,7 +35,7 @@ public class RpcEncoderProcessor extends AbstractProcessor {
             return false;
         }
 
-        for (val annotatedElement : roundEnv.getElementsAnnotatedWith(RpcEncoder.class)) {
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(RpcEncoder.class)) {
             if (annotatedElement.getKind() != ElementKind.CLASS) {
                 context.error(
                         annotatedElement,

@@ -1,0 +1,19 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':crypto')
+    implementation project(':rpc')
+    implementation project(':scale')
+    implementation project(':transport')
+
+    annotationProcessor project(':rpc:rpc-codegen')
+    annotationProcessor project(':scale:scale-codegen')
+
+    testImplementation project(':tests')
+
+    testAnnotationProcessor project(':scale:scale-codegen')
+
+    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
+    testImplementation 'org.testcontainers:testcontainers:1.17.1'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
+    testImplementation 'org.awaitility:awaitility:4.2.0'
+}

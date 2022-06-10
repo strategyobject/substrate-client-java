@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.rpc.codegen;
 
-import com.strategyobject.substrateclient.rpc.core.RpcSelfEncodable;
+import com.strategyobject.substrateclient.rpc.RpcSelfEncodable;
 
 public class Constants {
     public static final Class<?> RPC_SELF_ENCODABLE = RpcSelfEncodable.class;

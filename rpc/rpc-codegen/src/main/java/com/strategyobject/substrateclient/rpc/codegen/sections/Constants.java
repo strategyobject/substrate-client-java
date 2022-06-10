@@ -13,4 +13,7 @@ class Constants {
     public static final String UNSUBSCRIBE = "unsubscribe";
     static final String THEN_APPLY_ASYNC = "thenApplyAsync";
     static final String ACCEPT = "accept";
+
+    private Constants() {
+    }
 }

@@ -12,6 +12,6 @@ public class BoolWriter implements ScaleWriter<Boolean> {
     public void write(@NonNull Boolean value, @NonNull OutputStream stream, ScaleWriter<?>... writers) throws IOException {
         Preconditions.checkArgument(writers == null || writers.length == 0);
 
-        stream.write(value ? 1 : 0);
+        stream.write(Boolean.TRUE.equals(value) ? 1 : 0);
     }
 }

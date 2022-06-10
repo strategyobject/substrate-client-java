@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.scale.codegen;
 
 import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
-import com.strategyobject.substrateclient.scale.annotations.Default;
+import com.strategyobject.substrateclient.scale.annotation.Default;
 
 public class ScaleProcessorHelper {
     public static final Class<?> SCALE_SELF_WRITABLE = ScaleSelfWritable.class;
@@ -15,5 +15,8 @@ public class ScaleProcessorHelper {
 
     public static String getWriterName(String className) {
         return String.format(WRITER_NAME_TEMPLATE, className);
+    }
+
+    private ScaleProcessorHelper() {
     }
 }

@@ -1,10 +1,9 @@
 dependencies {
     implementation project(':common')
     implementation project(':rpc')
-    implementation project(':types')
+    implementation project(':rpc:rpc-api')
     implementation project(':scale')
     implementation project(':scale:scale-codegen')
-    implementation project(':storage')
     implementation project(':pallet')
 
     implementation 'com.squareup:javapoet:1.13.0'

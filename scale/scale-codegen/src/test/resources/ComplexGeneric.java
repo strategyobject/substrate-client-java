@@ -1,10 +1,10 @@
 package com.strategyobject.substrateclient.scale;
 
+import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.scale.ScaleType.Vec;
-import com.strategyobject.substrateclient.scale.annotations.ScaleReader;
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
-import com.strategyobject.substrateclient.scale.annotations.*;
-import com.strategyobject.substrateclient.types.Result;
+import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
+import com.strategyobject.substrateclient.scale.annotation.*;
 
 import java.util.List;
 import java.util.Map;

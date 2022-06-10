@@ -3,11 +3,11 @@ use jni::{
     objects::JClass,
     sys::{jboolean, jbyteArray},
 };
+use std::any::Any;
+use std::ops::Deref;
+use std::panic::catch_unwind;
 
 use crate::sr25519::*;
-use std::panic::catch_unwind;
-use std::ops::Deref;
-use std::any::Any;
 
 #[no_mangle]
 pub extern "system" fn Java_com_strategyobject_substrateclient_crypto_sr25519_Native_deriveKeyPairHard(

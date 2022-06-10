@@ -1,19 +1,21 @@
 dependencies {
     implementation project(':common')
+    implementation project(':crypto')
     implementation project(':pallet')
     implementation project(':rpc')
-    implementation project(':rpc:rpc-core')
-    implementation project(':rpc:rpc-sections')
-    implementation project(':rpc:rpc-types')
+    implementation project(':rpc:rpc-api')
     implementation project(':scale')
-    implementation project(':storage')
     implementation project(':transport')
-    implementation project(':types')
+
+    annotationProcessor project(':pallet:pallet-codegen')
+    annotationProcessor project(':rpc:rpc-codegen')
 
     testImplementation project(':tests')
 
+    testAnnotationProcessor project(':pallet:pallet-codegen')
+
+    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
     testImplementation 'org.testcontainers:testcontainers:1.17.1'
     testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
-
-    testAnnotationProcessor project(':pallet:pallet-codegen')
+    testImplementation 'org.awaitility:awaitility:4.2.0'
 }

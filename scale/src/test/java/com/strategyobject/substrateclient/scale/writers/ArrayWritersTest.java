@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ArrayWritersTest {
+class ArrayWritersTest {
     @TestFactory
     Stream<DynamicTest> write() {
         val Array2DWriter = new ArrayWriter().inject(

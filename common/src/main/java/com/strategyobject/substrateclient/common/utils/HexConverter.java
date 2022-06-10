@@ -50,4 +50,7 @@ public class HexConverter {
 
         return bytes;
     }
+
+    private HexConverter() {
+    }
 }

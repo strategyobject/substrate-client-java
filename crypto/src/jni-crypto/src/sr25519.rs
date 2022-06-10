@@ -2,10 +2,9 @@
 // Only `#[wasm_bindgen]` and `use wasm_bindgen::prelude::*;` were removed.
 
 use curve25519_dalek::scalar::Scalar;
-
 use schnorrkel::{
-    ExpansionMode, Keypair, MiniSecretKey, PublicKey, SecretKey, Signature,
-    derive::{Derivation, ChainCode, CHAIN_CODE_LENGTH},
+    derive::{CHAIN_CODE_LENGTH, ChainCode, Derivation}, ExpansionMode, Keypair, MiniSecretKey, PublicKey, SecretKey,
+    Signature,
 };
 
 // We must make sure that this is the same as declared in the substrate source code.
@@ -150,9 +149,10 @@ pub mod tests {
     extern crate rand;
     extern crate schnorrkel;
 
-    use super::*;
     use hex_literal::hex;
-    use schnorrkel::{SIGNATURE_LENGTH, KEYPAIR_LENGTH, SECRET_KEY_LENGTH};
+    use schnorrkel::{KEYPAIR_LENGTH, SECRET_KEY_LENGTH, SIGNATURE_LENGTH};
+
+    use super::*;
 
     fn generate_random_seed() -> Vec<u8> {
         (0..32).map(|_| rand::random::<u8>()).collect()

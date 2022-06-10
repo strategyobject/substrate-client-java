@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HexConverterTests {
+class HexConverterTests {
     @TestFactory
     Stream<DynamicTest> toHex() {
         return TestSuite.of(

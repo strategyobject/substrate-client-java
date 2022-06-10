@@ -1,10 +1,10 @@
 package com.strategyobject.substrateclient.scale;
 
+import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.scale.ScaleType.*;
-import com.strategyobject.substrateclient.scale.annotations.ScaleReader;
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
-import com.strategyobject.substrateclient.scale.annotations.*;
-import com.strategyobject.substrateclient.types.Result;
+import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
+import com.strategyobject.substrateclient.scale.annotation.*;
 
 import java.lang.String;
 import java.math.BigInteger;
@@ -86,7 +86,7 @@ public class Annotated<T1, T2, T3> {
                     @Scale(ScaleType.String.class)
             }
     )
-    private com.strategyobject.substrateclient.types.union.Union3<Integer, Boolean, String> testUnion;
+    private com.strategyobject.substrateclient.common.types.union.Union3<Integer, Boolean, String> testUnion;
 
     @ScaleGeneric(
             template = "Vec<i32>",
@@ -245,11 +245,11 @@ public class Annotated<T1, T2, T3> {
         this.testU128 = testU128;
     }
 
-    public com.strategyobject.substrateclient.types.union.Union3<Integer, Boolean, String> getTestUnion() {
+    public com.strategyobject.substrateclient.common.types.union.Union3<Integer, Boolean, String> getTestUnion() {
         return testUnion;
     }
 
-    public void setTestUnion(com.strategyobject.substrateclient.types.union.Union3<Integer, Boolean, String> testUnion) {
+    public void setTestUnion(com.strategyobject.substrateclient.common.types.union.Union3<Integer, Boolean, String> testUnion) {
         this.testUnion = testUnion;
     }
 

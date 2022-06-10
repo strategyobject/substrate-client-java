@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.scale.writers.union;
 
+import com.strategyobject.substrateclient.common.types.union.Union;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.writers.I8Writer;
 import com.strategyobject.substrateclient.scale.writers.VoidWriter;
-import com.strategyobject.substrateclient.types.union.Union;
 import lombok.SneakyThrows;
 import lombok.val;
 import lombok.var;

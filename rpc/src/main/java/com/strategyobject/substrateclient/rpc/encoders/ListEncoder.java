@@ -1,0 +1,25 @@
+package com.strategyobject.substrateclient.rpc.encoders;
+
+import com.google.common.base.Preconditions;
+import com.strategyobject.substrateclient.rpc.EncoderPair;
+import com.strategyobject.substrateclient.rpc.RpcEncoder;
+import lombok.val;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ListEncoder implements RpcEncoder<List<?>> {
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Object encode(List<?> source, EncoderPair<?>... encoders) {
+        if (source == null) {
+            return null;
+        }
+
+        Preconditions.checkArgument(encoders != null && encoders.length == 1);
+        Preconditions.checkNotNull(encoders[0]);
+        val nestedEncoder = (RpcEncoder) encoders[0].getEncoderOrThrow();
+
+        return source.stream().map(nestedEncoder::encode).collect(Collectors.toList());
+    }
+}

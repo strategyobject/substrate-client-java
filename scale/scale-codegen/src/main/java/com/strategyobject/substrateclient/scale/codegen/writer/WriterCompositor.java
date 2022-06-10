@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.scale.codegen.writer;
 import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
-import com.strategyobject.substrateclient.types.Array;
+import com.strategyobject.substrateclient.common.types.Array;
 import lombok.NonNull;
 import lombok.var;
 

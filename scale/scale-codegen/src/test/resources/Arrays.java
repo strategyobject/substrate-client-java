@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.scale;
 
-import com.strategyobject.substrateclient.scale.annotations.Scale;
-import com.strategyobject.substrateclient.scale.annotations.ScaleGeneric;
-import com.strategyobject.substrateclient.scale.annotations.ScaleReader;
-import com.strategyobject.substrateclient.scale.annotations.ScaleWriter;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
+import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 
 import java.util.List;
 import java.util.Optional;

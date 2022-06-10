@@ -4,15 +4,15 @@ import com.squareup.javapoet.*;
 import com.strategyobject.substrateclient.common.codegen.JavaPoet;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
-import com.strategyobject.substrateclient.rpc.core.EncoderPair;
-import com.strategyobject.substrateclient.rpc.core.RpcEncoder;
-import com.strategyobject.substrateclient.rpc.core.annotations.AutoRegister;
-import com.strategyobject.substrateclient.rpc.core.annotations.Ignore;
-import com.strategyobject.substrateclient.rpc.core.registries.RpcEncoderRegistry;
+import com.strategyobject.substrateclient.rpc.EncoderPair;
+import com.strategyobject.substrateclient.rpc.RpcEncoder;
+import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
+import com.strategyobject.substrateclient.rpc.annotation.Ignore;
+import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.annotations.Scale;
-import com.strategyobject.substrateclient.scale.annotations.ScaleGeneric;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
 import com.strategyobject.substrateclient.scale.codegen.writer.WriterCompositor;
 import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
@@ -56,7 +56,7 @@ public class RpcEncoderAnnotatedClass {
                 .collect(toMap(i -> typeParameters.get(i).toString(), Function.identity()));
         fields = classElement.getEnclosedElements().stream()
                 .filter(e -> e.getKind() == ElementKind.FIELD)
-                .map(e -> (VariableElement) e)
+                .map(VariableElement.class::cast)
                 .collect(Collectors.toList());
     }
 

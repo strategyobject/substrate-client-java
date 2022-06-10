@@ -1,14 +1,16 @@
 package com.strategyobject.substrateclient.scale.registries;
 
 import com.strategyobject.substrateclient.common.reflection.Scanner;
+import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.common.types.Result;
+import com.strategyobject.substrateclient.common.types.Unit;
+import com.strategyobject.substrateclient.common.types.union.*;
 import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.annotations.AutoRegister;
+import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.writers.*;
 import com.strategyobject.substrateclient.scale.writers.union.*;
-import com.strategyobject.substrateclient.types.*;
-import com.strategyobject.substrateclient.types.union.*;
 import lombok.NonNull;
 import lombok.val;
 import org.slf4j.Logger;
@@ -65,11 +67,9 @@ public final class ScaleWriterRegistry {
         register(new ShortArrayWriter(), short[].class);
         register(new IntArrayWriter(), int[].class);
         register(new LongArrayWriter(), long[].class);
-        register(new VoidWriter(), Void.class);
+        register(new VoidWriter(), Void.class, void.class);
         register(new UnitWriter(), Unit.class);
         register(new SelfWriter(), ScaleSelfWritable.class);
-        register(new PublicKeyWriter(), PublicKey.class);
-        register(new SignatureDataWriter(), SignatureData.class);
 
         registerAnnotatedFrom(ROOT_PREFIX);
     }

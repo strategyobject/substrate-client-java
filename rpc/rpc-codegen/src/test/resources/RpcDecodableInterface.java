@@ -1,4 +1,4 @@
-import com.strategyobject.substrateclient.rpc.core.annotations.RpcDecoder;
+import com.strategyobject.substrateclient.rpc.annotation.RpcDecoder;
 
 @RpcDecoder
 public interface RpcDecodableInterface {

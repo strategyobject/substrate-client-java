@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers.union;
 
-import com.strategyobject.substrateclient.types.union.Union9;
+import com.strategyobject.substrateclient.common.types.union.Union9;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;

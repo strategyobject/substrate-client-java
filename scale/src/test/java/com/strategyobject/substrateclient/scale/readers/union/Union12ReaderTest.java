@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers.union;
 
-import com.strategyobject.substrateclient.types.union.Union12;
+import com.strategyobject.substrateclient.common.types.union.Union12;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 

@@ -12,7 +12,7 @@ import java.util.Random;
 import static com.strategyobject.substrateclient.crypto.sr25519.Native.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class NativeTests {
+class NativeTests {
     @Test
     void deriveKeyPairHard() throws NativeException {
         val aliceChainCode = HexConverter.toBytes("14416c6963650000000000000000000000000000000000000000000000000000");

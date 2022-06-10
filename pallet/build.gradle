@@ -1,4 +1,16 @@
 dependencies {
-    implementation project(':scale')
+    implementation project(':common')
+    implementation project(':crypto')
     implementation project(':rpc')
+    implementation project(':rpc:rpc-api')
+    implementation project(':scale')
+
+    testImplementation project(':tests')
+    testCompileOnly project(':transport')
+
+    testAnnotationProcessor project(':rpc:rpc-codegen')
+
+    testImplementation 'org.testcontainers:testcontainers:1.17.1'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
 }

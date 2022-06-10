@@ -1,8 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.sections;
 
+import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestSection;
-import com.strategyobject.substrateclient.rpc.core.RpcGeneratedSectionFactory;
-import com.strategyobject.substrateclient.rpc.core.RpcInterfaceInitializationException;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import com.strategyobject.substrateclient.transport.RpcBoolean;
 import com.strategyobject.substrateclient.transport.RpcObject;
@@ -18,10 +17,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RpcSectionFactoryTest {
+class RpcSectionFactoryTest {
     // TODO move this test out of the project
     @Test
-    void createsRpcSectionAndCallsMethod() throws ExecutionException, InterruptedException, RpcInterfaceInitializationException {
+    void createsRpcSectionAndCallsMethod() throws ExecutionException, InterruptedException {
         val expected = true;
         val sendFuture = CompletableFuture.completedFuture((RpcObject) new RpcBoolean(expected));
         val provider = mock(ProviderInterface.class);
