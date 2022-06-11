@@ -22,8 +22,7 @@ public class SignedExtra<E extends Era> implements Extra, SignedExtension {
     @Ignore
     private final BlockHash eraBlock;
     private final E era;
-    @Scale(ScaleType.CompactBigInteger.class)
-    private final BigInteger nonce;
+    private final Index nonce;
     @Scale(ScaleType.CompactBigInteger.class)
     private final BigInteger tip;
 

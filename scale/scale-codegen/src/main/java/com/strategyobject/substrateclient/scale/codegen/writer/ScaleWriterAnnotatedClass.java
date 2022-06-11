@@ -116,7 +116,7 @@ public class ScaleWriterAnnotatedClass {
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;
-                if (field.getAnnotation(Ignore.class) == null) {
+                if (field.getAnnotation(Ignore.class) == null && !field.getModifiers().contains(Modifier.STATIC)) {
                     setField(methodSpec, field, scaleAnnotationParser, compositor);
                 }
             }

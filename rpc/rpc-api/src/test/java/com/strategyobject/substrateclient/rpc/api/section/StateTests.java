@@ -2,6 +2,7 @@ package com.strategyobject.substrateclient.rpc.api.section;
 
 import com.strategyobject.substrateclient.common.utils.HexConverter;
 import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.StorageKey;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
@@ -97,7 +98,7 @@ class StateTests {
     void getStorageAtBlock() throws Exception {
         try (val wsProvider = connect()) {
             val chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
-            val blockHash = chainSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val blockHash = chainSection.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
 
             val storageData = state.getStorage(storageKey, blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -123,7 +124,7 @@ class StateTests {
     void getStorageHashAt() throws Exception {
         try (val wsProvider = connect()) {
             val chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
-            val blockHash = chainSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val blockHash = chainSection.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
 
             val hash = state.getStorageHash(storageKey, blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -148,7 +149,7 @@ class StateTests {
     void getStorageSizeAt() throws Exception {
         try (val wsProvider = connect()) {
             val chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
-            val blockHash = chainSection.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val blockHash = chainSection.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
 
             val size = state.getStorageSize(storageKey, blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);

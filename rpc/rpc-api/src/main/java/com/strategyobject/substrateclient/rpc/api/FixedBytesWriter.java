@@ -6,6 +6,7 @@ import com.strategyobject.substrateclient.common.types.FixedBytes;
 import com.strategyobject.substrateclient.common.types.Size;
 import com.strategyobject.substrateclient.crypto.PublicKey;
 import com.strategyobject.substrateclient.crypto.SignatureData;
+import com.strategyobject.substrateclient.rpc.api.impl.Hash256;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import lombok.NonNull;
@@ -16,8 +17,9 @@ import java.io.OutputStream;
 @AutoRegister(
         types = {
                 AccountId.class,
-                BlockHash.class,
+                Hash256.class,
                 Hash.class,
+                BlockHash.class,
                 PublicKey.class,
                 SignatureData.class
         })

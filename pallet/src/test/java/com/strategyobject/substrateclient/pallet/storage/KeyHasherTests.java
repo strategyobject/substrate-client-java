@@ -4,6 +4,7 @@ import com.strategyobject.substrateclient.common.utils.HexConverter;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.impl.Hash256;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.readers.CompactIntegerReader;
@@ -44,7 +45,7 @@ class KeyHasherTests {
                         "0x4f9aea1afa791265fae359272badc1cf8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48"
                 ),
                 Arguments.of(
-                        BlockHash.fromBytes(HexConverter.toBytes("0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")),
+                        Hash256.fromBytes(HexConverter.toBytes("0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")),
                         ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
                         ScaleWriterRegistry.getInstance().resolve(BlockHash.class),
                         Identity.getInstance(),
@@ -115,7 +116,7 @@ class KeyHasherTests {
                         ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
                         ScaleWriterRegistry.getInstance().resolve(BlockHash.class),
                         Identity.getInstance(),
-                        BlockHash.fromBytes(HexConverter.toBytes("0xabcdef98765432100123456789abcdefabcdef98765432100123456789abcdef")),
+                        Hash256.fromBytes(HexConverter.toBytes("0xabcdef98765432100123456789abcdefabcdef98765432100123456789abcdef")),
                         0
                 ),
                 Arguments.of(

@@ -3,6 +3,7 @@ package com.strategyobject.substrateclient.pallet.storage;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
 import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
+import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
@@ -64,7 +65,7 @@ class StorageValueImplTests {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
             val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
 
-            val blockHash = chain.getBlockHash(0).get();
+            val blockHash = chain.getBlockHash(BlockNumber.GENESIS).get();
             val storage = StorageValueImpl.with(
                     state,
                     ScaleReaderRegistry.getInstance().resolve(AccountId.class),
