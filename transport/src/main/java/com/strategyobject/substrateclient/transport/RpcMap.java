@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public final class RpcMap extends RpcObject {
+public final class RpcMap implements RpcObject {
 
     private final Map<String, RpcObject> map;
 

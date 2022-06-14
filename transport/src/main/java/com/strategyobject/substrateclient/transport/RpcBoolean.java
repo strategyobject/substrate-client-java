@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.transport;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public final class RpcBoolean extends RpcObject {
+public final class RpcBoolean implements RpcObject {
 
     private final boolean value;
 

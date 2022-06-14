@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.transport;
 import java.util.List;
 import java.util.Map;
 
-public final class RpcNull extends RpcObject {
+public final class RpcNull implements RpcObject {
     @Override
     public boolean isNull() {
         return true;
