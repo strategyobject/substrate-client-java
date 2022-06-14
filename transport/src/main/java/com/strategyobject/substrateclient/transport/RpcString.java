@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.transport;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public final class RpcString extends RpcObject {
+public final class RpcString implements RpcObject {
 
     private final String value;
 

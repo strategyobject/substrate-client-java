@@ -7,6 +7,8 @@ import com.strategyobject.substrateclient.transport.*;
 import lombok.val;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,7 +27,7 @@ public class RpcObjectTypeAdapter extends TypeAdapter<RpcObject> {
             case BOOLEAN:
                 return new RpcBoolean(in.nextBoolean());
             case NUMBER:
-                return new RpcNumber(in.nextDouble());
+                return new RpcNumber(parseNumber(in));
             case STRING:
                 return new RpcString(in.nextString());
             case BEGIN_ARRAY:
@@ -47,5 +49,22 @@ public class RpcObjectTypeAdapter extends TypeAdapter<RpcObject> {
                 in.endObject();
                 return new RpcMap(map);
         }
+    }
+
+    private Number parseNumber(JsonReader in) throws IOException {
+        val value = in.nextString();
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException ignored) {
+            // Ignore
+        }
+
+        try {
+            return new BigInteger(value);
+        } catch (NumberFormatException ignored) {
+            // Ignore
+        }
+
+        return new BigDecimal(value);
     }
 }

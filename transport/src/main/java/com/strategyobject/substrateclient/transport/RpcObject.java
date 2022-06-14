@@ -3,76 +3,77 @@ package com.strategyobject.substrateclient.transport;
 import java.util.List;
 import java.util.Map;
 
-public abstract class RpcObject {
+public interface RpcObject {
 
-    RpcObject() {
-    }
-
-    public boolean isNull() {
+    default boolean isNull() {
         return false;
     }
 
-    public boolean isBoolean() {
+    default boolean isBoolean() {
         return false;
     }
 
-    public boolean isList() {
+    default boolean isList() {
         return false;
     }
 
-    public boolean isMap() {
+    default boolean isMap() {
         return false;
     }
 
-    public boolean isNumber() {
+    default boolean isNumber() {
         return false;
     }
 
-    public boolean isString() {
+    default boolean isString() {
         return false;
     }
 
-    public Boolean asBoolean() {
+    default Boolean asBoolean() {
         throw new IllegalStateException();
     }
 
-    public List<RpcObject> asList() {
+    default List<RpcObject> asList() {
         throw new IllegalStateException();
     }
 
-    public Map<String, RpcObject> asMap() {
+    default Map<String, RpcObject> asMap() {
         throw new IllegalStateException();
     }
 
-    public Number asNumber() {
+    default Number asNumber() {
         throw new IllegalStateException();
     }
 
-    public String asString() {
+    default String asString() {
         throw new IllegalStateException();
     }
 
-    public static RpcObject ofNull() {
+    static RpcObject ofNull() {
         return new RpcNull();
     }
 
-    public static RpcObject of(boolean value) {
+    static RpcObject of(boolean value) {
         return new RpcBoolean(value);
     }
 
-    public static RpcObject of(List<RpcObject> list) {
+    static RpcObject of(List<RpcObject> list) {
         return list == null ? new RpcNull() : new RpcList(list);
     }
 
-    public static RpcObject of(Map<String, RpcObject> map) {
+    static RpcObject of(Map<String, RpcObject> map) {
         return map == null ? new RpcNull() : new RpcMap(map);
     }
 
-    public static RpcObject of(Number value) {
+    static RpcObject of(long value) {
+        return new RpcNumber(value);
+    }
+
+    static RpcObject of(Number value) {
         return value == null ? new RpcNull() : new RpcNumber(value);
     }
 
-    public static RpcObject of(String value) {
+    static RpcObject of(String value) {
         return value == null ? new RpcNull() : new RpcString(value);
     }
 

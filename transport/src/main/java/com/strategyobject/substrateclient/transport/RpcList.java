@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public final class RpcList extends RpcObject {
+public final class RpcList implements RpcObject {
 
     private final List<RpcObject> list;
 
