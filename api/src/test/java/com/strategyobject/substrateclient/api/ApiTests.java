@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.api;
 
+import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -32,7 +33,7 @@ class ApiTests {
             val systemPallet = api.pallet(SystemPallet.class);
             val blockHash = systemPallet
                     .blockHash()
-                    .get(0)
+                    .get(BlockNumber.GENESIS)
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertNotNull(blockHash);

@@ -12,6 +12,5 @@ public class Header { // TODO add rest fields
     @Scale
     private BlockHash parentHash;
 
-    private Number number; /* TODO probably it would be better to change the type to BigInteger
-                                and support specific decoders */
+    private BlockNumber number;
 }

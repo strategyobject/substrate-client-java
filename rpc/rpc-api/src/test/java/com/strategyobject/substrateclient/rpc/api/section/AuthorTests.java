@@ -73,7 +73,7 @@ class AuthorTests {
     void submitExtrinsic() throws Exception {
         try (val wsProvider = connect()) {
             val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
-            val genesis = chain.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val genesis = chain.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val author = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
             Assertions.assertDoesNotThrow(() -> author.submitExtrinsic(createBalanceTransferExtrinsic(genesis, NONCE.getAndIncrement()))
@@ -85,7 +85,7 @@ class AuthorTests {
     void submitAndWatchExtrinsic() throws Exception {
         try (val wsProvider = connect()) {
             val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
-            val genesis = chain.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val genesis = chain.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val author = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
             val updateCount = new AtomicInteger(0);
@@ -128,7 +128,7 @@ class AuthorTests {
         val tip = 0;
         val call = new BalanceTransfer(moduleIndex, callIndex, AddressId.fromBytes(bobKeyPair().asPublicKey().getData()), BigInteger.valueOf(10));
 
-        val extra = new SignedExtra<>(specVersion, txVersion, genesis, genesis, new ImmortalEra(), BigInteger.valueOf(nonce), BigInteger.valueOf(tip));
+        val extra = new SignedExtra<>(specVersion, txVersion, genesis, genesis, new ImmortalEra(), Index.of(nonce), BigInteger.valueOf(tip));
         val signedPayload = new SignedPayload<>(call, extra);
         val keyRing = KeyRing.fromKeyPair(aliceKeyPair());
 

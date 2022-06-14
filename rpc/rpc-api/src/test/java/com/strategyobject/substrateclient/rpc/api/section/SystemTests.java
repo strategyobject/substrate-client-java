@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.rpc.api.section;
 import com.strategyobject.substrateclient.common.utils.HexConverter;
 import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
-import com.strategyobject.substrateclient.rpc.api.section.System;
+import com.strategyobject.substrateclient.rpc.api.Index;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -38,7 +38,7 @@ class SystemTests {
             val result = system.accountNextIndex(AccountId.fromBytes(alicePublicKey))
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            Assertions.assertEquals(0, result);
+            Assertions.assertEquals(Index.ZERO, result);
         }
     }
 }

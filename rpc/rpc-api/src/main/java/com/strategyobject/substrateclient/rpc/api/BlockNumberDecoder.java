@@ -8,13 +8,13 @@ import lombok.val;
 
 import java.math.BigInteger;
 
-@AutoRegister(types = Number.class)
-public class NumberDecoder extends AbstractDecoder<Number> {
+@AutoRegister(types = BlockNumber.class)
+public class BlockNumberDecoder extends AbstractDecoder<BlockNumber> {
     @Override
-    protected Number decodeNonNull(RpcObject value, DecoderPair<?>[] decoders) {
+    protected BlockNumber decodeNonNull(RpcObject value, DecoderPair<?>[] decoders) {
         val stringValue = value.asString();
         val number = new BigInteger(stringValue.substring(2), 16);
 
-        return Number.of(number);
+        return BlockNumber.of(number);
     }
 }

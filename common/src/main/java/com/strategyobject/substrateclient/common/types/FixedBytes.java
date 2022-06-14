@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @EqualsAndHashCode
-public abstract class FixedBytes<S extends Size> implements Fixed<S> {
+public abstract class FixedBytes<S extends Size> implements Fixed<S>, Bytes {
     @Getter
     private final byte[] data;
 

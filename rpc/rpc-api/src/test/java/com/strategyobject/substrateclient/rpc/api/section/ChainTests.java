@@ -2,7 +2,7 @@ package com.strategyobject.substrateclient.rpc.api.section;
 
 import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.section.Chain;
+import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class ChainTests {
@@ -75,7 +75,7 @@ class ChainTests {
     void getBlockHash() throws Exception {
         try (val wsProvider = connect()) {
             val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
-            val result = chain.getBlockHash(0).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val result = chain.getBlockHash().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
         }
@@ -98,14 +98,37 @@ class ChainTests {
                     .untilAtomic(height, greaterThan(1));
 
             val number = height.get();
-            val blockHash = chain.getBlockHash(number).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            val blockHash = chain.getBlockHash(BlockNumber.of(number)).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.getData()));
 
             val block = chain.getBlock(blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getData()));
-            Assertions.assertEquals(number, block.getBlock().getHeader().getNumber().getValue().intValue());
+            assertEquals(number, block.getBlock().getHeader().getNumber().getValue().intValue());
+        }
+    }
+
+    @Test
+    void getCurrentBlock() throws ExecutionException, InterruptedException, TimeoutException {
+        try (val wsProvider = connect()) {
+            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+
+            val height = new AtomicInteger(0);
+            chain.subscribeNewHeads((e, header) -> {
+                if (header != null) {
+                    height.set(header.getNumber().getValue().intValue());
+                }
+            });
+
+            await()
+                    .atMost(WAIT_TIMEOUT * 3, TimeUnit.SECONDS)
+                    .untilAtomic(height, greaterThan(2));
+
+            val block = chain.getBlock().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+
+            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getData()));
+            assertNotNull(block.getBlock().getHeader().getNumber());
         }
     }
 

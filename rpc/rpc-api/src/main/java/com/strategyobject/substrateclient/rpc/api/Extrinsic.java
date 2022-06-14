@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.util.Optional;
 
-// ScaleWriter must be overridden. It must be represented in hex string as a byte array of scale.
 @Getter
 public class Extrinsic<C extends Call, A extends Address, S extends Signature, E extends Extra>
         implements ScaleSelfWritable<Extrinsic<C, A, S, E>> {

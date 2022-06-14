@@ -5,6 +5,7 @@ import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
 import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
@@ -48,8 +49,8 @@ class StorageNMapImplTests {
                 state,
                 (ScaleReader<BlockHash>) ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
                 StorageKeyProvider.of("System", "BlockHash")
-                        .use(KeyHasher.with((ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(Integer.class),
-                                (ScaleReader<Integer>) ScaleReaderRegistry.getInstance().resolve(Integer.class),
+                        .use(KeyHasher.with((ScaleWriter<BlockNumber>) ScaleWriterRegistry.getInstance().resolve(BlockNumber.class),
+                                (ScaleReader<BlockNumber>) ScaleReaderRegistry.getInstance().resolve(BlockNumber.class),
                                 TwoX64Concat.getInstance())));
     }
 
@@ -74,10 +75,10 @@ class StorageNMapImplTests {
             assertNotNull(collection);
             assertEquals(1, collection.size());
 
-            val blockNumber = new AtomicReference<Integer>(null);
-            collection.iterator().forEachRemaining(q -> q.consume((o -> blockNumber.set((Integer) o.get(0)))));
+            val blockNumber = new AtomicReference<BlockNumber>(null);
+            collection.iterator().forEachRemaining(q -> q.consume((o -> blockNumber.set((BlockNumber) o.get(0)))));
 
-            assertEquals(0, blockNumber.get());
+            assertEquals(BlockNumber.GENESIS, blockNumber.get());
 
             val blocks = collection.multi().execute().get();
             val list = new ArrayList<>();
@@ -101,7 +102,7 @@ class StorageNMapImplTests {
             val storageMap = newSystemBlockHashStorage(state);
 
             val getKey = storageValue.query();
-            val getHash = storageMap.query(0);
+            val getHash = storageMap.query(BlockNumber.GENESIS);
 
             val multi = getKey.join(getHash);
             val collection = multi.execute().get();
@@ -110,7 +111,7 @@ class StorageNMapImplTests {
                     SS58Codec.decode(
                                     "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY")
                             .getAddress());
-            val expectedBlock = storageMap.get(0).get();
+            val expectedBlock = storageMap.get(BlockNumber.GENESIS).get();
 
             val list = new ArrayList<>(2);
             collection.iterator().forEachRemaining(e -> e.consume((value, keys) -> list.add(value)));
@@ -130,14 +131,14 @@ class StorageNMapImplTests {
 
             assertNotNull(collection);
 
-            val blockNumber = new AtomicReference<Integer>(null);
+            val blockNumber = new AtomicReference<BlockNumber>(null);
             val blockHash = new AtomicReference<BlockHash>(null);
             collection.iterator().forEachRemaining(e -> e.consume((value, keys) -> {
                 blockHash.set(value);
-                blockNumber.set((Integer) keys.get(0));
+                blockNumber.set((BlockNumber) keys.get(0));
             }));
 
-            assertEquals(0, blockNumber.get());
+            assertEquals(BlockNumber.GENESIS, blockNumber.get());
             assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getData()));
         }
     }
@@ -148,18 +149,24 @@ class StorageNMapImplTests {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
             val storage = newSystemBlockHashStorage(state);
 
-            val collection = storage.multi(Arg.of(0), Arg.of(1)).get();
+            val collection = storage.multi(
+                            Arg.of(BlockNumber.GENESIS),
+                            Arg.of(BlockNumber.of(1)))
+                    .get();
             assertNotNull(collection);
 
-            val list = new ArrayList<Pair<Integer, BlockHash>>();
-            collection.iterator().forEachRemaining(e -> e.consume((value, keys) -> list.add(Pair.of((Integer) keys.get(0), value))));
+            val list = new ArrayList<Pair<BlockNumber, BlockHash>>();
+            collection.iterator()
+                    .forEachRemaining(e ->
+                            e.consume((value, keys) ->
+                                    list.add(Pair.of((BlockNumber) keys.get(0), value))));
 
             assertEquals(2, list.size());
 
-            assertEquals(0, list.get(0).getValue0());
+            assertEquals(BlockNumber.GENESIS, list.get(0).getValue0());
             assertNotEquals(BigInteger.ZERO, new BigInteger(list.get(0).getValue1().getData()));
 
-            assertEquals(1, list.get(1).getValue0());
+            assertEquals(BlockNumber.of(1), list.get(1).getValue0());
             assertNull(list.get(1).getValue1());
         }
     }
@@ -204,14 +211,17 @@ class StorageNMapImplTests {
             assertNotNull(pages);
 
             var pageCount = 0;
-            val pairs = new ArrayList<Pair<Integer, BlockHash>>();
+            val pairs = new ArrayList<Pair<BlockNumber, BlockHash>>();
             while (pages.moveNext().join()) {
-                pages.current().iterator().forEachRemaining(e -> e.consume((value, keys) -> {
-                    val key = (Integer) keys.get(0);
-                    assertNotEquals(BigInteger.ZERO, new BigInteger(value.getData()));
+                pages.current()
+                        .iterator()
+                        .forEachRemaining(e ->
+                                e.consume((value, keys) -> {
+                                    val key = (BlockNumber) keys.get(0);
+                                    assertNotEquals(BigInteger.ZERO, new BigInteger(value.getData()));
 
-                    pairs.add(Pair.of(key, value));
-                }));
+                                    pairs.add(Pair.of(key, value));
+                                }));
                 pageCount++;
                 assertEquals(pageCount, pages.number());
             }
@@ -227,16 +237,16 @@ class StorageNMapImplTests {
     void subscribe() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
-            val blockNumber = 2;
+            val blockNumber = BlockNumber.of(2);
             val storage = newSystemBlockHashStorage(state);
             val blockHash = new AtomicReference<BlockHash>();
             val value = new AtomicReference<BlockHash>();
-            val argument = new AtomicInteger();
+            val argument = new AtomicReference<BlockNumber>();
             val unsubscribe = storage.subscribe((exception, block, v, keys) -> {
                         if (exception == null) {
                             blockHash.set(block);
                             value.set(v);
-                            argument.set((Integer) keys.get(0));
+                            argument.set((BlockNumber) keys.get(0));
                         }
                     }, Arg.of(blockNumber))
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS);

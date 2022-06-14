@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.impl.Hash256;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.SneakyThrows;
@@ -19,7 +20,7 @@ class IdentityTests {
     private static Stream<byte[]> getTestCasesForGetHash() {
         return Stream.of(
                 encode(Integer.class, -175),
-                encode(BlockHash.class, BlockHash.fromBytes(random(32))),
+                encode(BlockHash.class, Hash256.fromBytes(random(32))),
                 "TestString".getBytes(StandardCharsets.UTF_8),
                 random(new Random().nextInt(128) + 1));
     }
