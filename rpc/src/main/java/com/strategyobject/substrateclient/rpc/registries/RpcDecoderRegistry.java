@@ -18,10 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class RpcDecoderRegistry {
     private static final Logger logger = LoggerFactory.getLogger(RpcDecoderRegistry.class);
     private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile RpcDecoderRegistry instance;
-    private final Map<Class<?>, RpcDecoder<?>> decoders;
+    private static final Map<Class<?>, RpcDecoder<?>> decoders;
 
     private RpcDecoderRegistry() {
+    }
+
+    static {
         decoders = new ConcurrentHashMap<>(128);
 
         register(new ListDecoder(), List.class);
@@ -41,19 +43,7 @@ public final class RpcDecoderRegistry {
         registerAnnotatedFrom(ROOT_PREFIX);
     }
 
-    public static RpcDecoderRegistry getInstance() {
-        if (instance == null) {
-            synchronized (RpcDecoderRegistry.class) {
-                if (instance == null) {
-                    instance = new RpcDecoderRegistry();
-                }
-            }
-        }
-
-        return instance;
-    }
-
-    public void registerAnnotatedFrom(String... prefixes) {
+    public static void registerAnnotatedFrom(String... prefixes) {
         Scanner.forPrefixes(prefixes)
                 .getSubTypesOf(RpcDecoder.class).forEach(decoder -> {
                     val autoRegister = decoder.getAnnotation(AutoRegister.class);
@@ -73,13 +63,13 @@ public final class RpcDecoderRegistry {
                 });
     }
 
-    public <T> void register(@NonNull RpcDecoder<T> decoder, @NonNull Class<?>... clazz) {
+    public static <T> void register(@NonNull RpcDecoder<T> decoder, @NonNull Class<?>... clazz) {
         for (val type : clazz) {
             decoders.put(type, decoder);
         }
     }
 
-    public RpcDecoder<?> resolve(@NonNull Class<?> clazz) {
+    public static RpcDecoder<?> resolve(@NonNull Class<?> clazz) {
         return decoders.get(clazz);
     }
 }

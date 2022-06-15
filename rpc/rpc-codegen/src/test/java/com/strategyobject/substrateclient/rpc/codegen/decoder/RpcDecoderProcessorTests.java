@@ -2,8 +2,8 @@ package com.strategyobject.substrateclient.rpc.codegen.decoder;
 
 import com.google.gson.Gson;
 import com.google.testing.compile.JavaFileObjects;
-import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestDecodable;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
+import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestDecodable;
 import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
 import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.val;
@@ -56,9 +56,8 @@ class RpcDecoderProcessorTests {
 
     @Test
     void compilesAndDecodes() { // TODO move this test out of the project
-        val registry = RpcDecoderRegistry.getInstance();
-        val decoder = registry.resolve(TestDecodable.class)
-                .inject(DecoderPair.of(registry.resolve(String.class), null));
+        val decoder = RpcDecoderRegistry.resolve(TestDecodable.class)
+                .inject(DecoderPair.of(RpcDecoderRegistry.resolve(String.class), null));
 
         /*
             {

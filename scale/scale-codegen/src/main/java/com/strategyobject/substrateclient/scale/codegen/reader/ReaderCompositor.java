@@ -5,6 +5,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
 import lombok.var;
 
@@ -15,32 +16,27 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
     private final ProcessorContext context;
     private final Map<String, Integer> typeVarMap;
     private final String readerAccessor;
-    private final String registryVarName;
     private final TypeMirror arrayType;
 
     private ReaderCompositor(ProcessorContext context,
                              Map<String, Integer> typeVarMap,
-                             String readerAccessor,
-                             String registryVarName) {
+                             String readerAccessor) {
         super(CodeBlock.class);
 
         this.context = context;
         this.typeVarMap = typeVarMap;
         this.readerAccessor = readerAccessor;
-        this.registryVarName = registryVarName;
         this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     public static ReaderCompositor forAnyType(@NonNull ProcessorContext context,
                                               @NonNull Map<String, Integer> typeVarMap,
-                                              @NonNull String readerAccessor,
-                                              @NonNull String registryVarName) {
-        return new ReaderCompositor(context, typeVarMap, readerAccessor, registryVarName);
+                                              @NonNull String readerAccessor) {
+        return new ReaderCompositor(context, typeVarMap, readerAccessor);
     }
 
-    public static ReaderCompositor disallowOpenGeneric(@NonNull ProcessorContext context,
-                                                       @NonNull String registryVarName) {
-        return new ReaderCompositor(context, null, null, registryVarName);
+    public static ReaderCompositor disallowOpenGeneric(@NonNull ProcessorContext context) {
+        return new ReaderCompositor(context, null, null);
     }
 
     private CodeBlock getTypeVarCodeBlock(TypeVariable type) {
@@ -55,7 +51,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
 
     private CodeBlock getNonGenericCodeBlock(TypeMirror type, TypeMirror override) {
         return CodeBlock.builder()
-                .add("$L.resolve($T.class)", registryVarName, override != null ? override : type)
+                .add("$T.resolve($T.class)", ScaleReaderRegistry.class, override != null ? override : type)
                 .build();
     }
 
@@ -64,7 +60,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
         if (override != null) {
             if (context.isNonGeneric(override)) {
                 return CodeBlock.builder()
-                        .add("$L.resolve($T.class)", registryVarName, override)
+                        .add("$T.resolve($T.class)", ScaleReaderRegistry.class, override)
                         .build();
             }
 
@@ -73,7 +69,7 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
             resolveType = context.erasure(type);
         }
 
-        var builder = CodeBlock.builder().add("$L.resolve($T.class).inject(", registryVarName, resolveType);
+        var builder = CodeBlock.builder().add("$T.resolve($T.class).inject(", ScaleReaderRegistry.class, resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);

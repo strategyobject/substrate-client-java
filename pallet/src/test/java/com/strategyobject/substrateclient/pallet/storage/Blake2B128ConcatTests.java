@@ -42,7 +42,7 @@ class Blake2B128ConcatTests {
     @SuppressWarnings("unchecked")
     private static <T> byte[] decode(Class<T> type, T value) {
         val buf = new ByteArrayOutputStream();
-        ((ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(type)).write(value, buf);
+        ((ScaleWriter<T>) ScaleWriterRegistry.resolve(type)).write(value, buf);
 
         return buf.toByteArray();
     }

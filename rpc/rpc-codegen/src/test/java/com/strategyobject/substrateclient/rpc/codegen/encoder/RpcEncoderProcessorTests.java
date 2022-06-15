@@ -2,9 +2,9 @@ package com.strategyobject.substrateclient.rpc.codegen.encoder;
 
 import com.google.gson.Gson;
 import com.google.testing.compile.JavaFileObjects;
-import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestEncodable;
 import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
+import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestEncodable;
 import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -60,14 +60,13 @@ class RpcEncoderProcessorTests {
     @Test
     @SuppressWarnings("unchecked")
     void compilesAndDecodes() {  // TODO move this test out of the project
-        val registry = RpcEncoderRegistry.getInstance();
-        val encoder = (RpcEncoder<TestEncodable<?>>) registry.resolve(TestEncodable.class)
+        val encoder = (RpcEncoder<TestEncodable<?>>) RpcEncoderRegistry.resolve(TestEncodable.class)
                 .inject(
                         EncoderPair.of(
-                                registry
+                                RpcEncoderRegistry
                                         .resolve(TestEncodable.Subclass.class)
                                         .inject(EncoderPair.of(
-                                                registry.resolve(int.class),
+                                                RpcEncoderRegistry.resolve(int.class),
                                                 null
                                         )),
                                 null));

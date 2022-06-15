@@ -41,7 +41,7 @@ class StorageValueImplTests {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
             val storage = StorageValueImpl.with(
                     state,
-                    ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                    ScaleReaderRegistry.resolve(AccountId.class),
                     StorageKeyProvider.of("Sudo", "Key"));
 
             val actual = storage.get().get();
@@ -68,7 +68,7 @@ class StorageValueImplTests {
             val blockHash = chain.getBlockHash(BlockNumber.GENESIS).get();
             val storage = StorageValueImpl.with(
                     state,
-                    ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                    ScaleReaderRegistry.resolve(AccountId.class),
                     StorageKeyProvider.of("Sudo", "Key"));
 
             val actual = storage.at(blockHash).get();

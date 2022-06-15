@@ -24,10 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ScaleReaderRegistry {
     private static final Logger logger = LoggerFactory.getLogger(ScaleReaderRegistry.class);
     private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile ScaleReaderRegistry instance;
-    private final Map<Class<?>, ScaleReader<?>> readers;
+    private static final Map<Class<?>, ScaleReader<?>> readers;
 
     private ScaleReaderRegistry() {
+    }
+
+    static {
         readers = new ConcurrentHashMap<>(128);
 
         register(new BoolReader(), ScaleType.Bool.class, Boolean.class, boolean.class);
@@ -72,18 +74,7 @@ public final class ScaleReaderRegistry {
         registerAnnotatedFrom(ROOT_PREFIX);
     }
 
-    public static ScaleReaderRegistry getInstance() {
-        if (instance == null) {
-            synchronized (ScaleReaderRegistry.class) {
-                if (instance == null) {
-                    instance = new ScaleReaderRegistry();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public void registerAnnotatedFrom(String... prefixes) {
+    public static void registerAnnotatedFrom(String... prefixes) {
         Scanner.forPrefixes(prefixes)
                 .getSubTypesOf(ScaleReader.class).forEach(reader -> {
                     val autoRegister = reader.getAnnotation(AutoRegister.class);
@@ -103,13 +94,13 @@ public final class ScaleReaderRegistry {
                 });
     }
 
-    public <T> void register(@NonNull ScaleReader<T> scaleReader, @NonNull Class<?>... clazz) {
+    public static <T> void register(@NonNull ScaleReader<T> scaleReader, @NonNull Class<?>... clazz) {
         for (val type : clazz) {
             readers.put(type, scaleReader);
         }
     }
 
-    public ScaleReader<?> resolve(@NonNull Class<?> clazz) {
+    public static ScaleReader<?> resolve(@NonNull Class<?> clazz) {
         return readers.get(clazz);
     }
 }

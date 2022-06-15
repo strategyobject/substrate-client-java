@@ -27,12 +27,6 @@ public class Constants {
     public static final String DECODERS_ARG = "decoders";
     public static final String ENCODERS_ARG = "encoders";
 
-    public static final String ENCODER_REGISTRY = "encoderRegistry";
-    public static final String DECODER_REGISTRY = "decoderRegistry";
-
-    public static final String SCALE_WRITER_REGISTRY = "scaleWriterRegistry";
-    public static final String SCALE_READER_REGISTRY = "scaleReaderRegistry";
-
     private Constants() {
     }
 }

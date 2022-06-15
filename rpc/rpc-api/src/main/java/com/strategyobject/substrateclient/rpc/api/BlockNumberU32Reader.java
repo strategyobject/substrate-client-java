@@ -18,7 +18,7 @@ public class BlockNumberU32Reader implements ScaleReader<BlockNumber> {
     public BlockNumber read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
-        val u32Reader = (ScaleReader<Long>) ScaleReaderRegistry.getInstance().resolve(ScaleType.U32.class);
+        val u32Reader = (ScaleReader<Long>) ScaleReaderRegistry.resolve(ScaleType.U32.class);
         return BlockNumber.of(u32Reader.read(stream));
     }
 }

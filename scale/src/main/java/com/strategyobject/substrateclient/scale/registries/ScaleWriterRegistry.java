@@ -25,10 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class ScaleWriterRegistry {
     private static final Logger logger = LoggerFactory.getLogger(ScaleWriterRegistry.class);
     private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile ScaleWriterRegistry instance;
-    private final Map<Class<?>, ScaleWriter<?>> writers;
+    private static final Map<Class<?>, ScaleWriter<?>> writers;
 
     private ScaleWriterRegistry() {
+    }
+
+    static {
         writers = new ConcurrentHashMap<>(128);
 
         register(new BoolWriter(), ScaleType.Bool.class, Boolean.class, boolean.class);
@@ -74,18 +76,7 @@ public final class ScaleWriterRegistry {
         registerAnnotatedFrom(ROOT_PREFIX);
     }
 
-    public static ScaleWriterRegistry getInstance() {
-        if (instance == null) {
-            synchronized (ScaleWriterRegistry.class) {
-                if (instance == null) {
-                    instance = new ScaleWriterRegistry();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public void registerAnnotatedFrom(String... prefixes) {
+    public static void registerAnnotatedFrom(String... prefixes) {
         Scanner.forPrefixes(prefixes)
                 .getSubTypesOf(ScaleWriter.class).forEach(writer -> {
                     val autoRegister = writer.getAnnotation(AutoRegister.class);
@@ -105,13 +96,13 @@ public final class ScaleWriterRegistry {
                 });
     }
 
-    public <T> void register(@NonNull ScaleWriter<T> scaleWriter, @NonNull Class<?>... clazz) {
+    public static <T> void register(@NonNull ScaleWriter<T> scaleWriter, @NonNull Class<?>... clazz) {
         for (val type : clazz) {
             writers.put(type, scaleWriter);
         }
     }
 
-    public ScaleWriter<?> resolve(@NonNull Class<?> clazz) {
+    public static ScaleWriter<?> resolve(@NonNull Class<?> clazz) {
         return writers.get(clazz);
     }
 }

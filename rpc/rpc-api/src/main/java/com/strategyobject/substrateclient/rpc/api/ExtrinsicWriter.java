@@ -31,7 +31,7 @@ public class ExtrinsicWriter<C extends Call, A extends Address, S extends Signat
 
     @SuppressWarnings("unchecked")
     private void wrapToVec(ByteArrayOutputStream encodedExtrinsic, OutputStream stream) throws IOException {
-        ((ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(ScaleType.CompactInteger.class))
+        ((ScaleWriter<Integer>) ScaleWriterRegistry.resolve(ScaleType.CompactInteger.class))
                 .write(encodedExtrinsic.size(), stream);
 
         stream.write(encodedExtrinsic.toByteArray());
@@ -39,7 +39,7 @@ public class ExtrinsicWriter<C extends Call, A extends Address, S extends Signat
 
     @SuppressWarnings("unchecked")
     private void writeExtrinsic(Extrinsic<C, A, S, E> value, ByteArrayOutputStream stream) throws IOException {
-        val u8Writer = (ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(ScaleType.U8.class);
+        val u8Writer = (ScaleWriter<Integer>) ScaleWriterRegistry.resolve(ScaleType.U8.class);
         val maybeSignature = value.getSignature();
         if (maybeSignature.isPresent()) {
             u8Writer.write(VERSION | 0b1000_0000, stream);

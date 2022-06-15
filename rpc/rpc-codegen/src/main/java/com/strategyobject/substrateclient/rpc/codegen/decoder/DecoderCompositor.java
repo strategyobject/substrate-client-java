@@ -7,8 +7,10 @@ import com.strategyobject.substrateclient.common.types.Array;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.RpcRegistryHelper;
+import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleRegistryHelper;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
 import lombok.var;
 
@@ -24,17 +26,13 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
     private final String decoderAccessor;
     private final String readerAccessor;
     private final String readerMethod;
-    private final String decoderRegistryVarName;
-    private final String scaleRegistryVarName;
     private final TypeMirror arrayType;
 
     public DecoderCompositor(@NonNull ProcessorContext context,
                              @NonNull Map<String, Integer> typeVarMap,
                              @NonNull String decoderAccessor,
                              @NonNull String readerAccessor,
-                             @NonNull String readerMethod,
-                             @NonNull String decoderRegistryVarName,
-                             @NonNull String scaleRegistryVarName) {
+                             @NonNull String readerMethod) {
         super(CodeBlock.class);
 
         this.context = context;
@@ -42,8 +40,6 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
         this.decoderAccessor = decoderAccessor;
         this.readerAccessor = readerAccessor;
         this.readerMethod = readerMethod;
-        this.decoderRegistryVarName = decoderRegistryVarName;
-        this.scaleRegistryVarName = scaleRegistryVarName;
         this.arrayType = context.erasure(context.getType(Array.class));
     }
 
@@ -60,9 +56,9 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
     private CodeBlock getNonGenericCodeBlock(TypeMirror type) {
         return CodeBlock.builder()
                 .add("$T.$L(", DecoderPair.class, PAIR_FACTORY_METHOD)
-                .add("($T) $L.resolve($T.class)", RpcDecoder.class, decoderRegistryVarName, type)
+                .add("($T) $T.resolve($T.class)", RpcDecoder.class, RpcDecoderRegistry.class, type)
                 .add(", ")
-                .add("($T) $L.resolve($T.class)", ScaleReader.class, scaleRegistryVarName, type)
+                .add("($T) $T.resolve($T.class)", ScaleReader.class, ScaleReaderRegistry.class, type)
                 .add(")")
                 .build();
     }

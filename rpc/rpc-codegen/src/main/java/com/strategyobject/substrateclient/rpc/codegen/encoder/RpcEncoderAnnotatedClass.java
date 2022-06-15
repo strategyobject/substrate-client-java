@@ -101,8 +101,6 @@ public class RpcEncoderAnnotatedClass {
 
     private void addMethodBody(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
         methodSpec
-                .addStatement("$1T $2L = $1T.getInstance()", RpcEncoderRegistry.class, ENCODER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
                 .addStatement("$1T<$2T, $3T> $4L = new $1T<>()", HashMap.class, String.class, Object.class, RESULT_VAR)
                 .beginControlFlow("try");
 
@@ -120,14 +118,12 @@ public class RpcEncoderAnnotatedClass {
                 typeVarMap,
                 String.format("%s[$L].%s", ENCODERS_ARG, ENCODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", ENCODERS_ARG, WRITER_UNSAFE_ACCESSOR),
-                WRITER_UNSAFE_ACCESSOR,
-                ENCODER_REGISTRY,
-                SCALE_WRITER_REGISTRY);
+                WRITER_UNSAFE_ACCESSOR
+        );
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
         val scaleWriterCompositor = WriterCompositor.forAnyType(context,
                 typeVarMap,
-                String.format("%s[$L].%s", ENCODERS_ARG, WRITER_ACCESSOR),
-                SCALE_WRITER_REGISTRY);
+                String.format("%s[$L].%s", ENCODERS_ARG, WRITER_ACCESSOR));
 
         for (VariableElement field : fields) {
             if (field.getAnnotation(Ignore.class) != null) {

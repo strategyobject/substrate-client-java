@@ -16,6 +16,6 @@ public class AddressKindWriter implements ScaleWriter<AddressKind> {
     public void write(@NonNull AddressKind value, @NonNull OutputStream stream, ScaleWriter<?>... writers) throws IOException {
         Preconditions.checkArgument(writers == null || writers.length == 0);
 
-        ((ScaleWriter<Byte>) ScaleWriterRegistry.getInstance().resolve(byte.class)).write(value.getValue(), stream);
+        ((ScaleWriter<Byte>) ScaleWriterRegistry.resolve(byte.class)).write(value.getValue(), stream);
     }
 }

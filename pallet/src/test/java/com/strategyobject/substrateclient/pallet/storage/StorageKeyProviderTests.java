@@ -45,8 +45,8 @@ class StorageKeyProviderTests {
                 Arguments.of("System",
                         "BlockHash",
                         KeyHasher.with(
-                                (ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(Integer.class),
-                                (ScaleReader<Integer>) ScaleReaderRegistry.getInstance().resolve(Integer.class),
+                                (ScaleWriter<Integer>) ScaleWriterRegistry.resolve(Integer.class),
+                                (ScaleReader<Integer>) ScaleReaderRegistry.resolve(Integer.class),
                                 TwoX64Concat.getInstance()
                         ),
                         2,
@@ -59,12 +59,12 @@ class StorageKeyProviderTests {
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     private static <T> ScaleReader<T> resolveReader(Class<T> clazz) {
-        return (ScaleReader<T>) ScaleReaderRegistry.getInstance().resolve(clazz);
+        return (ScaleReader<T>) ScaleReaderRegistry.resolve(clazz);
     }
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     private static <T> ScaleWriter<T> resolveWriter(Class<T> clazz) {
-        return (ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(clazz);
+        return (ScaleWriter<T>) ScaleWriterRegistry.resolve(clazz);
     }
 
     private static Stream<Arguments> getTestCasesForGetByDoubleKey() {

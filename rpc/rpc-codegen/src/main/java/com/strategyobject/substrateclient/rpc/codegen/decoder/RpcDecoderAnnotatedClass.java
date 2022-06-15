@@ -102,8 +102,6 @@ public class RpcDecoderAnnotatedClass {
     private void addMethodBody(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
         val resultType = JavaPoet.setEachGenericParameterAs(classElement, TypeName.OBJECT);
         methodSpec
-                .addStatement("$1T $2L = $1T.getInstance()", RpcDecoderRegistry.class, DECODER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
                 .addStatement("$T<$T, $T> $L = $L.asMap()", Map.class, String.class, RpcObject.class, MAP_VAR, VALUE_ARG)
                 .addStatement("$1T $2L = new $1T()", resultType, RESULT_VAR)
                 .beginControlFlow("try");
@@ -123,15 +121,12 @@ public class RpcDecoderAnnotatedClass {
                 typeVarMap,
                 String.format("%s[$L].%s", DECODERS_ARG, DECODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", DECODERS_ARG, READER_UNSAFE_ACCESSOR),
-                READER_UNSAFE_ACCESSOR,
-                DECODER_REGISTRY,
-                SCALE_READER_REGISTRY);
+                READER_UNSAFE_ACCESSOR);
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
         val scaleReaderCompositor = ReaderCompositor.forAnyType(
                 context,
                 typeVarMap,
-                String.format("%s[$L].%s", DECODERS_ARG, READER_ACCESSOR),
-                SCALE_READER_REGISTRY);
+                String.format("%s[$L].%s", DECODERS_ARG, READER_ACCESSOR));
 
         for (VariableElement field : fields) {
             if (field.getAnnotation(Ignore.class) != null) {

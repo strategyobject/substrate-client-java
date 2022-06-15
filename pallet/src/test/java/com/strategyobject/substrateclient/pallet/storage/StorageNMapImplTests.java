@@ -47,10 +47,10 @@ class StorageNMapImplTests {
     private static StorageNMapImpl<BlockHash> newSystemBlockHashStorage(State state) {
         return StorageNMapImpl.with(
                 state,
-                (ScaleReader<BlockHash>) ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
+                (ScaleReader<BlockHash>) ScaleReaderRegistry.resolve(BlockHash.class),
                 StorageKeyProvider.of("System", "BlockHash")
-                        .use(KeyHasher.with((ScaleWriter<BlockNumber>) ScaleWriterRegistry.getInstance().resolve(BlockNumber.class),
-                                (ScaleReader<BlockNumber>) ScaleReaderRegistry.getInstance().resolve(BlockNumber.class),
+                        .use(KeyHasher.with((ScaleWriter<BlockNumber>) ScaleWriterRegistry.resolve(BlockNumber.class),
+                                (ScaleReader<BlockNumber>) ScaleReaderRegistry.resolve(BlockNumber.class),
                                 TwoX64Concat.getInstance())));
     }
 
@@ -97,7 +97,7 @@ class StorageNMapImplTests {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
             val storageValue = StorageNMapImpl.with(
                     state,
-                    ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                    ScaleReaderRegistry.resolve(AccountId.class),
                     StorageKeyProvider.of("Sudo", "Key"));
             val storageMap = newSystemBlockHashStorage(state);
 

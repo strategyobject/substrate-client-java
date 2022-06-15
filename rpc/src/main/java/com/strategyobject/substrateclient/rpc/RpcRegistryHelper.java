@@ -10,7 +10,7 @@ public final class RpcRegistryHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> RpcDecoder<T> resolveAndInjectOrNull(Class<T> clazz, DecoderPair<?>... dependencies) {
-        val target = (RpcDecoder<T>) RpcDecoderRegistry.getInstance().resolve(clazz);
+        val target = (RpcDecoder<T>) RpcDecoderRegistry.resolve(clazz);
 
         if (target == null) {
             return null;
@@ -21,7 +21,7 @@ public final class RpcRegistryHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> RpcEncoder<T> resolveAndInjectOrNull(Class<T> clazz, EncoderPair<?>... dependencies) {
-        val target = (RpcEncoder<T>) RpcEncoderRegistry.getInstance().resolve(clazz);
+        val target = (RpcEncoder<T>) RpcEncoderRegistry.resolve(clazz);
 
         if (target == null) {
             return null;

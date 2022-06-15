@@ -7,8 +7,10 @@ import com.strategyobject.substrateclient.common.types.Array;
 import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.RpcRegistryHelper;
+import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleRegistryHelper;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
@@ -25,17 +27,13 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
     private final String encoderAccessor;
     private final String writerAccessor;
     private final String writerMethod;
-    private final String encoderRegistryVarName;
-    private final String scaleRegistryVarName;
     private final TypeMirror arrayType;
 
     public EncoderCompositor(@NonNull ProcessorContext context,
                              @NonNull Map<String, Integer> typeVarMap,
                              @NonNull String encoderAccessor,
                              @NonNull String writerAccessor,
-                             @NonNull String writerMethod,
-                             @NonNull String encoderRegistryVarName,
-                             @NonNull String scaleRegistryVarName) {
+                             @NonNull String writerMethod) {
         super(CodeBlock.class);
         this.context = context;
         this.typeVarMap = typeVarMap;
@@ -43,21 +41,19 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
         this.encoderAccessor = encoderAccessor;
         this.writerAccessor = writerAccessor;
         this.writerMethod = writerMethod;
-        this.encoderRegistryVarName = encoderRegistryVarName;
-        this.scaleRegistryVarName = scaleRegistryVarName;
         this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     private CodeBlock getNonGenericCodeBlock(TypeMirror type) {
         return CodeBlock.builder()
                 .add("$T.$L(($T) ", EncoderPair.class, PAIR_FACTORY_METHOD, RpcEncoder.class)
-                .add("$L.resolve($T.class)",
-                        encoderRegistryVarName,
+                .add("$T.resolve($T.class)",
+                        RpcEncoderRegistry.class,
                         context.isAssignable(type, selfEncodable) ?
                                 selfEncodable :
                                 type)
                 .add(", ($T) ", ScaleWriter.class)
-                .add("$L.resolve($T.class)", scaleRegistryVarName, type)
+                .add("$T.resolve($T.class)", ScaleWriterRegistry.class, type)
                 .add(")")
                 .build();
     }
@@ -94,7 +90,7 @@ public class EncoderCompositor extends TypeTraverser<CodeBlock> {
                 .add("$T.$L(($T) ", EncoderPair.class, PAIR_FACTORY_METHOD, RpcEncoder.class);
 
         if (context.isAssignable(type, selfEncodable)) {
-            builder.add("$L.resolve($T.class)", encoderRegistryVarName, selfEncodable);
+            builder.add("$T.resolve($T.class)", RpcEncoderRegistry.class, selfEncodable);
         } else {
             builder.add(encoderAccessor, typeVarMap.get(type.toString()));
         }

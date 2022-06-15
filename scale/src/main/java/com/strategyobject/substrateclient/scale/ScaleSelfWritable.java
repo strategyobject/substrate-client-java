@@ -10,9 +10,7 @@ import java.io.OutputStream;
 public interface ScaleSelfWritable<T extends ScaleSelfWritable<T>> {
     @SuppressWarnings("unchecked")
     default void write(@NonNull OutputStream stream) throws IOException {
-        val writer = (ScaleWriter<T>) ScaleWriterRegistry
-                .getInstance()
-                .resolve(this.getClass());
+        val writer = (ScaleWriter<T>) ScaleWriterRegistry.resolve(this.getClass());
 
         writer.write((T) this, stream);
     }

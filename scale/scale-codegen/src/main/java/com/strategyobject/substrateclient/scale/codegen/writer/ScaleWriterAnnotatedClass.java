@@ -9,7 +9,6 @@ import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.annotation.Ignore;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
 import com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
@@ -31,7 +30,6 @@ import static java.util.stream.Collectors.toMap;
 
 public class ScaleWriterAnnotatedClass {
     private static final String WRITERS_ARG = "writers";
-    private static final String REGISTRY = "registry";
 
     private final TypeElement classElement;
     private final Map<String, Integer> typeVarMap;
@@ -104,15 +102,12 @@ public class ScaleWriterAnnotatedClass {
 
     private void addMethodBody(MethodSpec.Builder methodSpec,
                                ProcessorContext context) throws ProcessingException {
-        methodSpec
-                .addStatement("$1T registry = $1T.getInstance()", ScaleWriterRegistry.class)
-                .beginControlFlow("try");
+        methodSpec.beginControlFlow("try");
 
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
         val compositor = WriterCompositor.forAnyType(context,
                 typeVarMap,
-                String.format("%s[$L]", WRITERS_ARG),
-                REGISTRY);
+                String.format("%s[$L]", WRITERS_ARG));
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;

@@ -15,7 +15,7 @@ public final class ScaleUtils {
     @SuppressWarnings("unchecked")
     public static <T> T fromBytes(byte @NonNull [] bytes, Class<T> clazz) {
         val stream = new ByteArrayInputStream(bytes);
-        val reader = (ScaleReader<T>) ScaleReaderRegistry.getInstance().resolve(clazz);
+        val reader = (ScaleReader<T>) ScaleReaderRegistry.resolve(clazz);
         try {
             return reader.read(stream);
         } catch (IOException e) {
@@ -26,7 +26,7 @@ public final class ScaleUtils {
     @SuppressWarnings("unchecked")
     public static <T> byte[] toBytes(T value, Class<T> clazz) {
         val stream = new ByteArrayOutputStream();
-        val writer = (ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(clazz);
+        val writer = (ScaleWriter<T>) ScaleWriterRegistry.resolve(clazz);
         try {
             writer.write(value, stream);
         } catch (IOException e) {

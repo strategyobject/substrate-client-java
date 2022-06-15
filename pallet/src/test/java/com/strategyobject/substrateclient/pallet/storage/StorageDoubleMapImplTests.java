@@ -38,13 +38,13 @@ class StorageDoubleMapImplTests {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
             val storage = StorageDoubleMapImpl.with(
                     state,
-                    (ScaleReader<Void>) ScaleReaderRegistry.getInstance().resolve(Void.class),
+                    (ScaleReader<Void>) ScaleReaderRegistry.resolve(Void.class),
                     StorageKeyProvider.of("Society", "Votes")
-                            .use(KeyHasher.with((ScaleWriter<AccountId>) ScaleWriterRegistry.getInstance().resolve(AccountId.class),
-                                            (ScaleReader<AccountId>) ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                            .use(KeyHasher.with((ScaleWriter<AccountId>) ScaleWriterRegistry.resolve(AccountId.class),
+                                            (ScaleReader<AccountId>) ScaleReaderRegistry.resolve(AccountId.class),
                                             TwoX64Concat.getInstance()),
-                                    KeyHasher.with((ScaleWriter<AccountId>) ScaleWriterRegistry.getInstance().resolve(AccountId.class),
-                                            (ScaleReader<AccountId>) ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                                    KeyHasher.with((ScaleWriter<AccountId>) ScaleWriterRegistry.resolve(AccountId.class),
+                                            (ScaleReader<AccountId>) ScaleReaderRegistry.resolve(AccountId.class),
                                             TwoX64Concat.getInstance())));
             val alice = AccountId.fromBytes(
                     SS58Codec.decode(

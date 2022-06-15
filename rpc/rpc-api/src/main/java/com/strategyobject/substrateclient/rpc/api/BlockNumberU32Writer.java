@@ -17,7 +17,7 @@ public class BlockNumberU32Writer implements ScaleWriter<BlockNumber> {
     public void write(@NonNull BlockNumber value, @NonNull OutputStream stream, ScaleWriter<?>... writers) throws IOException {
         Preconditions.checkArgument(writers == null || writers.length == 0);
 
-        ((ScaleWriter<Long>) ScaleWriterRegistry.getInstance().resolve(ScaleType.U32.class))
+        ((ScaleWriter<Long>) ScaleWriterRegistry.resolve(ScaleType.U32.class))
                 .write(value.getValue().longValue(), stream);
     }
 }

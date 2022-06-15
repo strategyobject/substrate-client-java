@@ -5,7 +5,7 @@ import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 public interface RpcSelfEncodable<T extends RpcSelfEncodable<T>> {
     @SuppressWarnings("unchecked")
     default Object encode(T source) {
-        return ((RpcSelfEncodable<T>) RpcEncoderRegistry.getInstance()
+        return ((RpcSelfEncodable<T>) RpcEncoderRegistry
                 .resolve(this.getClass()))
                 .encode(source);
     }

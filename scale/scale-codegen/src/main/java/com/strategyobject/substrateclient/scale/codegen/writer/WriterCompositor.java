@@ -4,6 +4,7 @@ import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.var;
 
@@ -17,40 +18,35 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
     private final Map<String, Integer> typeVarMap;
     private final TypeMirror selfWritable;
     private final String writerAccessor;
-    private final String registryVarName;
     private final TypeMirror arrayType;
 
 
     private WriterCompositor(ProcessorContext context,
                              Map<String, Integer> typeVarMap,
-                             String writerAccessor,
-                             String registryVarName) {
+                             String writerAccessor) {
         super(CodeBlock.class);
 
         this.context = context;
         this.typeVarMap = typeVarMap;
         this.selfWritable = context.erasure(context.getType(SCALE_SELF_WRITABLE));
         this.writerAccessor = writerAccessor;
-        this.registryVarName = registryVarName;
         this.arrayType = context.erasure(context.getType(Array.class));
     }
 
     public static WriterCompositor forAnyType(@NonNull ProcessorContext context,
                                               @NonNull Map<String, Integer> typeVarMap,
-                                              @NonNull String writerAccessor,
-                                              @NonNull String registryVarName) {
-        return new WriterCompositor(context, typeVarMap, writerAccessor, registryVarName);
+                                              @NonNull String writerAccessor) {
+        return new WriterCompositor(context, typeVarMap, writerAccessor);
     }
 
-    public static WriterCompositor disallowOpenGeneric(@NonNull ProcessorContext context,
-                                                       @NonNull String registryVarName) {
-        return new WriterCompositor(context, null, null, registryVarName);
+    public static WriterCompositor disallowOpenGeneric(@NonNull ProcessorContext context) {
+        return new WriterCompositor(context, null, null);
     }
 
     private CodeBlock getNonGenericCodeBlock(TypeMirror type, TypeMirror override) {
         return CodeBlock.builder()
-                .add("$L.resolve($T.class)",
-                        registryVarName,
+                .add("$T.resolve($T.class)",
+                        ScaleWriterRegistry.class,
                         override != null ?
                                 override :
                                 context.isAssignable(type, selfWritable) ?
@@ -64,7 +60,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         if (override != null) {
             if (context.isNonGeneric(override)) {
                 return CodeBlock.builder()
-                        .add("$L.resolve($T.class)", registryVarName, override)
+                        .add("$T.resolve($T.class)", ScaleWriterRegistry.class, override)
                         .build();
             }
 
@@ -73,11 +69,11 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
             resolveType = context.erasure(type);
 
             if (context.isAssignable(resolveType, selfWritable)) {
-                return CodeBlock.builder().add("$L.resolve($T.class)", registryVarName, selfWritable).build();
+                return CodeBlock.builder().add("$T.resolve($T.class)", ScaleWriterRegistry.class, selfWritable).build();
             }
         }
 
-        var builder = CodeBlock.builder().add("$L.resolve($T.class).inject(", registryVarName, resolveType);
+        var builder = CodeBlock.builder().add("$T.resolve($T.class).inject(", ScaleWriterRegistry.class, resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);
@@ -90,7 +86,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
     protected CodeBlock whenTypeVar(@NonNull TypeVariable type, TypeMirror _override) {
         return context.isAssignable(type, selfWritable) ?
                 CodeBlock.builder()
-                        .add("$L.resolve($T.class)", registryVarName, selfWritable)
+                        .add("$T.resolve($T.class)", ScaleWriterRegistry.class, selfWritable)
                         .build() :
                 CodeBlock.builder()
                         .add(writerAccessor, typeVarMap.get(type.toString()))
@@ -113,7 +109,7 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
         if (override != null) {
             if (context.isNonGeneric(override)) {
                 return CodeBlock.builder()
-                        .add("$L.resolve($T.class)", registryVarName, override)
+                        .add("$T.resolve($T.class)", ScaleWriterRegistry.class, override)
                         .build();
             }
 
@@ -122,11 +118,11 @@ public class WriterCompositor extends TypeTraverser<CodeBlock> {
             resolveType = context.erasure(type);
 
             if (context.isAssignable(resolveType, selfWritable)) {
-                return CodeBlock.builder().add("$L.resolve($T.class)", registryVarName, selfWritable).build();
+                return CodeBlock.builder().add("$T.resolve($T.class)", ScaleWriterRegistry.class, selfWritable).build();
             }
         }
 
-        var builder = CodeBlock.builder().add("$L.resolve($T.class).inject(", registryVarName, resolveType);
+        var builder = CodeBlock.builder().add("$T.resolve($T.class).inject(", ScaleWriterRegistry.class, resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);

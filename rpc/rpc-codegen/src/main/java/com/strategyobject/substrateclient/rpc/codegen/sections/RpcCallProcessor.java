@@ -54,11 +54,10 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
         val rpcMethodName = String.format(RPC_METHOD_NAME_TEMPLATE, section, annotation.value());
         val paramsArgument = method.getParameters().isEmpty() ? "" : String.format(", %s", PARAMS_VAR);
 
-        val isReturnVoid = isReturnVoid(method, context);
         val code = CodeBlock.builder()
                 .add("return $L.$L($S$L).$L(", PROVIDER_INTERFACE, SEND, rpcMethodName, paramsArgument, THEN_APPLY_ASYNC);
 
-        if (isReturnVoid) {
+        if (returnsVoid(method, context)) {
             code.add("$L -> null", CALL_BACK_ARG);
         } else {
             code
@@ -68,11 +67,6 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
         code.add(")");
 
         methodSpecBuilder.addStatement(code.build());
-    }
-
-    @Override
-    protected boolean useDecodeRegistries(ExecutableElement method, ProcessorContext context) {
-        return !isReturnVoid(method, context);
     }
 
     @Override
@@ -101,7 +95,7 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
         }
     }
 
-    private boolean isReturnVoid(ExecutableElement method, ProcessorContext context) {
+    private boolean returnsVoid(ExecutableElement method, ProcessorContext context) {
         val futureParameter = getFutureParameter(method);
 
         return context.isSameType(futureParameter, context.getType(Void.class));

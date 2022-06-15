@@ -5,9 +5,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.9.0'
 
     testImplementation project(':tests')
-    testImplementation 'ch.qos.logback:logback-classic:1.2.11'
-    testImplementation 'org.testcontainers:testcontainers:1.17.1'
-    testImplementation 'org.testcontainers:junit-jupiter:1.17.1'
-    testImplementation 'org.testcontainers:toxiproxy:1.17.1'
+
+    testImplementation 'org.testcontainers:testcontainers:1.17.2'
+    testImplementation 'org.testcontainers:junit-jupiter:1.17.2'
+    testImplementation 'org.testcontainers:toxiproxy:1.17.2'
     testImplementation 'org.awaitility:awaitility:4.2.0'
 }

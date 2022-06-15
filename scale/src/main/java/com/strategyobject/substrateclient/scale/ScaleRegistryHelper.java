@@ -10,7 +10,7 @@ public final class ScaleRegistryHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> ScaleReader<T> resolveAndInjectOrNull(Class<T> clazz, ScaleReader<?>... dependencies) {
-        val target = (ScaleReader<T>) ScaleReaderRegistry.getInstance().resolve(clazz);
+        val target = (ScaleReader<T>) ScaleReaderRegistry.resolve(clazz);
 
         if (target == null) {
             return null;
@@ -21,7 +21,7 @@ public final class ScaleRegistryHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> ScaleWriter<T> resolveAndInjectOrNull(Class<T> clazz, ScaleWriter<?>... dependencies) {
-        val target = (ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(clazz);
+        val target = (ScaleWriter<T>) ScaleWriterRegistry.resolve(clazz);
 
         if (target == null) {
             return null;

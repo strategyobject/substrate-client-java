@@ -39,7 +39,7 @@ public class ExtrinsicStatusDecoder extends AbstractDecoder<ExtrinsicStatus> {
                     .filter(e -> STATUS_TO_CLASS.containsKey(e.getKey()))
                     .findFirst()
                     .map(e ->
-                            (ExtrinsicStatus) RpcDecoderRegistry.getInstance()
+                            (ExtrinsicStatus) RpcDecoderRegistry
                                     .resolve(STATUS_TO_CLASS.get(e.getKey()))
                                     .decode(value)
                     );

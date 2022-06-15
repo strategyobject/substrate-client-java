@@ -19,8 +19,6 @@ import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
 import com.strategyobject.substrateclient.scale.codegen.reader.ReaderCompositor;
 import com.strategyobject.substrateclient.scale.codegen.writer.WriterCompositor;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
@@ -104,15 +102,9 @@ class StorageProcessor extends PalletMethodProcessor {
                         .addAnnotation(suppressWarnings("unchecked", "rawtypes"))
                         .returns(TypeName.get(returnType));
 
-        declareReaderAndWriterRegistries(methodSpecBuilder);
-
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
-        val readerCompositor = ReaderCompositor.disallowOpenGeneric(
-                context,
-                SCALE_READER_REGISTRY);
-        val writerCompositor = WriterCompositor.disallowOpenGeneric(
-                context,
-                SCALE_WRITER_REGISTRY);
+        val readerCompositor = ReaderCompositor.disallowOpenGeneric(context);
+        val writerCompositor = WriterCompositor.disallowOpenGeneric(context);
 
         assignStorageMapImpl(methodSpecBuilder,
                 palletName,
@@ -431,11 +423,5 @@ class StorageProcessor extends PalletMethodProcessor {
                     palletElement.getQualifiedName().toString(),
                     method.getSimpleName());
         }
-    }
-
-    private void declareReaderAndWriterRegistries(MethodSpec.Builder methodSpecBuilder) {
-        methodSpecBuilder
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY);
     }
 }

@@ -38,10 +38,10 @@ class StorageMapImplTests {
             val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
             val storage = StorageMapImpl.with(
                     state,
-                    (ScaleReader<BlockHash>) ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
+                    (ScaleReader<BlockHash>) ScaleReaderRegistry.resolve(BlockHash.class),
                     StorageKeyProvider.of("System", "BlockHash")
-                            .use(KeyHasher.with((ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(Integer.class),
-                                    (ScaleReader<Integer>) ScaleReaderRegistry.getInstance().resolve(Integer.class),
+                            .use(KeyHasher.with((ScaleWriter<Integer>) ScaleWriterRegistry.resolve(Integer.class),
+                                    (ScaleReader<Integer>) ScaleReaderRegistry.resolve(Integer.class),
                                     TwoX64Concat.getInstance())));
 
             val actual = storage.get(0).get();

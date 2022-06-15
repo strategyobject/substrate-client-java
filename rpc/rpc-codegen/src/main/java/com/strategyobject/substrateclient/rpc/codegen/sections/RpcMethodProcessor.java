@@ -9,8 +9,6 @@ import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.codegen.decoder.DecoderCompositor;
 import com.strategyobject.substrateclient.rpc.codegen.encoder.EncoderCompositor;
-import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
-import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
@@ -19,8 +17,6 @@ import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
 import com.strategyobject.substrateclient.scale.codegen.reader.ReaderCompositor;
 import com.strategyobject.substrateclient.scale.codegen.writer.WriterCompositor;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 
@@ -93,10 +89,6 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                              A annotation,
                              ScaleAnnotationParser scaleAnnotationParser,
                              ProcessorContext context) {
-        if (useDecodeRegistries(method, context)) {
-            declareDecoderAndReaderRegistries(methodSpecBuilder);
-        }
-
         callProviderInterface(methodSpecBuilder,
                 method,
                 section,
@@ -128,9 +120,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                 EMPTY_TYPE_VAR_MAP,
                 String.format("%s[$L].%s", DECODERS_ARG, DECODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", DECODERS_ARG, READER_UNSAFE_ACCESSOR),
-                READER_UNSAFE_ACCESSOR,
-                DECODER_REGISTRY,
-                SCALE_READER_REGISTRY);
+                READER_UNSAFE_ACCESSOR);
 
         val decodeCode = decoderCompositor.traverse(resultType);
 
@@ -147,8 +137,7 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                                             String arg,
                                             ScaleAnnotationParser scaleAnnotationParser,
                                             ProcessorContext context) {
-        val readerCompositor = ReaderCompositor.disallowOpenGeneric(context,
-                SCALE_READER_REGISTRY);
+        val readerCompositor = ReaderCompositor.disallowOpenGeneric(context);
         val typeOverride = scaleAnnotationParser.parse(annotated);
         val readerCode = typeOverride != null ?
                 readerCompositor.traverse(resultType, typeOverride) :
@@ -163,8 +152,6 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
                 .build();
     }
 
-    protected abstract boolean useDecodeRegistries(ExecutableElement method, ProcessorContext context);
-
     private void processParameters(MethodSpec.Builder methodSpecBuilder,
                                    ExecutableElement method,
                                    ScaleAnnotationParser scaleAnnotationParser,
@@ -175,25 +162,21 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
             return;
         }
 
-        val writerCompositor = WriterCompositor.disallowOpenGeneric(context,
-                SCALE_WRITER_REGISTRY);
+        val writerCompositor = WriterCompositor.disallowOpenGeneric(context);
         val encoderCompositor = new EncoderCompositor(
                 context,
                 EMPTY_TYPE_VAR_MAP,
                 String.format("%s[$L].%s", ENCODERS_ARG, ENCODER_UNSAFE_ACCESSOR),
                 String.format("%s[$L].%s", ENCODERS_ARG, WRITER_UNSAFE_ACCESSOR),
-                WRITER_UNSAFE_ACCESSOR,
-                ENCODER_REGISTRY,
-                SCALE_WRITER_REGISTRY);
+                WRITER_UNSAFE_ACCESSOR
+        );
 
         methodSpecBuilder
                 .addStatement("$1T<$2T> $3L = new $4T<$2T>()",
                         List.class,
                         Object.class,
                         PARAMS_VAR,
-                        ArrayList.class)
-                .addStatement("$1T $2L = $1T.getInstance()", RpcEncoderRegistry.class, ENCODER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY);
+                        ArrayList.class);
 
         for (val param : method.getParameters()) {
             try {
@@ -261,12 +244,6 @@ public abstract class RpcMethodProcessor<A extends Annotation> extends RpcInterf
     protected abstract boolean shouldBePassedToProvider(ExecutableElement method, VariableElement param, ProcessorContext context) throws ProcessingException;
 
     protected abstract void onParametersVisited(ExecutableElement method) throws ProcessingException;
-
-    private void declareDecoderAndReaderRegistries(MethodSpec.Builder methodSpecBuilder) {
-        methodSpecBuilder
-                .addStatement("$1T $2L = $1T.getInstance()", RpcDecoderRegistry.class, DECODER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleReaderRegistry.class, SCALE_READER_REGISTRY);
-    }
 
     protected abstract void ensureMethodHasAppropriateReturnType(ExecutableElement method, TypeMirror returnType, ProcessorContext context) throws ProcessingException;
 
