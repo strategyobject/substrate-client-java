@@ -8,7 +8,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
-import static com.strategyobject.substrateclient.common.utils.StringUtils.capitalize;
+import static com.strategyobject.substrateclient.common.strings.StringUtils.capitalize;
 
 public class TypeUtils {
     private static final String SETTER_PREFIX = "set";

@@ -12,7 +12,7 @@ import com.strategyobject.substrateclient.scale.annotation.Scale;
 @Pallet("System")
 public interface SystemPallet {
     @Storage(
-            value = "BlockHash",
+            name = "BlockHash",
             keys = {
                     @StorageKey(
                             type = @Scale(BlockNumber.class),

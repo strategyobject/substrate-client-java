@@ -1,12 +1,11 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -38,10 +37,10 @@ class StorageValueImplTests {
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
 
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storage = StorageValueImpl.with(
                     state,
-                    ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                    TestsHelper.SCALE_READER_REGISTRY.resolve(AccountId.class),
                     StorageKeyProvider.of("Sudo", "Key"));
 
             val actual = storage.get().get();
@@ -62,13 +61,13 @@ class StorageValueImplTests {
                 .disableAutoConnect()
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
 
             val blockHash = chain.getBlockHash(BlockNumber.GENESIS).get();
             val storage = StorageValueImpl.with(
                     state,
-                    ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                    TestsHelper.SCALE_READER_REGISTRY.resolve(AccountId.class),
                     StorageKeyProvider.of("Sudo", "Key"));
 
             val actual = storage.at(blockHash).get();

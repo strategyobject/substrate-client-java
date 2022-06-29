@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 @Getter
 @Setter
@@ -140,8 +141,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         this.status = ProviderStatus.CONNECTING;
 
-        val whenConnected = new CompletableFuture<Void>();
-        this.whenConnected = whenConnected;
+        val whenConnectedFuture = new CompletableFuture<Void>();
+        this.whenConnected = whenConnectedFuture;
 
         try {
             val ws = WebSocket.builder()
@@ -156,19 +157,19 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
             this.webSocket = ws;
             this.eventEmitter.once(ProviderInterfaceEmitted.CONNECTED, _x -> {
-                whenConnected.complete(null);
+                whenConnectedFuture.complete(null);
                 this.whenConnected = null;
             });
             ws.connect();
         } catch (Exception ex) {
             log.error("Connect error", ex);
-            whenConnected.completeExceptionally(ex);
+            whenConnectedFuture.completeExceptionally(ex);
             this.emit(ProviderInterfaceEmitted.ERROR, ex);
             this.whenConnected = null;
             this.status = ProviderStatus.DISCONNECTED;
         }
 
-        return whenConnected;
+        return whenConnectedFuture;
     }
 
     /**
@@ -188,8 +189,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             return inProgress;
         }
 
-        val whenDisconnected = new CompletableFuture<Void>();
-        this.whenDisconnected = whenDisconnected;
+        val whenDisconnectedFuture = new CompletableFuture<Void>();
+        this.whenDisconnected = whenDisconnectedFuture;
 
         // switch off autoConnect, we are in manual mode now
         this.autoConnectMs = 0;
@@ -200,7 +201,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             ws.close(CloseFrame.NORMAL);
         }
 
-        return whenDisconnected;
+        return whenDisconnectedFuture;
     }
 
     /**
@@ -370,9 +371,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.webSocket = null;
         this.status = ProviderStatus.DISCONNECTED;
         this.emit(ProviderInterfaceEmitted.DISCONNECTED);
-        val whenDisconnected = this.whenDisconnected;
-        if (whenDisconnected != null) {
-            whenDisconnected.complete(null);
+        val whenDisconnectedFuture = this.whenDisconnected;
+        if (whenDisconnectedFuture != null) {
+            whenDisconnectedFuture.complete(null);
             this.whenDisconnected = null;
         }
 
@@ -400,7 +401,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
     private void onSocketMessageResult(JsonRpcResponseSingle response) {
         val id = response.getId();
-        val handler = (WsStateAwaiting) this.handlers.get(id);
+        val handler = this.handlers.get(id);
         if (handler == null) {
             log.error("Unable to find handler for id={}", id);
             return;
@@ -482,13 +483,13 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     }
 
     private void resubscribe() {
-        Map<String, WsStateSubscription> subscriptions = new HashMap<>(this.subscriptions);
+        Map<String, WsStateSubscription> currentSubscriptions = new HashMap<>(this.subscriptions);
 
         this.subscriptions.clear();
 
         try {
             CompletableFuture.allOf(
-                    subscriptions.values()
+                    currentSubscriptions.values()
                             .stream()
                             // only re-create subscriptions which are not in author (only area where
                             // transactions are created, i.e. submissions such as 'author_submitAndWatchExtrinsic'
@@ -514,7 +515,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
     }
 
-    public static class Builder {
+    public static class Builder implements Supplier<ProviderInterface> {
+        private static final String DEFAULT_URI = "ws://127.0.0.1:9944";
+
         private URI endpoint;
         private int autoConnectMs = 2500;
         private Map<String, String> headers = null;
@@ -523,9 +526,9 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
 
         Builder() {
             try {
-                endpoint = new URI("ws://127.0.0.1:9944");
-            } catch (URISyntaxException ex) {
-                ex.printStackTrace();
+                endpoint = new URI(DEFAULT_URI);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -578,6 +581,11 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                     this.headers,
                     this.heartbeatInterval,
                     this.responseTimeoutInMs);
+        }
+
+        @Override
+        public WsProvider get() {
+            return build();
         }
     }
 }

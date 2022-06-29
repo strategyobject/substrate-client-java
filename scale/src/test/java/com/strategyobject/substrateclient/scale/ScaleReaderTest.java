@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.scale.readers.I8Reader;
 import com.strategyobject.substrateclient.scale.readers.OptionReader;
 import com.strategyobject.substrateclient.scale.readers.VecReader;

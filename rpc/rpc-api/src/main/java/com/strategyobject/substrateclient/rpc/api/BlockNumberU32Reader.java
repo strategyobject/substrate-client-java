@@ -6,19 +6,23 @@ import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 @AutoRegister(types = BlockNumber.class)
+@RequiredArgsConstructor
 public class BlockNumberU32Reader implements ScaleReader<BlockNumber> {
+    private final @NonNull ScaleReaderRegistry registry;
+
     @SuppressWarnings("unchecked")
     @Override
     public BlockNumber read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
-        val u32Reader = (ScaleReader<Long>) ScaleReaderRegistry.getInstance().resolve(ScaleType.U32.class);
+        val u32Reader = (ScaleReader<Long>) registry.resolve(ScaleType.U32.class);
         return BlockNumber.of(u32Reader.read(stream));
     }
 }

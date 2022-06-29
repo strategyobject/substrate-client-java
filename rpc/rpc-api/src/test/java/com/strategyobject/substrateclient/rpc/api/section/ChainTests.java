@@ -1,6 +1,5 @@
 package com.strategyobject.substrateclient.rpc.api.section;
 
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
@@ -36,17 +35,17 @@ class ChainTests {
     @Test
     void getFinalizedHead() throws Exception {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
             val result = chain.getFinalizedHead().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getBytes()));
         }
     }
 
     @Test
     void subscribeNewHeads() throws Exception {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
 
             val blockCount = new AtomicInteger(0);
             val blockHash = new AtomicReference<BlockHash>(null);
@@ -63,7 +62,7 @@ class ChainTests {
                     .atMost(WAIT_TIMEOUT * 2, TimeUnit.SECONDS)
                     .untilAtomic(blockCount, greaterThan(2));
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getBytes()));
 
             val result = unsubscribeFunc.get().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -74,17 +73,17 @@ class ChainTests {
     @Test
     void getBlockHash() throws Exception {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
             val result = chain.getBlockHash().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(result.getBytes()));
         }
     }
 
     @Test
     void getBlock() throws Exception {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
 
             val height = new AtomicInteger(0);
             chain.subscribeNewHeads((e, header) -> {
@@ -100,11 +99,11 @@ class ChainTests {
             val number = height.get();
             val blockHash = chain.getBlockHash(BlockNumber.of(number)).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.getBytes()));
 
             val block = chain.getBlock(blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getBytes()));
             assertEquals(number, block.getBlock().getHeader().getNumber().getValue().intValue());
         }
     }
@@ -112,7 +111,7 @@ class ChainTests {
     @Test
     void getCurrentBlock() throws ExecutionException, InterruptedException, TimeoutException {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
 
             val height = new AtomicInteger(0);
             chain.subscribeNewHeads((e, header) -> {
@@ -127,7 +126,7 @@ class ChainTests {
 
             val block = chain.getBlock().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBlock().getHeader().getParentHash().getBytes()));
             assertNotNull(block.getBlock().getHeader().getNumber());
         }
     }

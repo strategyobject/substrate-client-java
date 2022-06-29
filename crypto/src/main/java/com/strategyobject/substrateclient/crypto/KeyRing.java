@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.crypto;
 
+import com.strategyobject.substrateclient.common.types.Bytes;
 import com.strategyobject.substrateclient.crypto.sr25519.Sr25519NativeCryptoProvider;
 import lombok.Getter;
 import lombok.NonNull;
@@ -32,15 +33,15 @@ public class KeyRing {
         return new KeyRing(seed);
     }
 
-    public SignatureData sign(@NonNull Signable message) {
+    public SignatureData sign(@NonNull Bytes message) {
         return cryptoProvider.sign(publicKey, secretKey, message);
     }
 
-    public boolean verifyOwn(@NonNull SignatureData signature, @NonNull Signable message) {
+    public boolean verifyOwn(@NonNull SignatureData signature, @NonNull Bytes message) {
         return cryptoProvider.verify(signature, message, publicKey);
     }
 
-    public boolean verify(@NonNull SignatureData signature, @NonNull Signable message, @NonNull PublicKey publicKey) {
+    public boolean verify(@NonNull SignatureData signature, @NonNull Bytes message, @NonNull PublicKey publicKey) {
         return cryptoProvider.verify(signature, message, publicKey);
     }
 }

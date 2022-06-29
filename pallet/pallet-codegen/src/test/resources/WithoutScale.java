@@ -6,7 +6,7 @@ import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 
 @Pallet("Test")
 public interface WithoutScale {
-    @Storage(value = "Test", keys = {
+    @Storage(name = "Test", keys = {
             @StorageKey(hasher = StorageHasher.BLAKE2_128_CONCAT)
     })
     StorageNMap<String> test();

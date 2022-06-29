@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.common.utils;
+package com.strategyobject.substrateclient.common.strings;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;

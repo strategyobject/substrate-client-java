@@ -19,10 +19,10 @@ public class KeyPair extends FixedBytes<Size.Of96> {
     }
 
     public SecretKey asSecretKey() {
-        return SecretKey.fromBytes(Arrays.copyOfRange(getData(), 0, SECRET_KEY_LENGTH));
+        return SecretKey.fromBytes(Arrays.copyOfRange(getBytes(), 0, SECRET_KEY_LENGTH));
     }
 
     public PublicKey asPublicKey() {
-        return PublicKey.fromBytes(Arrays.copyOfRange(getData(), SECRET_KEY_LENGTH, SECRET_KEY_LENGTH + PUBLIC_KEY_LENGTH));
+        return PublicKey.fromBytes(Arrays.copyOfRange(getBytes(), SECRET_KEY_LENGTH, SECRET_KEY_LENGTH + PUBLIC_KEY_LENGTH));
     }
 }

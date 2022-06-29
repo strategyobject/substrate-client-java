@@ -1,34 +1,34 @@
 package com.strategyobject.substrateclient.scale.registries;
 
+import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.common.types.union.*;
-import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
+import com.strategyobject.substrateclient.scale.ScaleDispatch;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.writers.*;
 import com.strategyobject.substrateclient.scale.writers.union.*;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class ScaleWriterRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(ScaleWriterRegistry.class);
-    private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile ScaleWriterRegistry instance;
+@Slf4j
+public class ScaleWriterRegistry implements AutoRegistry {
     private final Map<Class<?>, ScaleWriter<?>> writers;
 
-    private ScaleWriterRegistry() {
+    public ScaleWriterRegistry() {
         writers = new ConcurrentHashMap<>(128);
 
         register(new BoolWriter(), ScaleType.Bool.class, Boolean.class, boolean.class);
@@ -69,20 +69,7 @@ public final class ScaleWriterRegistry {
         register(new LongArrayWriter(), long[].class);
         register(new VoidWriter(), Void.class, void.class);
         register(new UnitWriter(), Unit.class);
-        register(new SelfWriter(), ScaleSelfWritable.class);
-
-        registerAnnotatedFrom(ROOT_PREFIX);
-    }
-
-    public static ScaleWriterRegistry getInstance() {
-        if (instance == null) {
-            synchronized (ScaleWriterRegistry.class) {
-                if (instance == null) {
-                    instance = new ScaleWriterRegistry();
-                }
-            }
-        }
-        return instance;
+        register(new DispatchingWriter<>(this), ScaleDispatch.class);
     }
 
     public void registerAnnotatedFrom(String... prefixes) {
@@ -95,12 +82,20 @@ public final class ScaleWriterRegistry {
 
                     try {
                         val types = autoRegister.types();
-                        logger.info("Auto register writer {} for types: {}", writer, types);
+                        log.info("Auto register writer {} for types: {}", writer, types);
 
-                        final ScaleWriter<?> writerInstance = writer.newInstance();
+                        ScaleWriter<?> writerInstance;
+                        if (ClassUtils.hasDefaultConstructor(writer)) {
+                            writerInstance = writer.newInstance();
+                        } else {
+                            val ctor = writer.getConstructor(ScaleWriterRegistry.class);
+                            writerInstance = ctor.newInstance(this);
+                        }
+
                         register(writerInstance, types);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.error("Auto registration error", e);
+                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                             InvocationTargetException e) {
+                        log.error("Auto registration error", e);
                     }
                 });
     }

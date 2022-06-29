@@ -5,7 +5,7 @@ import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.common.codegen.TypeUtils;
-import com.strategyobject.substrateclient.common.utils.StringUtils;
+import com.strategyobject.substrateclient.common.strings.StringUtils;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
 import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 import lombok.NonNull;
@@ -23,6 +23,8 @@ import java.util.Objects;
 import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_ANNOTATIONS_DEFAULT;
 
 public class ScaleAnnotationParser {
+    private static final String VALUE = "value";
+    private static final String TEMPLATE = "template";
     private final ProcessorContext context;
 
     public ScaleAnnotationParser(@NonNull ProcessorContext context) {
@@ -30,14 +32,14 @@ public class ScaleAnnotationParser {
     }
 
     public TypeTraverser.TypeTreeNode parse(@NonNull AnnotatedConstruct annotated) {
-        val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotated, Scale.class, "value");
+        val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotated, Scale.class, VALUE);
         if (scaleType != null) {
             return new TypeTraverser.TypeTreeNode(scaleType);
         }
 
         val scaleGeneric = AnnotationUtils.getAnnotationMirror(annotated, ScaleGeneric.class);
         if (scaleGeneric != null) {
-            val template = AnnotationUtils.<String>getValueFromAnnotation(scaleGeneric, "template");
+            val template = AnnotationUtils.<String>getValueFromAnnotation(scaleGeneric, TEMPLATE);
             val typesMap = getTypesMap(scaleGeneric);
             return parseTemplate(template, typesMap);
         }
@@ -47,13 +49,13 @@ public class ScaleAnnotationParser {
 
     public TypeTraverser.TypeTreeNode parse(AnnotationMirror annotation) {
         if (context.isSameType(annotation.getAnnotationType(), context.getType(Scale.class))) {
-            val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotation, "value");
+            val scaleType = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotation, VALUE);
 
             return new TypeTraverser.TypeTreeNode(scaleType);
         }
 
         if (context.isSameType(annotation.getAnnotationType(), context.getType(ScaleGeneric.class))) {
-            val template = AnnotationUtils.<String>getValueFromAnnotation(annotation, "template");
+            val template = AnnotationUtils.<String>getValueFromAnnotation(annotation, TEMPLATE);
             val typesMap = getTypesMap(annotation);
 
             return parseTemplate(template, typesMap);
@@ -64,8 +66,11 @@ public class ScaleAnnotationParser {
 
     private TypeTraverser.TypeTreeNode parseTemplate(String template, Map<String, TypeMirror> typesMap) {
         val indexes = StringUtils.allIndexesOfAny(template, "<,>");
-        if (indexes.size() == 0 || indexes.get(0) == 0) {
-            throw new IllegalArgumentException("Wrong template");
+        if (indexes.size() == 0) {
+            return new TypeTraverser.TypeTreeNode(getMappedType(typesMap, template.trim()));
+        }
+        if (indexes.get(0) == 0) {
+            throw new IllegalArgumentException("Template cannot begin with a special character");
         }
 
         val firstIndex = indexes.get(0);
@@ -101,7 +106,7 @@ public class ScaleAnnotationParser {
         }
 
         if (root != node) {
-            throw new IllegalArgumentException("Wrong template");
+            throw new IllegalArgumentException("Template brackets don't match");
         }
 
         return root;
@@ -116,7 +121,7 @@ public class ScaleAnnotationParser {
         val annotations = AnnotationUtils.<List<AnnotationMirror>>getValueFromAnnotation(scaleGeneric, "types");
         val result = new HashMap<String, TypeMirror>(Objects.requireNonNull(annotations).size());
         for (val annotation : annotations) {
-            var type = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotation, "value");
+            var type = AnnotationUtils.<TypeMirror>getValueFromAnnotation(annotation, VALUE);
             var name = AnnotationUtils.<String>getValueFromAnnotation(annotation, "name");
             validateScaleAnnotationIsNotEmpty(name, type);
 

@@ -14,8 +14,6 @@ import javax.lang.model.element.TypeElement;
 import java.io.IOException;
 import java.util.Set;
 
-import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_SELF_WRITABLE;
-
 @SupportedAnnotationTypes("com.strategyobject.substrateclient.scale.annotation.ScaleWriter")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
@@ -48,14 +46,6 @@ public class ScaleWriterProcessor extends AbstractProcessor {
             }
 
             val typeElement = (TypeElement) annotatedElement;
-            if (!validateScaleSelfWritable(typeElement)) {
-                context.error(
-                        typeElement,
-                        "Classes implementing `%1$s` and annotated with `@%2$s` have to be either non generic or all its parameters have to implement `%1$s`",
-                        SCALE_SELF_WRITABLE.getCanonicalName(),
-                        ScaleWriter.class.getSimpleName());
-            }
-
             try {
                 new ScaleWriterAnnotatedClass(typeElement).generateWriter(context);
             } catch (ProcessingException e) {
@@ -68,16 +58,5 @@ public class ScaleWriterProcessor extends AbstractProcessor {
         }
 
         return true;
-    }
-
-    private boolean validateScaleSelfWritable(TypeElement typeElement) {
-        val selfWritable = context.erasure(context.getType(SCALE_SELF_WRITABLE));
-        if (!context.isAssignable(typeElement.asType(), selfWritable)) {
-            return true;
-        }
-
-        val typeParameters = typeElement.getTypeParameters();
-        return typeParameters.size() == 0 ||
-                typeParameters.stream().allMatch(x -> context.isAssignable(x.asType(), selfWritable));
     }
 }

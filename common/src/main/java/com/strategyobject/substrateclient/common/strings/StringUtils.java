@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.common.utils;
+package com.strategyobject.substrateclient.common.strings;
 
 import com.google.common.base.Preconditions;
 import lombok.NonNull;

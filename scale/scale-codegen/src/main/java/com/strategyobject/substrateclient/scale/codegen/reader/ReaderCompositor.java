@@ -3,6 +3,7 @@ package com.strategyobject.substrateclient.scale.codegen.reader;
 import com.google.common.base.Strings;
 import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
+import com.strategyobject.substrateclient.common.codegen.TypeNotSupportedException;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.common.types.Array;
 import lombok.NonNull;
@@ -82,6 +83,11 @@ public class ReaderCompositor extends TypeTraverser<CodeBlock> {
         return builder.add(")").build();
     }
 
+
+    @Override
+    protected CodeBlock whenWildcard(TypeMirror override) {
+        throw new TypeNotSupportedException("WILDCARD");
+    }
 
     @Override
     protected CodeBlock whenTypeVar(@NonNull TypeVariable type, TypeMirror _override) {

@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.squareup.javapoet.*;
+import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
 import com.strategyobject.substrateclient.common.codegen.JavaPoet;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
@@ -26,7 +27,6 @@ import java.util.stream.IntStream;
 
 import static com.strategyobject.substrateclient.common.codegen.AnnotationUtils.suppressWarnings;
 import static com.strategyobject.substrateclient.common.codegen.TypeUtils.getGetterName;
-import static com.strategyobject.substrateclient.scale.codegen.ScaleProcessorHelper.SCALE_SELF_WRITABLE;
 import static java.util.stream.Collectors.toMap;
 
 public class ScaleWriterAnnotatedClass {
@@ -53,13 +53,30 @@ public class ScaleWriterAnnotatedClass {
                         .addMember("types", "{$L.class}", classElement.getQualifiedName().toString())
                         .build())
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(ScaleWriter.class), classWildcardTyped))
+                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(ScaleWriter.class), classWildcardTyped));
+
+        injectDependencies(typeSpecBuilder)
                 .addMethod(generateWriteMethod(classWildcardTyped, context));
 
         JavaFile.builder(
                 context.getPackageName(classElement),
                 typeSpecBuilder.build()
         ).build().writeTo(context.getFiler());
+    }
+
+    private TypeSpec.Builder injectDependencies(TypeSpec.Builder typeSpecBuilder) {
+        val ctor = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ScaleWriterRegistry.class, REGISTRY)
+                .beginControlFlow("if ($L == null)", REGISTRY)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, REGISTRY)
+                .endControlFlow()
+                .addStatement("this.$1L = $1L", REGISTRY)
+                .build();
+
+        return typeSpecBuilder
+                .addField(ScaleWriterRegistry.class, REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addMethod(ctor);
     }
 
     private MethodSpec generateWriteMethod(TypeName classWildcardTyped,
@@ -75,22 +92,21 @@ public class ScaleWriterAnnotatedClass {
                                 ParameterizedTypeName.get(
                                         ClassName.get(ScaleWriter.class),
                                         WildcardTypeName.subtypeOf(Object.class))),
-                        "writers")
+                        WRITERS_ARG)
                 .varargs(true)
                 .addException(IOException.class);
 
-        addValidationRules(methodSpec, context);
+        addValidationRules(methodSpec);
         addMethodBody(methodSpec, context);
         return methodSpec.build();
     }
 
-    private void addValidationRules(MethodSpec.Builder methodSpec,
-                                    ProcessorContext context) {
+    private void addValidationRules(MethodSpec.Builder methodSpec) {
         methodSpec.addStatement("if (stream == null) throw new IllegalArgumentException(\"stream is null\")");
         methodSpec.addStatement("if (value == null) throw new IllegalArgumentException(\"value is null\")");
 
         val classTypeParametersSize = classElement.getTypeParameters().size();
-        if (classTypeParametersSize == 0 || context.isAssignable(classElement.asType(), context.erasure(context.getType(SCALE_SELF_WRITABLE)))) {
+        if (classTypeParametersSize == 0) {
             methodSpec.addStatement("if (writers != null && writers.length > 0) throw new IllegalArgumentException()");
         } else {
             methodSpec
@@ -105,7 +121,6 @@ public class ScaleWriterAnnotatedClass {
     private void addMethodBody(MethodSpec.Builder methodSpec,
                                ProcessorContext context) throws ProcessingException {
         methodSpec
-                .addStatement("$1T registry = $1T.getInstance()", ScaleWriterRegistry.class)
                 .beginControlFlow("try");
 
         val scaleAnnotationParser = new ScaleAnnotationParser(context);
@@ -116,7 +131,7 @@ public class ScaleWriterAnnotatedClass {
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;
-                if (field.getAnnotation(Ignore.class) == null && !field.getModifiers().contains(Modifier.STATIC)) {
+                if (!AnnotationUtils.isAnnotatedWith(field, Ignore.class) && !field.getModifiers().contains(Modifier.STATIC)) {
                     setField(methodSpec, field, scaleAnnotationParser, compositor);
                 }
             }

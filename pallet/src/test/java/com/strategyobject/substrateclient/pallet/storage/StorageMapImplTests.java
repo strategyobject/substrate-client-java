@@ -1,12 +1,10 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -35,18 +33,18 @@ class StorageMapImplTests {
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
 
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storage = StorageMapImpl.with(
                     state,
-                    (ScaleReader<BlockHash>) ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
+                    (ScaleReader<BlockHash>) TestsHelper.SCALE_READER_REGISTRY.resolve(BlockHash.class),
                     StorageKeyProvider.of("System", "BlockHash")
-                            .use(KeyHasher.with((ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(Integer.class),
-                                    (ScaleReader<Integer>) ScaleReaderRegistry.getInstance().resolve(Integer.class),
+                            .use(KeyHasher.with((ScaleWriter<Integer>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(Integer.class),
+                                    (ScaleReader<Integer>) TestsHelper.SCALE_READER_REGISTRY.resolve(Integer.class),
                                     TwoX64Concat.getInstance())));
 
             val actual = storage.get(0).get();
 
-            assertNotEquals(BigInteger.ZERO, new BigInteger(actual.getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(actual.getBytes()));
         }
     }
 }

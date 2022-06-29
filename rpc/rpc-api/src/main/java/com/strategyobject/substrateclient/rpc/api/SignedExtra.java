@@ -3,7 +3,6 @@ package com.strategyobject.substrateclient.rpc.api;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.Ignore;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
-import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +10,6 @@ import java.math.BigInteger;
 
 @RequiredArgsConstructor
 @Getter
-@ScaleWriter
 public class SignedExtra<E extends Era> implements Extra, SignedExtension {
     @Ignore
     private final long specVersion;

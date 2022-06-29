@@ -7,16 +7,17 @@ import lombok.val;
 
 import javax.lang.model.type.*;
 import java.lang.reflect.Array;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public abstract class TypeTraverser<T> {
     private final Class<T> clazz;
 
-    public TypeTraverser(Class<T> clazz) {
+    protected TypeTraverser(Class<T> clazz) {
         this.clazz = clazz;
     }
+
+    protected abstract T whenWildcard(TypeMirror override);
 
     protected abstract T whenTypeVar(@NonNull TypeVariable type, TypeMirror override);
 
@@ -30,12 +31,12 @@ public abstract class TypeTraverser<T> {
 
     protected abstract T whenArrayType(@NonNull ArrayType type, TypeMirror override, @NonNull T subtype);
 
-    protected boolean doTraverseArguments(@NonNull DeclaredType type, TypeMirror override) {
-        return true;
-    }
-
     @SuppressWarnings("unchecked")
     public T traverse(@NonNull TypeMirror type) {
+        if (type.getKind() == TypeKind.WILDCARD) {
+            return whenWildcard(null);
+        }
+
         if (type.getKind() == TypeKind.TYPEVAR) {
             return whenTypeVar((TypeVariable) type, null);
         }
@@ -57,9 +58,8 @@ public abstract class TypeTraverser<T> {
         if (!(type instanceof DeclaredType)) {
             throw new TypeNotSupportedException(type);
         }
-
         val declaredType = (DeclaredType) type;
-        val typeArguments = getTypeArgumentsOrDefault(declaredType, null);
+        val typeArguments = getTypeArguments(declaredType, null);
         if (typeArguments.size() == 0) {
             return whenNonGenericType(declaredType, null);
         }
@@ -74,6 +74,10 @@ public abstract class TypeTraverser<T> {
 
     @SuppressWarnings({"unchecked", "UnstableApiUsage"})
     public T traverse(@NonNull TypeMirror type, @NonNull TypeTraverser.TypeTreeNode typeOverride) {
+        if (type.getKind() == TypeKind.WILDCARD) {
+            return whenWildcard(typeOverride.type);
+        }
+
         if (type.getKind() == TypeKind.TYPEVAR) {
             return whenTypeVar((TypeVariable) type, typeOverride.type);
         }
@@ -109,7 +113,7 @@ public abstract class TypeTraverser<T> {
         }
 
         val declaredType = (DeclaredType) type;
-        val typeArguments = getTypeArgumentsOrDefault(declaredType, typeOverride.type);
+        val typeArguments = getTypeArguments(declaredType, typeOverride.type);
         val typeArgumentsSize = typeArguments.size();
         val typeOverrideSize = typeOverride.children.size();
         if (typeIsNonGeneric(typeArgumentsSize, typeOverrideSize)) {
@@ -117,12 +121,17 @@ public abstract class TypeTraverser<T> {
         }
 
         if (typeIsOverriddenByNonGeneric(typeOverrideSize)) {
+            if (typeOverride.type != null) {
+                return whenGenericType(declaredType, typeOverride.type, (T[]) Array.newInstance(clazz, 0));
+            }
+
             return whenGenericType(
                     declaredType,
-                    typeOverride.type,
+                    null,
                     typeArguments.stream()
                             .map(this::traverse)
                             .toArray(x -> (T[]) Array.newInstance(clazz, typeArguments.size())));
+
         }
 
         if (typeOverrideSize != typeArgumentsSize) {
@@ -172,10 +181,8 @@ public abstract class TypeTraverser<T> {
                         .toArray(x -> (T[]) Array.newInstance(clazz, typeOverride.children.size())));
     }
 
-    private List<? extends TypeMirror> getTypeArgumentsOrDefault(DeclaredType declaredType, TypeMirror override) {
-        return (doTraverseArguments(declaredType, override) ?
-                declaredType.getTypeArguments() :
-                Collections.emptyList());
+    protected List<? extends TypeMirror> getTypeArguments(DeclaredType declaredType, TypeMirror override) {
+        return declaredType.getTypeArguments();
     }
 
     private boolean typeIsNonGeneric(int typeArgumentsSize, int typeOverrideSize) {

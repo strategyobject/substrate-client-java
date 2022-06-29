@@ -2,6 +2,7 @@ package com.strategyobject.substrateclient.rpc.codegen.decoder;
 
 import com.squareup.javapoet.CodeBlock;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
+import com.strategyobject.substrateclient.common.codegen.TypeNotSupportedException;
 import com.strategyobject.substrateclient.common.codegen.TypeTraverser;
 import com.strategyobject.substrateclient.common.types.Array;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
@@ -72,13 +73,21 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
 
         var builder = CodeBlock.builder()
                 .add("$T.$L(", DecoderPair.class, PAIR_FACTORY_METHOD)
-                .add("$T.$L($T.class, ", RpcRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
+                .add("$T.$L($L, $T.class, ",
+                        RpcRegistryHelper.class,
+                        RESOLVE_AND_INJECT_METHOD,
+                        decoderRegistryVarName,
+                        resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);
         }
 
-        builder.add("), $T.$L($T.class, ", ScaleRegistryHelper.class, RESOLVE_AND_INJECT_METHOD, resolveType);
+        builder.add("), $T.$L($L, $T.class, ",
+                ScaleRegistryHelper.class,
+                RESOLVE_AND_INJECT_METHOD,
+                scaleRegistryVarName,
+                resolveType);
         for (var i = 0; i < subtypes.length; i++) {
             if (i > 0) builder.add(", ");
             builder.add(subtypes[i]);
@@ -88,6 +97,11 @@ public class DecoderCompositor extends TypeTraverser<CodeBlock> {
 
         return builder
                 .add(")").build();
+    }
+
+    @Override
+    protected CodeBlock whenWildcard(TypeMirror override) {
+        throw new TypeNotSupportedException("WILDCARD");
     }
 
     @Override

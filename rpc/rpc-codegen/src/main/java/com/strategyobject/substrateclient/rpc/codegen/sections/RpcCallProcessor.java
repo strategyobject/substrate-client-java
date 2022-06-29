@@ -71,11 +71,6 @@ class RpcCallProcessor extends RpcMethodProcessor<RpcCall> {
     }
 
     @Override
-    protected boolean useDecodeRegistries(ExecutableElement method, ProcessorContext context) {
-        return !isReturnVoid(method, context);
-    }
-
-    @Override
     protected boolean shouldBePassedToProvider(ExecutableElement method, VariableElement param, ProcessorContext context) {
         return true;
     }

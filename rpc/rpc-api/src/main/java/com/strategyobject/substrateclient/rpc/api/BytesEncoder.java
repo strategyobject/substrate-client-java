@@ -2,7 +2,7 @@ package com.strategyobject.substrateclient.rpc.api;
 
 import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.common.types.Bytes;
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
@@ -20,6 +20,6 @@ public class BytesEncoder implements RpcEncoder<Bytes> {
     public Object encode(Bytes source, EncoderPair<?>... encoders) {
         Preconditions.checkArgument(encoders == null || encoders.length == 0);
 
-        return HexConverter.toHex(source.getData());
+        return HexConverter.toHex(source.getBytes());
     }
 }

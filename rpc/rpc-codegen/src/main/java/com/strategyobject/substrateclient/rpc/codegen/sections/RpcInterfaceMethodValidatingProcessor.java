@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.sections;
 
 import com.squareup.javapoet.TypeSpec;
+import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.rpc.annotation.RpcCall;
@@ -29,12 +30,10 @@ class RpcInterfaceMethodValidatingProcessor extends RpcInterfaceMethodProcessor 
 
     private void ensureMethodIsNotAbstractOrProperlyAnnotated(Element method) throws ProcessingException {
         val modifiers = method.getModifiers();
-        val requiresMethod = method.getAnnotation(RpcCall.class) != null;
-        val requiresSubscription = method.getAnnotation(RpcSubscription.class) != null;
 
         // Ensure method is not abstract or annotated with `RpcMethod` or `RpcSubscription`
         if (!(modifiers.contains(Modifier.STATIC) || modifiers.contains(Modifier.DEFAULT))
-                && !(requiresMethod || requiresSubscription)) {
+                && !AnnotationUtils.isAnnotatedWithAny(method, RpcCall.class, RpcSubscription.class)) {
             throw new ProcessingException(
                     interfaceElement,
                     "Method `%s` can't be constructed because it doesn't have `@%s` or `@%s` annotation.",
@@ -44,7 +43,7 @@ class RpcInterfaceMethodValidatingProcessor extends RpcInterfaceMethodProcessor 
         }
 
         // Ensure method doesn't have ambiguous annotations
-        if (requiresMethod && requiresSubscription) {
+        if (AnnotationUtils.isAnnotatedWithAll(method, RpcCall.class, RpcSubscription.class)) {
             throw new ProcessingException(
                     interfaceElement,
                     "Method `%s` can't be constructed because it has ambiguous annotations. Only one of `@%s` and `@%s` should be chosen.",

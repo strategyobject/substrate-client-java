@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.impl.Hash256;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,7 +29,7 @@ class IdentityTests {
     @SuppressWarnings("unchecked")
     private static <T> byte[] encode(Class<T> type, T value) {
         val buf = new ByteArrayOutputStream();
-        ((ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(type)).write(value, buf);
+        ((ScaleWriter<T>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(type)).write(value, buf);
 
         return buf.toByteArray();
     }

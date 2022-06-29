@@ -9,7 +9,7 @@ import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 
 @Pallet("Test")
 public interface AmbiguousScale {
-    @Storage(value = "Test", keys = {
+    @Storage(name = "Test", keys = {
             @StorageKey(
                     hasher = StorageHasher.BLAKE2_128_CONCAT,
                     type = @Scale(ScaleType.I32.class),

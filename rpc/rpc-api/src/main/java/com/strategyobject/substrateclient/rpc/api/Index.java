@@ -1,6 +1,5 @@
 package com.strategyobject.substrateclient.rpc.api;
 
-import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
 import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
@@ -14,7 +13,7 @@ import java.math.BigInteger;
 @Getter
 @EqualsAndHashCode
 @ScaleWriter
-public class Index implements ScaleSelfWritable<Index> {
+public class Index {
     public static final Index ZERO = Index.of(BigInteger.ZERO);
 
     @Scale(ScaleType.CompactBigInteger.class)

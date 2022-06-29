@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.api;
 
 import com.strategyobject.substrateclient.common.types.Bytes;
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
 import com.strategyobject.substrateclient.rpc.decoders.AbstractDecoder;

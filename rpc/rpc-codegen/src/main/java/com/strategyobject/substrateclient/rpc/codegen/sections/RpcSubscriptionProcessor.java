@@ -94,11 +94,6 @@ class RpcSubscriptionProcessor extends RpcMethodProcessor<RpcSubscription> {
     }
 
     @Override
-    protected boolean useDecodeRegistries(ExecutableElement method, ProcessorContext context) {
-        return !isCallbackResultVoid(context);
-    }
-
-    @Override
     protected boolean shouldBePassedToProvider(ExecutableElement method, VariableElement param, ProcessorContext context) throws ProcessingException {
         val paramType = param.asType();
         if (!context.isSameType(context.erasure(paramType), context.erasure(callbackType))) { // is not callback

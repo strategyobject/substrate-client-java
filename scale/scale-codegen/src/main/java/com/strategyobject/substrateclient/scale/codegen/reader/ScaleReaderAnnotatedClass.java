@@ -1,9 +1,7 @@
 package com.strategyobject.substrateclient.scale.codegen.reader;
 
 import com.squareup.javapoet.*;
-import com.strategyobject.substrateclient.common.codegen.JavaPoet;
-import com.strategyobject.substrateclient.common.codegen.ProcessingException;
-import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
+import com.strategyobject.substrateclient.common.codegen.*;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.annotation.Ignore;
@@ -54,13 +52,30 @@ public class ScaleReaderAnnotatedClass {
                         .addMember("types", "{$L.class}", classElement.getQualifiedName().toString())
                         .build())
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(ScaleReader.class), classWildcardTyped))
+                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(ScaleReader.class), classWildcardTyped));
+
+        injectDependencies(typeSpecBuilder)
                 .addMethod(generateReadMethod(classWildcardTyped, context));
 
         JavaFile.builder(
                 context.getPackageName(classElement),
                 typeSpecBuilder.build()
         ).build().writeTo(context.getFiler());
+    }
+
+    private TypeSpec.Builder injectDependencies(TypeSpec.Builder typeSpecBuilder) {
+        val ctor = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ScaleReaderRegistry.class, REGISTRY)
+                .beginControlFlow("if ($L == null)", REGISTRY)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, REGISTRY)
+                .endControlFlow()
+                .addStatement("this.$1L = $1L", REGISTRY)
+                .build();
+
+        return typeSpecBuilder
+                .addField(ScaleReaderRegistry.class, REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addMethod(ctor);
     }
 
     private MethodSpec generateReadMethod(TypeName classWildcardTyped,
@@ -104,7 +119,6 @@ public class ScaleReaderAnnotatedClass {
                                ProcessorContext context) throws ProcessingException {
         val resultType = JavaPoet.setEachGenericParameterAs(classElement, TypeName.OBJECT);
         methodSpec
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleReaderRegistry.class, REGISTRY)
                 .addStatement("$1T result = new $1T()", resultType)
                 .beginControlFlow("try");
 
@@ -116,7 +130,7 @@ public class ScaleReaderAnnotatedClass {
         for (Element element : classElement.getEnclosedElements()) {
             if (element instanceof VariableElement) {
                 val field = (VariableElement) element;
-                if (field.getAnnotation(Ignore.class) == null && !field.getModifiers().contains(Modifier.STATIC)) {
+                if (!AnnotationUtils.isAnnotatedWith(field, Ignore.class) && !field.getModifiers().contains(Modifier.STATIC)) {
                     setField(methodSpec, field, context.getTypeUtils(), scaleAnnotationParser, compositor);
                 }
             }

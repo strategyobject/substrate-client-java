@@ -1,9 +1,9 @@
 package com.strategyobject.substrateclient.rpc.codegen;
 
-import com.strategyobject.substrateclient.rpc.RpcSelfEncodable;
+import com.strategyobject.substrateclient.rpc.RpcDispatch;
 
 public class Constants {
-    public static final Class<?> RPC_SELF_ENCODABLE = RpcSelfEncodable.class;
+    public static final Class<?> RPC_DISPATCH = RpcDispatch.class;
 
     public static final String AUTO_REGISTER_TYPES_ARG = "types";
     public static final String PAIR_FACTORY_METHOD = "of";

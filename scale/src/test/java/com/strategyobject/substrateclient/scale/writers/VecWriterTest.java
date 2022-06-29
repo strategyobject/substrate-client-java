@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;

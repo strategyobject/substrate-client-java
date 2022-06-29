@@ -1,7 +1,11 @@
 package com.strategyobject.substrateclient.rpc.codegen.sections;
 
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.rpc.GeneratedRpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestSection;
+import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
+import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import com.strategyobject.substrateclient.transport.RpcBoolean;
 import com.strategyobject.substrateclient.transport.RpcObject;
@@ -22,12 +26,19 @@ class RpcSectionFactoryTest {
     @Test
     void createsRpcSectionAndCallsMethod() throws ExecutionException, InterruptedException {
         val expected = true;
+
         val sendFuture = CompletableFuture.completedFuture((RpcObject) new RpcBoolean(expected));
         val provider = mock(ProviderInterface.class);
         when(provider.send(anyString(), anyList()))
                 .thenReturn(sendFuture);
 
-        val rpcSection = RpcGeneratedSectionFactory.create(TestSection.class, provider);
+        val rpcGeneratedSectionFactory = new GeneratedRpcSectionFactory(
+                provider,
+                new RpcEncoderRegistry(new ScaleWriterRegistry()),
+                new ScaleWriterRegistry(),
+                new RpcDecoderRegistry(new ScaleReaderRegistry()),
+                new ScaleReaderRegistry());
+        val rpcSection = rpcGeneratedSectionFactory.create(TestSection.class);
 
         val actual = rpcSection.doNothing("some").get();
 

@@ -8,6 +8,7 @@ import lombok.val;
 import javax.lang.model.AnnotatedConstruct;
 import javax.lang.model.element.AnnotationMirror;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,6 +56,20 @@ public final class AnnotationUtils {
         return AnnotationSpec.builder(SuppressWarnings.class)
                 .addMember("value", format, (Object[]) warnings)
                 .build();
+    }
+
+    public static boolean isAnnotatedWith(AnnotatedConstruct annotated, Class<? extends Annotation> annotation) {
+        return annotated.getAnnotation(annotation) != null;
+    }
+
+    @SafeVarargs
+    public static boolean isAnnotatedWithAny(AnnotatedConstruct annotated, Class<? extends Annotation>... annotations) {
+        return Arrays.stream(annotations).anyMatch(x -> annotated.getAnnotation(x) != null);
+    }
+
+    @SafeVarargs
+    public static boolean isAnnotatedWithAll(AnnotatedConstruct annotated, Class<? extends Annotation>... annotations) {
+        return Arrays.stream(annotations).allMatch(x -> annotated.getAnnotation(x) != null);
     }
 
     private AnnotationUtils() {
