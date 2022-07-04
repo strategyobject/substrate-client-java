@@ -1,5 +1,7 @@
 plugins {
-    id 'io.freefair.lombok' version '6.4.3' apply false
+    id 'io.freefair.lombok' version '6.5.0.2' apply false
+    id "io.freefair.javadocs" version "6.5.0.2" apply false
+    id "io.freefair.aggregate-javadoc" version "6.5.0.2"
     id 'maven-publish'
 }
 
@@ -17,6 +19,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'io.freefair.lombok'
+    apply plugin: 'io.freefair.javadocs'
     apply plugin: 'maven-publish'
 
     targetCompatibility = '1.8'

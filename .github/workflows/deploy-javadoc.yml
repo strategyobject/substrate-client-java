@@ -1,0 +1,28 @@
+name: Deploy Javadoc
+
+on:
+  workflow_dispatch
+
+jobs:
+  publish:
+
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Generate Javadoc
+        run: gradle aggregateJavadoc
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build/docs/aggregateJavadoc
+          branch: javadoc
