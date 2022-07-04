@@ -1,10 +1,10 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,7 +55,7 @@ class TwoX64ConcatTests {
     @SuppressWarnings("unchecked")
     private static <T> byte[] decode(Class<T> type, T value) {
         val buf = new ByteArrayOutputStream();
-        ((ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(type)).write(value, buf);
+        ((ScaleWriter<T>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(type)).write(value, buf);
 
         return buf.toByteArray();
     }

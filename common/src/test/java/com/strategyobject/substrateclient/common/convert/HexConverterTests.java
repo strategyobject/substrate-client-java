@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.common.utils;
+package com.strategyobject.substrateclient.common.convert;
 
 import com.strategyobject.substrateclient.tests.TestSuite;
 import lombok.AccessLevel;
@@ -21,15 +21,15 @@ class HexConverterTests {
                 Test.toHex(new byte[]{(byte) 255, 0}, "0xff00"),
                 Test.toHex(new byte[]{(byte) 0, (byte) 255}, "0x00ff"),
                 Test.toHex(new byte[]{127, (byte) 128}, "0x7f80"),
-                Test.toHex(new byte[]{(byte) 128, (byte) 127}, "0x807f")
+                Test.toHex(new byte[]{(byte) 128, (byte) 127}, "0x807f"),
+                Test.toHex(new byte[0], "0x")
         );
     }
 
     @TestFactory
     Stream<DynamicTest> toHexThrows() {
         return TestSuite.of(
-                Test.toHex(null, IllegalArgumentException.class),
-                Test.toHex(new byte[]{}, IllegalArgumentException.class)
+                Test.toHex(null, IllegalArgumentException.class)
         );
     }
 

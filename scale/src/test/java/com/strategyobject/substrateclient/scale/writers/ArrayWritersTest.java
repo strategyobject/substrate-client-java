@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.writers;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.TestSuite;
 import lombok.AccessLevel;

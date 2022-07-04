@@ -14,7 +14,7 @@ public @interface Storage {
     /**
      * @return the name of a storage
      */
-    String value();
+    String name();
 
     /**
      * @return the array of items that describe SCALE-codecs

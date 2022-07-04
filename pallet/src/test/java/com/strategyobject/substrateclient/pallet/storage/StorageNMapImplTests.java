@@ -2,7 +2,7 @@ package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.common.types.tuple.Pair;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.BlockNumber;
@@ -10,8 +10,6 @@ import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
@@ -47,10 +45,10 @@ class StorageNMapImplTests {
     private static StorageNMapImpl<BlockHash> newSystemBlockHashStorage(State state) {
         return StorageNMapImpl.with(
                 state,
-                (ScaleReader<BlockHash>) ScaleReaderRegistry.getInstance().resolve(BlockHash.class),
+                (ScaleReader<BlockHash>) TestsHelper.SCALE_READER_REGISTRY.resolve(BlockHash.class),
                 StorageKeyProvider.of("System", "BlockHash")
-                        .use(KeyHasher.with((ScaleWriter<BlockNumber>) ScaleWriterRegistry.getInstance().resolve(BlockNumber.class),
-                                (ScaleReader<BlockNumber>) ScaleReaderRegistry.getInstance().resolve(BlockNumber.class),
+                        .use(KeyHasher.with((ScaleWriter<BlockNumber>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(BlockNumber.class),
+                                (ScaleReader<BlockNumber>) TestsHelper.SCALE_READER_REGISTRY.resolve(BlockNumber.class),
                                 TwoX64Concat.getInstance())));
     }
 
@@ -67,7 +65,7 @@ class StorageNMapImplTests {
     @Test
     void keys() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storage = newSystemBlockHashStorage(state);
 
             val collection = storage.keys().get();
@@ -87,17 +85,17 @@ class StorageNMapImplTests {
             assertEquals(1, list.size());
 
             val block = (BlockHash) list.stream().findFirst().orElseThrow(RuntimeException::new);
-            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(block.getBytes()));
         }
     }
 
     @Test
     void multiToDifferentStorages() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storageValue = StorageNMapImpl.with(
                     state,
-                    ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                    TestsHelper.SCALE_READER_REGISTRY.resolve(AccountId.class),
                     StorageKeyProvider.of("Sudo", "Key"));
             val storageMap = newSystemBlockHashStorage(state);
 
@@ -124,7 +122,7 @@ class StorageNMapImplTests {
     @Test
     void entries() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storage = newSystemBlockHashStorage(state);
 
             val collection = storage.entries().get();
@@ -139,14 +137,14 @@ class StorageNMapImplTests {
             }));
 
             assertEquals(BlockNumber.GENESIS, blockNumber.get());
-            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(blockHash.get().getBytes()));
         }
     }
 
     @Test
     void multi() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storage = newSystemBlockHashStorage(state);
 
             val collection = storage.multi(
@@ -164,7 +162,7 @@ class StorageNMapImplTests {
             assertEquals(2, list.size());
 
             assertEquals(BlockNumber.GENESIS, list.get(0).getValue0());
-            assertNotEquals(BigInteger.ZERO, new BigInteger(list.get(0).getValue1().getData()));
+            assertNotEquals(BigInteger.ZERO, new BigInteger(list.get(0).getValue1().getBytes()));
 
             assertEquals(BlockNumber.of(1), list.get(1).getValue0());
             assertNull(list.get(1).getValue1());
@@ -174,7 +172,7 @@ class StorageNMapImplTests {
     @Test
     void keysPaged() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             waitForNewBlocks(wsProvider);
 
             val storage = newSystemBlockHashStorage(state);
@@ -200,7 +198,7 @@ class StorageNMapImplTests {
     @Test
     void entriesPaged() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             waitForNewBlocks(wsProvider);
 
             val storage = newSystemBlockHashStorage(state);
@@ -218,7 +216,7 @@ class StorageNMapImplTests {
                         .forEachRemaining(e ->
                                 e.consume((value, keys) -> {
                                     val key = (BlockNumber) keys.get(0);
-                                    assertNotEquals(BigInteger.ZERO, new BigInteger(value.getData()));
+                                    assertNotEquals(BigInteger.ZERO, new BigInteger(value.getBytes()));
 
                                     pairs.add(Pair.of(key, value));
                                 }));
@@ -236,7 +234,7 @@ class StorageNMapImplTests {
     @Test
     void subscribe() throws Exception {
         try (val wsProvider = getConnectedProvider()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val blockNumber = BlockNumber.of(2);
             val storage = newSystemBlockHashStorage(state);
             val blockHash = new AtomicReference<BlockHash>();
@@ -253,7 +251,7 @@ class StorageNMapImplTests {
 
             waitForNewBlocks(wsProvider);
 
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
             val expectedValue = chain.getBlockHash(blockNumber).join();
             val history = storage.history(blockNumber).join();
             val changedAt = history.stream()
@@ -271,7 +269,7 @@ class StorageNMapImplTests {
     }
 
     private void waitForNewBlocks(ProviderInterface wsProvider) throws Exception {
-        val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+        val chain = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
 
         val blockCount = new AtomicInteger(0);
         val unsubscribeFunc = chain

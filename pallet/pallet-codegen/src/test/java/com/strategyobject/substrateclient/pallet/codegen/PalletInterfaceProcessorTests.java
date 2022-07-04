@@ -2,7 +2,6 @@ package com.strategyobject.substrateclient.pallet.codegen;
 
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.JavaFileObjects;
-import com.strategyobject.substrateclient.pallet.codegen.PalletInterfaceProcessor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -99,12 +98,13 @@ class PalletInterfaceProcessorTests {
 
         assertThat(compilation).succeeded();
 
+        assertContains(generatedName, compilation, "private final ScaleReaderRegistry scaleReaderRegistry;");
+        assertContains(generatedName, compilation, "private final ScaleWriterRegistry scaleWriterRegistry;");
         assertContains(generatedName, compilation, "private final State state;");
         assertContains(generatedName, compilation, "private final StorageNMap<Integer> value;");
         assertContains(generatedName, compilation, "private final StorageNMap<Integer> map;");
         assertContains(generatedName, compilation, "private final StorageNMap<AccountId> doubleMap;");
         assertContains(generatedName, compilation, "private final StorageNMap<Integer> tripleMap;");
-        assertContains(generatedName, compilation, "public TestPalletImpl(State state)");
         assertContains(generatedName, compilation, "public StorageNMap<Integer> value()");
         assertContains(generatedName, compilation, "public StorageNMap<Integer> map()");
         assertContains(generatedName, compilation, "public StorageNMap<AccountId> doubleMap()");

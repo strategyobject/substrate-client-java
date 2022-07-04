@@ -1,13 +1,12 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,8 +44,8 @@ class StorageKeyProviderTests {
                 Arguments.of("System",
                         "BlockHash",
                         KeyHasher.with(
-                                (ScaleWriter<Integer>) ScaleWriterRegistry.getInstance().resolve(Integer.class),
-                                (ScaleReader<Integer>) ScaleReaderRegistry.getInstance().resolve(Integer.class),
+                                (ScaleWriter<Integer>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(Integer.class),
+                                (ScaleReader<Integer>) TestsHelper.SCALE_READER_REGISTRY.resolve(Integer.class),
                                 TwoX64Concat.getInstance()
                         ),
                         2,
@@ -59,12 +58,12 @@ class StorageKeyProviderTests {
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     private static <T> ScaleReader<T> resolveReader(Class<T> clazz) {
-        return (ScaleReader<T>) ScaleReaderRegistry.getInstance().resolve(clazz);
+        return (ScaleReader<T>) TestsHelper.SCALE_READER_REGISTRY.resolve(clazz);
     }
 
     @SuppressWarnings({"unchecked", "SameParameterValue"})
     private static <T> ScaleWriter<T> resolveWriter(Class<T> clazz) {
-        return (ScaleWriter<T>) ScaleWriterRegistry.getInstance().resolve(clazz);
+        return (ScaleWriter<T>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(clazz);
     }
 
     private static Stream<Arguments> getTestCasesForGetByDoubleKey() {

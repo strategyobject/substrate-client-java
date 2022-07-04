@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.crypto.ss58;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

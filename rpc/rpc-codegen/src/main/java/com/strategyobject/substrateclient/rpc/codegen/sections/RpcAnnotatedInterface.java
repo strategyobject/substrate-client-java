@@ -8,16 +8,21 @@ import com.squareup.javapoet.TypeSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.rpc.annotation.RpcInterface;
+import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
+import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import lombok.NonNull;
 import lombok.val;
-import lombok.var;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
 
+import static com.strategyobject.substrateclient.rpc.codegen.Constants.*;
 import static com.strategyobject.substrateclient.rpc.codegen.sections.Constants.CLASS_NAME_TEMPLATE;
 import static com.strategyobject.substrateclient.rpc.codegen.sections.Constants.PROVIDER_INTERFACE;
 
@@ -59,9 +64,13 @@ public class RpcAnnotatedInterface {
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(TypeName.get(interfaceElement.asType()))
                 .addField(ProviderInterface.class, PROVIDER_INTERFACE)
+                .addField(RpcEncoderRegistry.class, ENCODER_REGISTRY)
+                .addField(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
+                .addField(RpcDecoderRegistry.class, DECODER_REGISTRY)
+                .addField(ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
                 .addMethod(createConstructor());
 
-        for (var method : interfaceElement.getEnclosedElements()) {
+        for (Element method : interfaceElement.getEnclosedElements()) {
             methodProcessor.process(section, (ExecutableElement) method, typeSpecBuilder, context);
         }
 
@@ -69,13 +78,31 @@ public class RpcAnnotatedInterface {
     }
 
     private MethodSpec createConstructor() {
-        return MethodSpec.constructorBuilder()
+        val methodSpec = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(ProviderInterface.class, PROVIDER_INTERFACE)
-                .beginControlFlow("if ($L == null)", PROVIDER_INTERFACE)
-                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, PROVIDER_INTERFACE)
-                .endControlFlow()
-                .addStatement("this.$1L = $1L", PROVIDER_INTERFACE)
-                .build();
+                .addParameter(RpcEncoderRegistry.class, ENCODER_REGISTRY)
+                .addParameter(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
+                .addParameter(RpcDecoderRegistry.class, DECODER_REGISTRY)
+                .addParameter(ScaleReaderRegistry.class, SCALE_READER_REGISTRY);
+
+        assignParameters(methodSpec,
+                PROVIDER_INTERFACE,
+                ENCODER_REGISTRY,
+                SCALE_WRITER_REGISTRY,
+                DECODER_REGISTRY,
+                SCALE_READER_REGISTRY);
+
+        return methodSpec.build();
+    }
+
+    private void assignParameters(MethodSpec.Builder methodSpec, String... parameters) {
+        for (val parameter : parameters) {
+            methodSpec
+                    .beginControlFlow("if ($L == null)", parameter)
+                    .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, parameter)
+                    .endControlFlow()
+                    .addStatement("this.$1L = $1L", parameter);
+        }
     }
 }

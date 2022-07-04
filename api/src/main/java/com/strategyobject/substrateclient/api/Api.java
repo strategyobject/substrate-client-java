@@ -1,32 +1,27 @@
 package com.strategyobject.substrateclient.api;
 
-import com.strategyobject.substrateclient.pallet.GeneratedPalletResolver;
-import com.strategyobject.substrateclient.pallet.PalletResolver;
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
-import com.strategyobject.substrateclient.rpc.api.section.State;
+import com.google.inject.Module;
+import com.strategyobject.substrateclient.pallet.PalletFactory;
+import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import lombok.NonNull;
-import lombok.val;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 /**
  * Provides the ability to query a node and interact with the Polkadot or Substrate chains.
  * It allows interacting with blockchain in various ways: using RPC's queries directly or
  * accessing Pallets and its APIs, such as storages, transactions, etc.
  */
+@RequiredArgsConstructor
 public class Api implements AutoCloseable {
-    private final @NonNull ProviderInterface providerInterface;
-    private final @NonNull PalletResolver palletResolver;
+    private final @NonNull RpcSectionFactory rpcSectionFactory;
+    private final @NonNull PalletFactory palletFactory;
     private final Map<Class<?>, Object> resolvedCache = new ConcurrentHashMap<>();
 
-    private Api(@NonNull ProviderInterface providerInterface) {
-        this.providerInterface = providerInterface;
-
-        val state = RpcGeneratedSectionFactory.create(State.class, providerInterface);
-        this.palletResolver = GeneratedPalletResolver.with(state);
-    }
 
     /**
      * Resolves the instance of a rpc by its definition.
@@ -35,9 +30,8 @@ public class Api implements AutoCloseable {
      * @param <T>   the type of the rpc
      * @return appropriate instance of the rpc
      */
-    public <T> T rpc(Class<T> clazz) {
-        return clazz.cast(resolvedCache
-                .computeIfAbsent(clazz, x -> RpcGeneratedSectionFactory.create(x, providerInterface)));
+    public <T> T rpc(@NonNull Class<T> clazz) {
+        return clazz.cast(resolvedCache.computeIfAbsent(clazz, rpcSectionFactory::create));
     }
 
     /**
@@ -48,18 +42,21 @@ public class Api implements AutoCloseable {
      * @return appropriate instance of the pallet
      */
     public <T> T pallet(@NonNull Class<T> clazz) {
-        return clazz.cast(resolvedCache
-                .computeIfAbsent(clazz, palletResolver::resolve));
-    }
-
-    public static Api with(ProviderInterface providerInterface) {
-        return new Api(providerInterface);
+        return clazz.cast(resolvedCache.computeIfAbsent(clazz, palletFactory::create));
     }
 
     @Override
     public void close() throws Exception {
-        if (providerInterface instanceof AutoCloseable) {
-            ((AutoCloseable) providerInterface).close();
+        if (rpcSectionFactory instanceof AutoCloseable) {
+            ((AutoCloseable) rpcSectionFactory).close();
         }
+    }
+
+    public static ApiBuilder<DefaultModule> with(@NonNull Supplier<ProviderInterface> providerInterface) {
+        return with(new DefaultModule(providerInterface.get()));
+    }
+
+    public static <M extends Module> ApiBuilder<M> with(@NonNull M module) {
+        return new ApiBuilder<>(module);
     }
 }

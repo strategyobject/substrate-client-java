@@ -18,7 +18,7 @@ class ScaleReaderProcessorTest {
 
         assertThat(compilation).failed();
         assertThat(compilation)
-                .hadErrorContaining("Wrong template");
+                .hadErrorContaining("brackets");
     }
 
     @Test

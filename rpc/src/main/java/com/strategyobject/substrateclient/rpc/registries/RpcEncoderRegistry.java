@@ -1,29 +1,34 @@
 package com.strategyobject.substrateclient.rpc.registries;
 
+import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Unit;
+import com.strategyobject.substrateclient.rpc.RpcDispatch;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
 import com.strategyobject.substrateclient.rpc.encoders.*;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class RpcEncoderRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(RpcEncoderRegistry.class);
-    private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile RpcEncoderRegistry instance;
+@Slf4j
+public class RpcEncoderRegistry implements AutoRegistry {
+    private final ScaleWriterRegistry scaleWriterRegistry;
+
     private final Map<Class<?>, RpcEncoder<?>> encoders;
 
-    private RpcEncoderRegistry() {
-        encoders = new ConcurrentHashMap<>(128);
+    public RpcEncoderRegistry(@NonNull ScaleWriterRegistry scaleWriterRegistry) {
+        this.scaleWriterRegistry = scaleWriterRegistry;
 
+        encoders = new ConcurrentHashMap<>(128);
         register(new PlainEncoder<>(),
                 Void.class, void.class, String.class, Boolean.class, boolean.class, Byte.class, byte.class,
                 Double.class, double.class, Float.class, float.class, Integer.class, int.class, Long.class,
@@ -32,20 +37,7 @@ public final class RpcEncoderRegistry {
         register(new ListEncoder(), List.class);
         register(new MapEncoder(), Map.class);
         register(new ArrayEncoder(), Array.class);
-
-        registerAnnotatedFrom(ROOT_PREFIX);
-    }
-
-    public static RpcEncoderRegistry getInstance() {
-        if (instance == null) {
-            synchronized (RpcEncoderRegistry.class) {
-                if (instance == null) {
-                    instance = new RpcEncoderRegistry();
-                }
-            }
-        }
-
-        return instance;
+        register(new DispatchingEncoder<>(this), RpcDispatch.class);
     }
 
     public void registerAnnotatedFrom(String... prefixes) {
@@ -58,12 +50,20 @@ public final class RpcEncoderRegistry {
 
                     try {
                         val types = autoRegister.types();
-                        logger.info("Auto register encoder {} for types: {}", encoder, types);
+                        log.info("Auto register encoder {} for types: {}", encoder, types);
 
-                        final RpcEncoder<?> instance = encoder.newInstance();
-                        register(instance, types);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.error("Auto registration error", e);
+                        RpcEncoder<?> rpcEncoder;
+                        if (ClassUtils.hasDefaultConstructor(encoder)) {
+                            rpcEncoder = encoder.newInstance();
+                        } else {
+                            val ctor = encoder.getConstructor(RpcEncoderRegistry.class, ScaleWriterRegistry.class);
+                            rpcEncoder = ctor.newInstance(this, scaleWriterRegistry);
+                        }
+
+                        register(rpcEncoder, types);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                             NoSuchMethodException e) {
+                        log.error("Auto registration error", e);
                     }
                 });
     }

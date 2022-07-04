@@ -1,13 +1,11 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -35,16 +33,17 @@ class StorageDoubleMapImplTests {
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
 
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
             val storage = StorageDoubleMapImpl.with(
                     state,
-                    (ScaleReader<Void>) ScaleReaderRegistry.getInstance().resolve(Void.class),
+                    (ScaleReader<Void>) TestsHelper.SCALE_READER_REGISTRY.resolve(Void.class),
                     StorageKeyProvider.of("Society", "Votes")
-                            .use(KeyHasher.with((ScaleWriter<AccountId>) ScaleWriterRegistry.getInstance().resolve(AccountId.class),
-                                            (ScaleReader<AccountId>) ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                            .use(
+                                    KeyHasher.with((ScaleWriter<AccountId>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(AccountId.class),
+                                            (ScaleReader<AccountId>) TestsHelper.SCALE_READER_REGISTRY.resolve(AccountId.class),
                                             TwoX64Concat.getInstance()),
-                                    KeyHasher.with((ScaleWriter<AccountId>) ScaleWriterRegistry.getInstance().resolve(AccountId.class),
-                                            (ScaleReader<AccountId>) ScaleReaderRegistry.getInstance().resolve(AccountId.class),
+                                    KeyHasher.with((ScaleWriter<AccountId>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(AccountId.class),
+                                            (ScaleReader<AccountId>) TestsHelper.SCALE_READER_REGISTRY.resolve(AccountId.class),
                                             TwoX64Concat.getInstance())));
             val alice = AccountId.fromBytes(
                     SS58Codec.decode(

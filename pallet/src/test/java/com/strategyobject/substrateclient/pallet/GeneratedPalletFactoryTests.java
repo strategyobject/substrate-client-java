@@ -7,33 +7,27 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-class GeneratedPalletResolverTests {
+class GeneratedPalletFactoryTests {
+    private final GeneratedPalletFactory factory = new GeneratedPalletFactory(
+            TestsHelper.SCALE_READER_REGISTRY,
+            TestsHelper.SCALE_WRITER_REGISTRY,
+            mock(State.class));
+
     @Test
     void throwsWhenPalletIsNotAnnotated() {
-        val state = mock(State.class);
-
-        val resolver = GeneratedPalletResolver.with(state);
-
         assertThrows(IllegalArgumentException.class,
-                () -> resolver.resolve(TestPalletNotAnnotated.class));
+                () -> factory.create(TestPalletNotAnnotated.class));
     }
 
     @Test
     void throwsWhenPalletImplementationDoesNotHaveAppropriateConstructor() {
-        val state = mock(State.class);
-
-        val resolver = GeneratedPalletResolver.with(state);
-
         assertThrows(RuntimeException.class,
-                () -> resolver.resolve(TestPalletWithoutConstructor.class));
+                () -> factory.create(TestPalletWithoutConstructor.class));
     }
 
     @Test
     void resolve() {
-        val state = mock(State.class);
-
-        val resolver = GeneratedPalletResolver.with(state);
-        val pallet = resolver.resolve(TestPallet.class);
+        val pallet = factory.create(TestPallet.class);
 
         assertNotNull(pallet);
         assertEquals(TestPalletImpl.class, pallet.getClass());

@@ -30,6 +30,6 @@ public class FixedBytesWriter implements ScaleWriter<FixedBytes<? extends Size>>
                       ScaleWriter<?>... writers) throws IOException {
         Preconditions.checkArgument(writers == null || writers.length == 0);
 
-        Streamer.writeBytes(value.getData(), stream);
+        Streamer.writeBytes(value.getBytes(), stream);
     }
 }

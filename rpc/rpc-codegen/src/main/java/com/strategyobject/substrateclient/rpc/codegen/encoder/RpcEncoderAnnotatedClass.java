@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.encoder;
 
 import com.squareup.javapoet.*;
+import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
 import com.strategyobject.substrateclient.common.codegen.JavaPoet;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
@@ -69,13 +70,36 @@ public class RpcEncoderAnnotatedClass {
                         .addMember(AUTO_REGISTER_TYPES_ARG, "{$L.class}", classElement.getQualifiedName().toString())
                         .build())
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(RpcEncoder.class), classWildcardTyped))
+                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(RpcEncoder.class), classWildcardTyped));
+
+        injectDependencies(typeSpecBuilder)
                 .addMethod(generateEncodeMethod(context, classWildcardTyped));
 
         JavaFile.builder(
                 context.getPackageName(classElement),
                 typeSpecBuilder.build()
         ).build().writeTo(context.getFiler());
+    }
+
+    private TypeSpec.Builder injectDependencies(TypeSpec.Builder typeSpecBuilder) {
+        val ctor = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(RpcEncoderRegistry.class, ENCODER_REGISTRY)
+                .addParameter(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
+                .beginControlFlow("if ($L == null)", ENCODER_REGISTRY)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, ENCODER_REGISTRY)
+                .endControlFlow()
+                .addStatement("this.$1L = $1L", ENCODER_REGISTRY)
+                .beginControlFlow("if ($L == null)", SCALE_WRITER_REGISTRY)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, SCALE_WRITER_REGISTRY)
+                .endControlFlow()
+                .addStatement("this.$1L = $1L", SCALE_WRITER_REGISTRY)
+                .build();
+
+        return typeSpecBuilder
+                .addField(RpcEncoderRegistry.class, ENCODER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addField(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addMethod(ctor);
     }
 
     private MethodSpec generateEncodeMethod(ProcessorContext context, TypeName classWildcardTyped) throws ProcessingException {
@@ -93,7 +117,7 @@ public class RpcEncoderAnnotatedClass {
                 .varargs(true);
 
         shortcutIfNull(methodSpec);
-        addValidationRules(methodSpec, context);
+        addValidationRules(methodSpec);
         addMethodBody(methodSpec, context);
 
         return methodSpec.build();
@@ -101,8 +125,6 @@ public class RpcEncoderAnnotatedClass {
 
     private void addMethodBody(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
         methodSpec
-                .addStatement("$1T $2L = $1T.getInstance()", RpcEncoderRegistry.class, ENCODER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
                 .addStatement("$1T<$2T, $3T> $4L = new $1T<>()", HashMap.class, String.class, Object.class, RESULT_VAR)
                 .beginControlFlow("try");
 
@@ -130,11 +152,11 @@ public class RpcEncoderAnnotatedClass {
                 SCALE_WRITER_REGISTRY);
 
         for (VariableElement field : fields) {
-            if (field.getAnnotation(Ignore.class) != null) {
+            if (AnnotationUtils.isAnnotatedWith(field, Ignore.class)) {
                 continue;
             }
 
-            if (field.getAnnotation(Scale.class) != null || field.getAnnotation(ScaleGeneric.class) != null) {
+            if (AnnotationUtils.isAnnotatedWithAny(field, Scale.class, ScaleGeneric.class)) {
                 setScaleField(methodSpec, field, scaleAnnotationParser, scaleWriterCompositor);
             } else {
                 setField(methodSpec, field, context, encoderCompositor);
@@ -210,9 +232,9 @@ public class RpcEncoderAnnotatedClass {
 
     }
 
-    private void addValidationRules(MethodSpec.Builder methodSpec, ProcessorContext context) {
+    private void addValidationRules(MethodSpec.Builder methodSpec) {
         val classTypeParametersSize = classElement.getTypeParameters().size();
-        if (classTypeParametersSize == 0 || context.isAssignable(classElement.asType(), context.erasure(context.getType(RPC_SELF_ENCODABLE)))) {
+        if (classTypeParametersSize == 0) {
             methodSpec.addStatement("if ($1L != null && $1L.length > 0) throw new $2T()", ENCODERS_ARG, IllegalArgumentException.class);
         } else {
             methodSpec

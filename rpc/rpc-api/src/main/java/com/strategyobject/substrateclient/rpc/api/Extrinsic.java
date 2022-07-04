@@ -1,13 +1,11 @@
 package com.strategyobject.substrateclient.rpc.api;
 
-import com.strategyobject.substrateclient.scale.ScaleSelfWritable;
 import lombok.Getter;
 
 import java.util.Optional;
 
 @Getter
-public class Extrinsic<C extends Call, A extends Address, S extends Signature, E extends Extra>
-        implements ScaleSelfWritable<Extrinsic<C, A, S, E>> {
+public class Extrinsic<C extends Call, A extends Address, S extends Signature, E extends Extra> {
     private final Optional<SignaturePayload<A, S, E>> signature;
     private final C call;
 

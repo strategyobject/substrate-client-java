@@ -11,11 +11,11 @@ import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 
 @Pallet("Test")
 public interface TestPallet {
-    @Storage("Value")
+    @Storage(name = "Value")
     StorageNMap<Integer> value();
 
     @Storage(
-            value = "Map",
+            name = "Map",
             keys = {
                     @StorageKey(type = @Scale(ScaleType.I32.class),
                             hasher = StorageHasher.TWOX_64_CONCAT)
@@ -23,7 +23,7 @@ public interface TestPallet {
     StorageNMap<Integer> map();
 
     @Storage(
-            value = "DoubleMap",
+            name = "DoubleMap",
             keys = {
                     @StorageKey(type = @Scale(ScaleType.I32.class),
                             hasher = StorageHasher.TWOX_64_CONCAT),
@@ -42,7 +42,7 @@ public interface TestPallet {
     StorageNMap<AccountId> doubleMap();
 
     @Storage(
-            value = "TripleMap",
+            name = "TripleMap",
             keys = {
                     @StorageKey(type = @Scale(String.class),
                             hasher = StorageHasher.BLAKE2_128_CONCAT),

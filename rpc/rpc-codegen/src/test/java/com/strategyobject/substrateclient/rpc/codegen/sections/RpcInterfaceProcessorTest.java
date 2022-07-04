@@ -127,5 +127,9 @@ class RpcInterfaceProcessorTest {
                 .compile(clazz);
 
         assertThat(compilation).succeeded();
+        assertThat(compilation)
+                .generatedSourceFile("com.strategyobject.substrateclient.rpc.sections.TestSectionImpl")
+                .contentsAsUtf8String()
+                .contains("scaleWriterRegistry.resolve(TestDispatch.class))");
     }
 }

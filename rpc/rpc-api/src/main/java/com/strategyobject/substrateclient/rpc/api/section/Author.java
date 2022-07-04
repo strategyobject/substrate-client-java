@@ -8,6 +8,7 @@ import com.strategyobject.substrateclient.rpc.api.Extrinsic;
 import com.strategyobject.substrateclient.rpc.api.ExtrinsicStatus;
 import com.strategyobject.substrateclient.rpc.api.Hash;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
@@ -38,6 +39,17 @@ public interface Author {
     CompletableFuture<Void> insertKey(String keyType, String secretUri, Bytes publicKey);
 
     /**
+     * Submit hex-encoded extrinsic for inclusion in block.
+     *
+     * @param extrinsic extrinsic to submit
+     * @return hash of extrinsic
+     */
+    @RpcCall("submitExtrinsic")
+    CompletableFuture<Hash> submitExtrinsic(
+            @ScaleGeneric(template = "Extrinsic", types = @Scale(Extrinsic.class))
+            Extrinsic<?, ?, ?, ?> extrinsic);
+
+    /**
      * Submit an extrinsic to watch.
      *
      * @param extrinsic extrinsic to submit
@@ -45,15 +57,8 @@ public interface Author {
      * @return unsubscribe delegate
      */
     @RpcSubscription(type = "extrinsicUpdate", subscribeMethod = "submitAndWatchExtrinsic", unsubscribeMethod = "unwatchExtrinsic")
-    CompletableFuture<Supplier<CompletableFuture<Boolean>>> submitAndWatchExtrinsic(@Scale Extrinsic<?, ?, ?, ?> extrinsic,
-                                                                                    BiConsumer<Exception, ExtrinsicStatus> callback);
-
-    /**
-     * Submit hex-encoded extrinsic for inclusion in block.
-     *
-     * @param extrinsic extrinsic to submit
-     * @return hash of extrinsic
-     */
-    @RpcCall("submitExtrinsic")
-    CompletableFuture<Hash> submitExtrinsic(@Scale Extrinsic<?, ?, ?, ?> extrinsic);
+    CompletableFuture<Supplier<CompletableFuture<Boolean>>> submitAndWatchExtrinsic(
+            @ScaleGeneric(template = "Extrinsic", types = @Scale(Extrinsic.class))
+            Extrinsic<?, ?, ?, ?> extrinsic,
+            BiConsumer<Exception, ExtrinsicStatus> callback);
 }

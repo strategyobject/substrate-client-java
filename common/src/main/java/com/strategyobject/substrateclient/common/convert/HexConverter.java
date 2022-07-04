@@ -1,4 +1,4 @@
-package com.strategyobject.substrateclient.common.utils;
+package com.strategyobject.substrateclient.common.convert;
 
 import com.google.common.base.Preconditions;
 import lombok.NonNull;
@@ -9,7 +9,9 @@ public class HexConverter {
     private static final char[] HEX = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     public static String toHex(byte @NonNull [] data) {
-        Preconditions.checkArgument(data.length > 0);
+        if (data.length == 0) {
+            return "0x";
+        }
 
         val hex = new char[(data.length * 2) + 2];
         hex[0] = '0';

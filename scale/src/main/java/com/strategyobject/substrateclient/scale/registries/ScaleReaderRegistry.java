@@ -1,7 +1,9 @@
 package com.strategyobject.substrateclient.scale.registries;
 
+import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.common.types.union.*;
@@ -11,23 +13,21 @@ import com.strategyobject.substrateclient.scale.annotation.AutoRegister;
 import com.strategyobject.substrateclient.scale.readers.*;
 import com.strategyobject.substrateclient.scale.readers.union.*;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class ScaleReaderRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(ScaleReaderRegistry.class);
-    private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile ScaleReaderRegistry instance;
+@Slf4j
+public class ScaleReaderRegistry implements AutoRegistry {
     private final Map<Class<?>, ScaleReader<?>> readers;
 
-    private ScaleReaderRegistry() {
+    public ScaleReaderRegistry() {
         readers = new ConcurrentHashMap<>(128);
 
         register(new BoolReader(), ScaleType.Bool.class, Boolean.class, boolean.class);
@@ -68,19 +68,6 @@ public final class ScaleReaderRegistry {
         register(new LongArrayReader(), long[].class);
         register(new VoidReader(), Void.class, void.class);
         register(new UnitReader(), Unit.class);
-
-        registerAnnotatedFrom(ROOT_PREFIX);
-    }
-
-    public static ScaleReaderRegistry getInstance() {
-        if (instance == null) {
-            synchronized (ScaleReaderRegistry.class) {
-                if (instance == null) {
-                    instance = new ScaleReaderRegistry();
-                }
-            }
-        }
-        return instance;
     }
 
     public void registerAnnotatedFrom(String... prefixes) {
@@ -93,12 +80,21 @@ public final class ScaleReaderRegistry {
 
                     try {
                         val types = autoRegister.types();
-                        logger.info("Auto register reader {} for types: {}", reader, types);
+                        log.info("Auto register reader {} for types: {}", reader, types);
 
-                        final ScaleReader<?> readerInstance = reader.newInstance();
+
+                        ScaleReader<?> readerInstance;
+                        if (ClassUtils.hasDefaultConstructor(reader)) {
+                            readerInstance = reader.newInstance();
+                        } else {
+                            val ctor = reader.getConstructor(ScaleReaderRegistry.class);
+                            readerInstance = ctor.newInstance(this);
+                        }
+
                         register(readerInstance, types);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.error("Auto registration error", e);
+                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                             InvocationTargetException e) {
+                        log.error("Auto registration error", e);
                     }
                 });
     }

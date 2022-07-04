@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.crypto.sr25519;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.crypto.NativeException;
 import lombok.val;
 import org.junit.jupiter.api.Test;

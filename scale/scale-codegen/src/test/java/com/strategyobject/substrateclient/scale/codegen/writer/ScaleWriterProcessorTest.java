@@ -18,42 +18,7 @@ class ScaleWriterProcessorTest {
 
         assertThat(compilation).failed();
         assertThat(compilation)
-                .hadErrorContaining("Wrong template");
-    }
-
-    @Test
-    void failsWhenMissesScaleSelfWritable() {
-        val nameless = JavaFileObjects.forResource("MissesScaleSelfWritable.java");
-
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(nameless);
-
-        assertThat(compilation).failed();
-        assertThat(compilation)
-                .hadErrorContaining("ScaleSelfWritable");
-    }
-
-    @Test
-    void compilesNonGenericScaleSelfWritable() {
-        val clazz = JavaFileObjects.forResource("NonGenericScaleSelfWritable.java");
-
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(clazz);
-
-        assertThat(compilation).succeeded();
-    }
-
-    @Test
-    void compilesGenericScaleSelfWritable() {
-        val clazz = JavaFileObjects.forResource("GenericScaleSelfWritable.java");
-
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(clazz);
-
-        assertThat(compilation).succeeded();
+                .hadErrorContaining("brackets");
     }
 
     @Test

@@ -1,9 +1,7 @@
 package com.strategyobject.substrateclient.rpc.codegen.decoder;
 
 import com.squareup.javapoet.*;
-import com.strategyobject.substrateclient.common.codegen.JavaPoet;
-import com.strategyobject.substrateclient.common.codegen.ProcessingException;
-import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
+import com.strategyobject.substrateclient.common.codegen.*;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
@@ -69,7 +67,9 @@ public class RpcDecoderAnnotatedClass {
                         .addMember(AUTO_REGISTER_TYPES_ARG, "{$L.class}", classElement.getQualifiedName().toString())
                         .build())
                 .addModifiers(Modifier.PUBLIC)
-                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(RpcDecoder.class), classWildcardTyped))
+                .addSuperinterface(ParameterizedTypeName.get(ClassName.get(RpcDecoder.class), classWildcardTyped));
+
+        injectDependencies(typeSpecBuilder)
                 .addMethod(generateDecodeMethod(context, classWildcardTyped));
 
         JavaFile.builder(
@@ -99,11 +99,30 @@ public class RpcDecoderAnnotatedClass {
         return methodSpec.build();
     }
 
+    private TypeSpec.Builder injectDependencies(TypeSpec.Builder typeSpecBuilder) {
+        val ctor = MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(RpcDecoderRegistry.class, DECODER_REGISTRY)
+                .addParameter(ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
+                .beginControlFlow("if ($L == null)", DECODER_REGISTRY)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, DECODER_REGISTRY)
+                .endControlFlow()
+                .addStatement("this.$1L = $1L", DECODER_REGISTRY)
+                .beginControlFlow("if ($L == null)", SCALE_READER_REGISTRY)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, SCALE_READER_REGISTRY)
+                .endControlFlow()
+                .addStatement("this.$1L = $1L", SCALE_READER_REGISTRY)
+                .build();
+
+        return typeSpecBuilder
+                .addField(RpcDecoderRegistry.class, DECODER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addField(ScaleReaderRegistry.class, SCALE_READER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addMethod(ctor);
+    }
+
     private void addMethodBody(MethodSpec.Builder methodSpec, ProcessorContext context) throws ProcessingException {
         val resultType = JavaPoet.setEachGenericParameterAs(classElement, TypeName.OBJECT);
         methodSpec
-                .addStatement("$1T $2L = $1T.getInstance()", RpcDecoderRegistry.class, DECODER_REGISTRY)
-                .addStatement("$1T $2L = $1T.getInstance()", ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
                 .addStatement("$T<$T, $T> $L = $L.asMap()", Map.class, String.class, RpcObject.class, MAP_VAR, VALUE_ARG)
                 .addStatement("$1T $2L = new $1T()", resultType, RESULT_VAR)
                 .beginControlFlow("try");
@@ -134,11 +153,11 @@ public class RpcDecoderAnnotatedClass {
                 SCALE_READER_REGISTRY);
 
         for (VariableElement field : fields) {
-            if (field.getAnnotation(Ignore.class) != null) {
+            if (AnnotationUtils.isAnnotatedWith(field, Ignore.class)) {
                 continue;
             }
 
-            if (field.getAnnotation(Scale.class) != null || field.getAnnotation(ScaleGeneric.class) != null) {
+            if (AnnotationUtils.isAnnotatedWithAny(field, Scale.class, ScaleGeneric.class)) {
                 setScaleField(methodSpec, context, field, scaleAnnotationParser, scaleReaderCompositor);
             } else {
                 setField(methodSpec, field, context, decoderCompositor);

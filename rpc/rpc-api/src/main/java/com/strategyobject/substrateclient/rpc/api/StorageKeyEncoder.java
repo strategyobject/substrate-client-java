@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.api;
 
 import com.google.common.base.Preconditions;
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;

@@ -9,6 +9,8 @@ import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.pallet.annotation.Pallet;
 import com.strategyobject.substrateclient.rpc.api.section.State;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
+import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.val;
 
 import javax.lang.model.element.Element;
@@ -16,9 +18,9 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
+import java.util.stream.Stream;
 
-import static com.strategyobject.substrateclient.pallet.codegen.Constants.CLASS_NAME_TEMPLATE;
-import static com.strategyobject.substrateclient.pallet.codegen.Constants.STATE;
+import static com.strategyobject.substrateclient.pallet.codegen.Constants.*;
 
 public class PalletAnnotatedInterface {
     private final TypeElement interfaceElement;
@@ -55,7 +57,9 @@ public class PalletAnnotatedInterface {
         val typeSpecBuilder = TypeSpec.classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(TypeName.get(interfaceElement.asType()))
-                .addField(State.class, STATE, Modifier.FINAL, Modifier.PRIVATE);
+                .addField(ScaleReaderRegistry.class, SCALE_READER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addField(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
+                .addField(State.class, STATE, Modifier.PRIVATE, Modifier.FINAL);
 
         val constructorBuilder = createConstructorBuilder();
 
@@ -73,12 +77,19 @@ public class PalletAnnotatedInterface {
     }
 
     private MethodSpec.Builder createConstructorBuilder() {
-        return MethodSpec.constructorBuilder()
+        val ctor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(State.class, STATE)
-                .beginControlFlow("if ($L == null)", STATE)
-                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, STATE)
-                .endControlFlow()
-                .addStatement("this.$1L = $1L", STATE);
+                .addParameter(ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
+                .addParameter(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
+                .addParameter(State.class, STATE);
+
+        Stream.of(SCALE_READER_REGISTRY, SCALE_WRITER_REGISTRY, STATE)
+                .forEach(x ->
+                        ctor.beginControlFlow("if ($L == null)", x)
+                                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, x)
+                                .endControlFlow()
+                                .addStatement("this.$1L = $1L", x));
+
+        return ctor;
     }
 }

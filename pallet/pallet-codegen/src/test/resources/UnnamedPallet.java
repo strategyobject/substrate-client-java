@@ -4,6 +4,6 @@ import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 
 @Pallet("")
 public interface UnnamedPallet {
-    @Storage("Test")
+    @Storage(name = "Test")
     StorageNMap<Integer> test();
 }

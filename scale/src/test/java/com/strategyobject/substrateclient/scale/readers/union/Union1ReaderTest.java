@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.scale.readers.union;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.scale.readers.U8Reader;
 import lombok.SneakyThrows;
 import lombok.val;

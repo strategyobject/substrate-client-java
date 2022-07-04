@@ -7,7 +7,7 @@ import com.strategyobject.substrateclient.scale.annotation.Scale;
 
 @Pallet("Test")
 public interface NotAStorage {
-    @Storage(value = "Test", keys = {
+    @Storage(name = "Test", keys = {
             @StorageKey(
                     hasher = StorageHasher.BLAKE2_128_CONCAT,
                     type = @Scale(ScaleType.I32.class)

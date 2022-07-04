@@ -1,29 +1,33 @@
 package com.strategyobject.substrateclient.rpc.registries;
 
+import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
+import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
 import com.strategyobject.substrateclient.rpc.decoders.*;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class RpcDecoderRegistry {
-    private static final Logger logger = LoggerFactory.getLogger(RpcDecoderRegistry.class);
-    private static final String ROOT_PREFIX = "com.strategyobject.substrateclient";
-    private static volatile RpcDecoderRegistry instance;
+@Slf4j
+public class RpcDecoderRegistry implements AutoRegistry {
+    private final ScaleReaderRegistry scaleReaderRegistry;
+
     private final Map<Class<?>, RpcDecoder<?>> decoders;
 
-    private RpcDecoderRegistry() {
-        decoders = new ConcurrentHashMap<>(128);
+    public RpcDecoderRegistry(ScaleReaderRegistry scaleReaderRegistry) {
+        this.scaleReaderRegistry = scaleReaderRegistry;
 
+        decoders = new ConcurrentHashMap<>(128);
         register(new ListDecoder(), List.class);
         register(new MapDecoder(), Map.class);
         register(new VoidDecoder(), Void.class, void.class);
@@ -37,20 +41,6 @@ public final class RpcDecoderRegistry {
         register(new ShortDecoder(), Short.class, short.class);
         register(new StringDecoder(), String.class);
         register(new ArrayDecoder(), Array.class);
-
-        registerAnnotatedFrom(ROOT_PREFIX);
-    }
-
-    public static RpcDecoderRegistry getInstance() {
-        if (instance == null) {
-            synchronized (RpcDecoderRegistry.class) {
-                if (instance == null) {
-                    instance = new RpcDecoderRegistry();
-                }
-            }
-        }
-
-        return instance;
     }
 
     public void registerAnnotatedFrom(String... prefixes) {
@@ -63,12 +53,20 @@ public final class RpcDecoderRegistry {
 
                     try {
                         val types = autoRegister.types();
-                        logger.info("Auto register decoder {} for types: {}", decoder, types);
+                        log.info("Auto register decoder {} for types: {}", decoder, types);
 
-                        final RpcDecoder<?> instance = decoder.newInstance();
-                        register(instance, types);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        logger.error("Auto registration error", e);
+                        RpcDecoder<?> rpcDecoder;
+                        if (ClassUtils.hasDefaultConstructor(decoder)) {
+                            rpcDecoder = decoder.newInstance();
+                        } else {
+                            val ctor = decoder.getConstructor(RpcDecoderRegistry.class, ScaleReaderRegistry.class);
+                            rpcDecoder = ctor.newInstance(this, scaleReaderRegistry);
+                        }
+
+                        register(rpcDecoder, types);
+                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                             InvocationTargetException e) {
+                        log.error("Auto registration error", e);
                     }
                 });
     }

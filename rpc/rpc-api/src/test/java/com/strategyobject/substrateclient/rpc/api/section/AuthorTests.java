@@ -1,10 +1,14 @@
 package com.strategyobject.substrateclient.rpc.api.section;
 
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.common.types.Size;
-import com.strategyobject.substrateclient.common.utils.HexConverter;
-import com.strategyobject.substrateclient.crypto.*;
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.crypto.Hasher;
+import com.strategyobject.substrateclient.crypto.KeyPair;
+import com.strategyobject.substrateclient.crypto.KeyRing;
+import com.strategyobject.substrateclient.crypto.PublicKey;
 import com.strategyobject.substrateclient.rpc.api.*;
+import com.strategyobject.substrateclient.scale.ScaleUtils;
+import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -40,7 +44,7 @@ class AuthorTests {
     @Test
     void hasKey() throws Exception {
         try (val wsProvider = connect()) {
-            val author = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
+            val author = TestsHelper.createSectionFactory(wsProvider).create(Author.class);
 
             val publicKey = PublicKey.fromBytes(
                     HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"));
@@ -59,7 +63,7 @@ class AuthorTests {
     @Test
     void insertKey() throws Exception {
         try (val wsProvider = connect()) {
-            val author = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
+            val author = TestsHelper.createSectionFactory(wsProvider).create(Author.class);
 
             Assertions.assertDoesNotThrow(() -> author.insertKey("aura",
                             "alice",
@@ -72,10 +76,11 @@ class AuthorTests {
     @Test
     void submitExtrinsic() throws Exception {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val sectionFactory = TestsHelper.createSectionFactory(wsProvider);
+            val chain = sectionFactory.create(Chain.class);
             val genesis = chain.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val author = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
+            val author = sectionFactory.create(Author.class);
             Assertions.assertDoesNotThrow(() -> author.submitExtrinsic(createBalanceTransferExtrinsic(genesis, NONCE.getAndIncrement()))
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS));
         }
@@ -84,10 +89,12 @@ class AuthorTests {
     @Test
     void submitAndWatchExtrinsic() throws Exception {
         try (val wsProvider = connect()) {
-            val chain = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val sectionFactory = TestsHelper.createSectionFactory(wsProvider);
+
+            val chain = sectionFactory.create(Chain.class);
             val genesis = chain.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            val author = RpcGeneratedSectionFactory.create(Author.class, wsProvider);
+            val author = sectionFactory.create(Author.class);
             val updateCount = new AtomicInteger(0);
             val status = new AtomicReference<ExtrinsicStatus>();
             val unsubscribe = author.submitAndWatchExtrinsic(
@@ -110,6 +117,7 @@ class AuthorTests {
         }
     }
 
+
     private WsProvider connect() throws ExecutionException, InterruptedException, TimeoutException {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
@@ -120,31 +128,32 @@ class AuthorTests {
         return wsProvider;
     }
 
+    @SuppressWarnings({"unchecked"})
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis, int nonce) {
         val specVersion = 264;
         val txVersion = 2;
         val moduleIndex = (byte) 6;
         val callIndex = (byte) 0;
         val tip = 0;
-        val call = new BalanceTransfer(moduleIndex, callIndex, AddressId.fromBytes(bobKeyPair().asPublicKey().getData()), BigInteger.valueOf(10));
+        val call = new BalanceTransfer(moduleIndex, callIndex, AddressId.fromBytes(bobKeyPair().asPublicKey().getBytes()), BigInteger.valueOf(10));
 
         val extra = new SignedExtra<>(specVersion, txVersion, genesis, genesis, new ImmortalEra(), Index.of(nonce), BigInteger.valueOf(tip));
-        val signedPayload = new SignedPayload<>(call, extra);
+        val writer = (ScaleWriter<? super SignedPayload<? super BalanceTransfer, ? super SignedExtra<ImmortalEra>>>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(SignedPayload.class);
+        val signedPayload = ScaleUtils.toBytes(new SignedPayload<>(call, extra), writer);
         val keyRing = KeyRing.fromKeyPair(aliceKeyPair());
 
         val signature = sign(keyRing, signedPayload);
 
         return Extrinsic.createSigned(
                 new SignaturePayload<>(
-                        AddressId.fromBytes(aliceKeyPair().asPublicKey().getData()),
+                        AddressId.fromBytes(aliceKeyPair().asPublicKey().getBytes()),
                         signature,
                         extra
                 ), call);
     }
 
-    private Signature sign(KeyRing keyRing, Signable payload) {
-        var signed = payload.getBytes();
-        val signature = signed.length > 256 ? Hasher.blake2(Size.of256, signed) : signed;
+    private Signature sign(KeyRing keyRing, byte[] payload) {
+        val signature = payload.length > 256 ? Hasher.blake2(Size.of256, payload) : payload;
 
         return Sr25519Signature.from(keyRing.sign(() -> signature));
     }

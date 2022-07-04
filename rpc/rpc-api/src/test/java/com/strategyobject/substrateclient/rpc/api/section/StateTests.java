@@ -1,7 +1,6 @@
 package com.strategyobject.substrateclient.rpc.api.section;
 
-import com.strategyobject.substrateclient.common.utils.HexConverter;
-import com.strategyobject.substrateclient.rpc.RpcGeneratedSectionFactory;
+import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.api.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.StorageKey;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
@@ -40,7 +39,7 @@ class StateTests {
     @Test
     void getRuntimeVersion() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             assertDoesNotThrow(() -> {
                 state.getRuntimeVersion().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -51,7 +50,7 @@ class StateTests {
     @Test
     void getMetadata() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             assertDoesNotThrow(() -> {
                 state.getMetadata().get(WAIT_TIMEOUT * 10, TimeUnit.SECONDS);
@@ -62,7 +61,7 @@ class StateTests {
     @Test
     void getKeys() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val keys = state.getKeys(storageKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -73,7 +72,7 @@ class StateTests {
     @Test
     void getStorage() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val storageData = state.getStorage(storageKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -85,7 +84,7 @@ class StateTests {
     @Test
     void getStorageHandlesNullResponse() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val emptyKey = new byte[32];
             val storageData = state.getStorage(StorageKey.valueOf(emptyKey)).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -97,9 +96,9 @@ class StateTests {
     @Test
     void getStorageAtBlock() throws Exception {
         try (val wsProvider = connect()) {
-            val chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chainSection = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
             val blockHash = chainSection.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val storageData = state.getStorage(storageKey, blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -111,33 +110,33 @@ class StateTests {
     @Test
     void getStorageHash() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val hash = state.getStorageHash(storageKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertNotNull(hash);
-            assertTrue(hash.getData().length > 0);
+            assertTrue(hash.getBytes().length > 0);
         }
     }
 
     @Test
     void getStorageHashAt() throws Exception {
         try (val wsProvider = connect()) {
-            val chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chainSection = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
             val blockHash = chainSection.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val hash = state.getStorageHash(storageKey, blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertNotNull(hash);
-            assertTrue(hash.getData().length > 0);
+            assertTrue(hash.getBytes().length > 0);
         }
     }
 
     @Test
     void getStorageSize() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val size = state.getStorageSize(storageKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -148,9 +147,9 @@ class StateTests {
     @Test
     void getStorageSizeAt() throws Exception {
         try (val wsProvider = connect()) {
-            val chainSection = RpcGeneratedSectionFactory.create(Chain.class, wsProvider);
+            val chainSection = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
             val blockHash = chainSection.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val size = state.getStorageSize(storageKey, blockHash).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
@@ -161,7 +160,7 @@ class StateTests {
     @Test
     void queryStorageAt() throws Exception {
         try (val wsProvider = connect()) {
-            val state = RpcGeneratedSectionFactory.create(State.class, wsProvider);
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
 
             val changes = state
                     .queryStorageAt(Collections.singletonList(storageKey))
