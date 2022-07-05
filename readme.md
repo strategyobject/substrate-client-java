@@ -1,3 +1,7 @@
+<a href="https://github.com/w3f/Grants-Program/blob/master/applications/substrate_client_java.md">
+  <img align="right" width="400" src="./docs/web3 foundation_grants_badge_black.svg">
+</a>
+
 # About
 This project provides written in Java API for interaction with a Polkadot or Substrate based network.
 
