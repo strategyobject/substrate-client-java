@@ -5,6 +5,7 @@ import com.google.testing.compile.JavaFileObjects;
 import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestEncodable;
+import com.strategyobject.substrateclient.rpc.context.RpcEncoderContext;
 import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.val;
@@ -19,6 +20,8 @@ import java.util.stream.Stream;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RpcEncoderProcessorTests {
     private final Gson gson = new Gson();
@@ -61,8 +64,11 @@ class RpcEncoderProcessorTests {
     @Test
     @SuppressWarnings("unchecked")
     void compilesAndDecodes() {  // TODO move this test out of the project
-        val registry = new RpcEncoderRegistry(new ScaleWriterRegistry());
-        registry.registerAnnotatedFrom("com.strategyobject.substrateclient.rpc.codegen.substitutes");
+        val registry = new RpcEncoderRegistry();
+        val context = mock(RpcEncoderContext.class);
+        when(context.getRpcEncoderRegistry()).thenReturn(registry);
+        when(context.getScaleWriterRegistry()).thenReturn(new ScaleWriterRegistry());
+        registry.registerAnnotatedFrom(() -> context, "com.strategyobject.substrateclient.rpc.codegen.substitutes");
 
         val encoder = (RpcEncoder<TestEncodable<?>>) registry.resolve(TestEncodable.class)
                 .inject(

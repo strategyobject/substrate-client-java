@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.testing.compile.JavaFileObjects;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
 import com.strategyobject.substrateclient.rpc.codegen.substitutes.TestDecodable;
+import com.strategyobject.substrateclient.rpc.context.RpcDecoderContext;
 import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import com.strategyobject.substrateclient.transport.RpcObject;
@@ -16,6 +17,8 @@ import java.util.HashMap;
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RpcDecoderProcessorTests {
     private final Gson gson = new Gson();
@@ -57,8 +60,11 @@ class RpcDecoderProcessorTests {
 
     @Test
     void compilesAndDecodes() { // TODO move this test out of the project
-        val registry = new RpcDecoderRegistry(new ScaleReaderRegistry());
-        registry.registerAnnotatedFrom("com.strategyobject.substrateclient.rpc.codegen.substitutes");
+        val registry = new RpcDecoderRegistry();
+        val context = mock(RpcDecoderContext.class);
+        when(context.getRpcDecoderRegistry()).thenReturn(registry);
+        when(context.getScaleReaderRegistry()).thenReturn(new ScaleReaderRegistry());
+        registry.registerAnnotatedFrom(() -> context, "com.strategyobject.substrateclient.rpc.codegen.substitutes");
 
         val decoder = registry.resolve(TestDecodable.class)
                 .inject(DecoderPair.of(registry.resolve(String.class), null));

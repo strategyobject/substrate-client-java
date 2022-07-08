@@ -10,5 +10,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class AddressWithPrefix {
     private final byte @NonNull [] address;
-    private final short prefix;
+    private final SS58AddressFormat prefix;
 }

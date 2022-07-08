@@ -3,13 +3,13 @@ package com.strategyobject.substrateclient.rpc.registries;
 import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
-import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.rpc.RpcDispatch;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
+import com.strategyobject.substrateclient.rpc.context.RpcEncoderContext;
+import com.strategyobject.substrateclient.rpc.context.RpcEncoderContextFactory;
 import com.strategyobject.substrateclient.rpc.encoders.*;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,14 +20,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class RpcEncoderRegistry implements AutoRegistry {
-    private final ScaleWriterRegistry scaleWriterRegistry;
-
+public class RpcEncoderRegistry {
     private final Map<Class<?>, RpcEncoder<?>> encoders;
 
-    public RpcEncoderRegistry(@NonNull ScaleWriterRegistry scaleWriterRegistry) {
-        this.scaleWriterRegistry = scaleWriterRegistry;
-
+    public RpcEncoderRegistry() {
         encoders = new ConcurrentHashMap<>(128);
         register(new PlainEncoder<>(),
                 Void.class, void.class, String.class, Boolean.class, boolean.class, Byte.class, byte.class,
@@ -40,7 +36,7 @@ public class RpcEncoderRegistry implements AutoRegistry {
         register(new DispatchingEncoder<>(this), RpcDispatch.class);
     }
 
-    public void registerAnnotatedFrom(String... prefixes) {
+    public void registerAnnotatedFrom(RpcEncoderContextFactory rpcEncoderContextFactory, String... prefixes) {
         Scanner.forPrefixes(prefixes)
                 .getSubTypesOf(RpcEncoder.class).forEach(encoder -> {
                     val autoRegister = encoder.getAnnotation(AutoRegister.class);
@@ -56,8 +52,8 @@ public class RpcEncoderRegistry implements AutoRegistry {
                         if (ClassUtils.hasDefaultConstructor(encoder)) {
                             rpcEncoder = encoder.newInstance();
                         } else {
-                            val ctor = encoder.getConstructor(RpcEncoderRegistry.class, ScaleWriterRegistry.class);
-                            rpcEncoder = ctor.newInstance(this, scaleWriterRegistry);
+                            val ctor = encoder.getConstructor(RpcEncoderContext.class);
+                            rpcEncoder = ctor.newInstance(rpcEncoderContextFactory.create());
                         }
 
                         register(rpcEncoder, types);

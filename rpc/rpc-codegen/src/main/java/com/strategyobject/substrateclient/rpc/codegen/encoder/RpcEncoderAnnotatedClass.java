@@ -9,6 +9,7 @@ import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
 import com.strategyobject.substrateclient.rpc.annotation.Ignore;
+import com.strategyobject.substrateclient.rpc.context.RpcEncoderContext;
 import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
@@ -45,6 +46,7 @@ public class RpcEncoderAnnotatedClass {
     private static final String ENCODER_NAME_TEMPLATE = "%sEncoder";
     private static final String SOURCE_ARG = "source";
     private static final String RESULT_VAR = "result";
+    private static final String CONTEXT = "context";
     private final TypeElement classElement;
     private final Map<String, Integer> typeVarMap;
     private final List<VariableElement> fields;
@@ -84,16 +86,12 @@ public class RpcEncoderAnnotatedClass {
     private TypeSpec.Builder injectDependencies(TypeSpec.Builder typeSpecBuilder) {
         val ctor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(RpcEncoderRegistry.class, ENCODER_REGISTRY)
-                .addParameter(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
-                .beginControlFlow("if ($L == null)", ENCODER_REGISTRY)
-                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, ENCODER_REGISTRY)
+                .addParameter(RpcEncoderContext.class, CONTEXT)
+                .beginControlFlow("if ($L == null)", CONTEXT)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, CONTEXT)
                 .endControlFlow()
-                .addStatement("this.$1L = $1L", ENCODER_REGISTRY)
-                .beginControlFlow("if ($L == null)", SCALE_WRITER_REGISTRY)
-                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, SCALE_WRITER_REGISTRY)
-                .endControlFlow()
-                .addStatement("this.$1L = $1L", SCALE_WRITER_REGISTRY)
+                .addStatement("this.$L = $L.getRpcEncoderRegistry()", ENCODER_REGISTRY, CONTEXT)
+                .addStatement("this.$L = $L.getScaleWriterRegistry()", SCALE_WRITER_REGISTRY, CONTEXT)
                 .build();
 
         return typeSpecBuilder

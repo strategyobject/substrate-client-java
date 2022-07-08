@@ -53,15 +53,17 @@ public final class SS58Codec {
             throw new IllegalArgumentException("Incorrect checksum.");
         }
 
-        return AddressWithPrefix.from(Arrays.copyOfRange(data, typeLen, typeLen + ADDRESS_LENGTH), prefix);
+        return AddressWithPrefix.from(
+                Arrays.copyOfRange(data, typeLen, typeLen + ADDRESS_LENGTH),
+                SS58AddressFormat.of(prefix));
     }
 
-    public static String encode(byte @NonNull [] address, short prefix) {
+    public static String encode(byte @NonNull [] address, SS58AddressFormat prefix) {
         Preconditions.checkArgument(address.length == ADDRESS_LENGTH,
                 "The length of address must be 32, but was: " + address.length);
 
-        val ident = prefix & 0b0011_1111_1111_1111;
-        Preconditions.checkArgument(ident == prefix,
+        val ident = prefix.getPrefix() & 0b0011_1111_1111_1111;
+        Preconditions.checkArgument(ident == prefix.getPrefix(),
                 "The prefix size is restricted by 14 bits.");
 
         byte[] data;

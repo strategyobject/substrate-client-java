@@ -2,9 +2,8 @@ package com.strategyobject.substrateclient.rpc.api;
 
 import com.strategyobject.substrateclient.rpc.DecoderPair;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
+import com.strategyobject.substrateclient.rpc.context.RpcDecoderContext;
 import com.strategyobject.substrateclient.rpc.decoders.AbstractDecoder;
-import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import com.strategyobject.substrateclient.transport.RpcObject;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +18,7 @@ public class ExtrinsicStatusDecoder extends AbstractDecoder<ExtrinsicStatus> {
     private static final Map<String, ExtrinsicStatus> STATUS_TO_VALUE = new HashMap<>();
     private static final Map<String, Class<? extends ExtrinsicStatus>> STATUS_TO_CLASS = new HashMap<>();
 
-    private final @NonNull RpcDecoderRegistry decoderRegistry;
-    private final @NonNull ScaleReaderRegistry scaleReaderRegistry;
+    private final @NonNull RpcDecoderContext rpcDecoderContext;
 
     static {
         STATUS_TO_VALUE.put("future", ExtrinsicStatus.Future);
@@ -46,7 +44,7 @@ public class ExtrinsicStatusDecoder extends AbstractDecoder<ExtrinsicStatus> {
                     .stream()
                     .filter(e -> STATUS_TO_CLASS.containsKey(e.getKey()))
                     .findFirst()
-                    .map(e -> (ExtrinsicStatus) decoderRegistry.resolve(STATUS_TO_CLASS.get(e.getKey())).decode(value));
+                    .map(e -> (ExtrinsicStatus) rpcDecoderContext.getRpcDecoderRegistry().resolve(STATUS_TO_CLASS.get(e.getKey())).decode(value));
         } else {
             decoded = Optional.empty();
         }

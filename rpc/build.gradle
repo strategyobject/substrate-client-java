@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':common')
+    implementation project(':crypto')
     implementation project(':scale')
     implementation project(':transport')
 
