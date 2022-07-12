@@ -3,12 +3,12 @@ package com.strategyobject.substrateclient.rpc.registries;
 import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
-import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
+import com.strategyobject.substrateclient.rpc.context.RpcDecoderContext;
+import com.strategyobject.substrateclient.rpc.context.RpcDecoderContextFactory;
 import com.strategyobject.substrateclient.rpc.decoders.*;
-import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,14 +19,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class RpcDecoderRegistry implements AutoRegistry {
-    private final ScaleReaderRegistry scaleReaderRegistry;
-
+public class RpcDecoderRegistry {
     private final Map<Class<?>, RpcDecoder<?>> decoders;
 
-    public RpcDecoderRegistry(ScaleReaderRegistry scaleReaderRegistry) {
-        this.scaleReaderRegistry = scaleReaderRegistry;
-
+    public RpcDecoderRegistry() {
         decoders = new ConcurrentHashMap<>(128);
         register(new ListDecoder(), List.class);
         register(new MapDecoder(), Map.class);
@@ -43,7 +39,7 @@ public class RpcDecoderRegistry implements AutoRegistry {
         register(new ArrayDecoder(), Array.class);
     }
 
-    public void registerAnnotatedFrom(String... prefixes) {
+    public void registerAnnotatedFrom(RpcDecoderContextFactory rpcDecoderContextFactory, String... prefixes) {
         Scanner.forPrefixes(prefixes)
                 .getSubTypesOf(RpcDecoder.class).forEach(decoder -> {
                     val autoRegister = decoder.getAnnotation(AutoRegister.class);
@@ -59,8 +55,8 @@ public class RpcDecoderRegistry implements AutoRegistry {
                         if (ClassUtils.hasDefaultConstructor(decoder)) {
                             rpcDecoder = decoder.newInstance();
                         } else {
-                            val ctor = decoder.getConstructor(RpcDecoderRegistry.class, ScaleReaderRegistry.class);
-                            rpcDecoder = ctor.newInstance(this, scaleReaderRegistry);
+                            val ctor = decoder.getConstructor(RpcDecoderContext.class);
+                            rpcDecoder = ctor.newInstance(rpcDecoderContextFactory.create());
                         }
 
                         register(rpcDecoder, types);

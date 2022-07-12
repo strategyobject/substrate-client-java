@@ -3,6 +3,7 @@ package com.strategyobject.substrateclient.api;
 import com.google.inject.Module;
 import com.strategyobject.substrateclient.pallet.PalletFactory;
 import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
+import com.strategyobject.substrateclient.rpc.metadata.MetadataProvider;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.function.Supplier;
 public class Api implements AutoCloseable {
     private final @NonNull RpcSectionFactory rpcSectionFactory;
     private final @NonNull PalletFactory palletFactory;
+    private final @NonNull MetadataProvider metadataProvider;
     private final Map<Class<?>, Object> resolvedCache = new ConcurrentHashMap<>();
 
 
@@ -43,6 +45,15 @@ public class Api implements AutoCloseable {
      */
     public <T> T pallet(@NonNull Class<T> clazz) {
         return clazz.cast(resolvedCache.computeIfAbsent(clazz, palletFactory::create));
+    }
+
+    /**
+     * Provides access to current version of metadata in use.
+     *
+     * @return MetadataProvider instance
+     */
+    public MetadataProvider metadata() {
+        return metadataProvider;
     }
 
     @Override

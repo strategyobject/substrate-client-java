@@ -3,7 +3,6 @@ package com.strategyobject.substrateclient.scale.registries;
 import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
-import com.strategyobject.substrateclient.common.types.AutoRegistry;
 import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.common.types.union.*;
@@ -24,7 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class ScaleReaderRegistry implements AutoRegistry {
+public class ScaleReaderRegistry {
     private final Map<Class<?>, ScaleReader<?>> readers;
 
     public ScaleReaderRegistry() {

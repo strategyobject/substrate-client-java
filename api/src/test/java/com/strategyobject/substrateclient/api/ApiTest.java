@@ -3,6 +3,7 @@ package com.strategyobject.substrateclient.api;
 import com.google.inject.CreationException;
 import com.google.inject.util.Modules;
 import com.strategyobject.substrateclient.common.convert.HexConverter;
+import com.strategyobject.substrateclient.crypto.ss58.SS58AddressFormat;
 import com.strategyobject.substrateclient.pallet.PalletFactory;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.BlockNumber;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @Testcontainers
-class ApiTests {
+class ApiTest {
     private static final int WAIT_TIMEOUT = 1000;
 
     @Container
@@ -62,6 +63,19 @@ class ApiTests {
     }
 
     @Test
+    void getSS58AddressFormat() throws Exception {
+        val wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress());
+
+        try (val api = Api.with(wsProvider).build().join()) {
+            val ss58AddressFormat = api.metadata().getSS58AddressFormat();
+
+            assertNotNull(ss58AddressFormat);
+            assertEquals(SS58AddressFormat.SUBSTRATE_ACCOUNT, ss58AddressFormat);
+        }
+    }
+
+    @Test
     void configureApi() throws Exception {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress());
@@ -69,10 +83,8 @@ class ApiTests {
         val expected = mock(Index.class);
         try (val api = Api.with(wsProvider)
                 .configure(defaultModule ->
-                        defaultModule.configureRpcDecoderRegistry(registry ->
-                                registry.register(
-                                        (value, decoders) -> expected,
-                                        Index.class)))
+                        defaultModule.configureRpcDecoderRegistry((registry, _factory) ->
+                                registry.register((value, decoders) -> expected, Index.class)))
                 .build()
                 .join()) {
             val system = api.rpc(System.class);

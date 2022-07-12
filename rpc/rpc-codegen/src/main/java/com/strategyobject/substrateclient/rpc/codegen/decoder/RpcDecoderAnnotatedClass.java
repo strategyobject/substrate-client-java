@@ -1,11 +1,15 @@
 package com.strategyobject.substrateclient.rpc.codegen.decoder;
 
 import com.squareup.javapoet.*;
-import com.strategyobject.substrateclient.common.codegen.*;
+import com.strategyobject.substrateclient.common.codegen.AnnotationUtils;
+import com.strategyobject.substrateclient.common.codegen.JavaPoet;
+import com.strategyobject.substrateclient.common.codegen.ProcessingException;
+import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.rpc.DecoderPair;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
 import com.strategyobject.substrateclient.rpc.annotation.Ignore;
+import com.strategyobject.substrateclient.rpc.context.RpcDecoderContext;
 import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
@@ -41,6 +45,7 @@ public class RpcDecoderAnnotatedClass {
     private static final String VALUE_ARG = "value";
     private static final String RESULT_VAR = "result";
     private static final String MAP_VAR = "sourceMap";
+    private static final String CONTEXT = "context";
 
     private final TypeElement classElement;
     private final Map<String, Integer> typeVarMap;
@@ -102,16 +107,12 @@ public class RpcDecoderAnnotatedClass {
     private TypeSpec.Builder injectDependencies(TypeSpec.Builder typeSpecBuilder) {
         val ctor = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
-                .addParameter(RpcDecoderRegistry.class, DECODER_REGISTRY)
-                .addParameter(ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
-                .beginControlFlow("if ($L == null)", DECODER_REGISTRY)
-                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, DECODER_REGISTRY)
+                .addParameter(RpcDecoderContext.class, CONTEXT)
+                .beginControlFlow("if ($L == null)", CONTEXT)
+                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, CONTEXT)
                 .endControlFlow()
-                .addStatement("this.$1L = $1L", DECODER_REGISTRY)
-                .beginControlFlow("if ($L == null)", SCALE_READER_REGISTRY)
-                .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, SCALE_READER_REGISTRY)
-                .endControlFlow()
-                .addStatement("this.$1L = $1L", SCALE_READER_REGISTRY)
+                .addStatement("this.$L = $L.getRpcDecoderRegistry()", DECODER_REGISTRY, CONTEXT)
+                .addStatement("this.$L = $L.getScaleReaderRegistry()", SCALE_READER_REGISTRY, CONTEXT)
                 .build();
 
         return typeSpecBuilder

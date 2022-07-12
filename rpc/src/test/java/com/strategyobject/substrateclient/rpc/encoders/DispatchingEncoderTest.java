@@ -5,14 +5,13 @@ import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.registries.RpcEncoderRegistry;
 import com.strategyobject.substrateclient.rpc.substitutes.TestDispatch;
 import com.strategyobject.substrateclient.rpc.substitutes.TestDispatchEncoder;
-import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DispatchingEncoderTest {
-    private final RpcEncoderRegistry registry = new RpcEncoderRegistry(new ScaleWriterRegistry()) {{
+    private final RpcEncoderRegistry registry = new RpcEncoderRegistry() {{
         register(new TestDispatchEncoder(this), TestDispatch.class);
     }};
 

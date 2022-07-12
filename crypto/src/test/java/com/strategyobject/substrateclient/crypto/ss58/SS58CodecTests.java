@@ -20,7 +20,7 @@ class SS58CodecTests {
     },
             delimiterString = ":")
     void encode(String expected, String hex, short prefix) {
-        val actual = SS58Codec.encode(HexConverter.toBytes(hex), prefix);
+        val actual = SS58Codec.encode(HexConverter.toBytes(hex), SS58AddressFormat.of(prefix));
 
         assertEquals(expected, actual);
     }
@@ -33,7 +33,9 @@ class SS58CodecTests {
     },
             delimiterString = ":")
     void encodeThrows(String hex, short prefix) {
-        assertThrows(IllegalArgumentException.class, () -> SS58Codec.encode(HexConverter.toBytes(hex), prefix));
+        val format = SS58AddressFormat.of(prefix);
+        val address = HexConverter.toBytes(hex);
+        assertThrows(IllegalArgumentException.class, () -> SS58Codec.encode(address, format));
     }
 
     @ParameterizedTest
@@ -49,7 +51,7 @@ class SS58CodecTests {
     void decode(String source, String hex, short prefix) {
         val actual = SS58Codec.decode(source);
 
-        val expected = AddressWithPrefix.from(HexConverter.toBytes(hex), prefix);
+        val expected = AddressWithPrefix.from(HexConverter.toBytes(hex), SS58AddressFormat.of(prefix));
         assertEquals(expected, actual);
     }
 
