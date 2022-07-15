@@ -8,6 +8,7 @@ import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
+import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class StorageValueImplTests {
 
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
 
@@ -58,7 +59,7 @@ class StorageValueImplTests {
 
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
             val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);

@@ -5,6 +5,7 @@ import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.Index;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
+import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class SystemTests {
     void accountNextIndex() throws Exception {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 

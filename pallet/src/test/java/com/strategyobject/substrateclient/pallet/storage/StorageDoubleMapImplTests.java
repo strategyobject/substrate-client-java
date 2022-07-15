@@ -8,6 +8,7 @@ import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
+import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class StorageDoubleMapImplTests {
     void societyVotes() throws Exception {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
             wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
 

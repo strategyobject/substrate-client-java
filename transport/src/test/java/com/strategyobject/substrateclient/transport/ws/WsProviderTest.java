@@ -30,7 +30,7 @@ class WsProviderTest {
     void canConnect() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             assertDoesNotThrow(() -> wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS));
@@ -55,7 +55,7 @@ class WsProviderTest {
     void notifiesWhenConnected() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             val notified = new AtomicBoolean();
@@ -74,7 +74,7 @@ class WsProviderTest {
     void canCancelNotification() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             val notified = new AtomicBoolean();
@@ -91,7 +91,7 @@ class WsProviderTest {
     void canDisconnect() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -122,7 +122,7 @@ class WsProviderTest {
     void notifiesWhenDisconnected() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -143,7 +143,7 @@ class WsProviderTest {
     void canSend() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -159,7 +159,7 @@ class WsProviderTest {
     void canSubscribe() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -183,7 +183,7 @@ class WsProviderTest {
     void canUnsubscribe() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -210,7 +210,7 @@ class WsProviderTest {
     void sendThrowsRpcExceptions() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -225,7 +225,7 @@ class WsProviderTest {
     void supportsSubscriptions() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             assertTrue(wsProvider.hasSubscriptions());
@@ -237,7 +237,7 @@ class WsProviderTest {
     void canReconnectManually() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);

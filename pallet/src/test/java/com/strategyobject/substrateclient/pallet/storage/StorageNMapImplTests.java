@@ -13,6 +13,7 @@ import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
+import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.NonNull;
 import lombok.val;
@@ -56,7 +57,7 @@ class StorageNMapImplTests {
     private WsProvider getConnectedProvider() throws InterruptedException, ExecutionException, TimeoutException {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build();
         wsProvider.connect().get(CONNECTION_TIMEOUT, TimeUnit.MILLISECONDS);
         return wsProvider;
