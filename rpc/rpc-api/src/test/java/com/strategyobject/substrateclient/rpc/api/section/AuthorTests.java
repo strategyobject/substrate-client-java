@@ -11,6 +11,7 @@ import com.strategyobject.substrateclient.scale.ScaleUtils;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
+import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import lombok.var;
@@ -121,7 +122,7 @@ class AuthorTests {
     private WsProvider connect() throws ExecutionException, InterruptedException, TimeoutException {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build();
 
         wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);

@@ -2,6 +2,7 @@ package com.strategyobject.substrateclient.transport.ws;
 
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
+import com.strategyobject.substrateclient.transport.ProviderInterfaceEmitted;
 import eu.rekawek.toxiproxy.model.ToxicDirection;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -13,10 +14,13 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
@@ -32,6 +36,7 @@ class WsProviderProxyTest {
             .withNetwork(network)
             .withNetworkAliases("toxiproxy");
     private static final int HEARTBEAT_INTERVAL = 5;
+    private static final int RECONNECT_INTERVAL = 5;
     private static final int WAIT_TIMEOUT = HEARTBEAT_INTERVAL * 3;
     final ToxiproxyContainer.ContainerProxy proxy = toxiproxy.getProxy(substrate, 9944);
 
@@ -41,6 +46,10 @@ class WsProviderProxyTest {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(getWsAddress())
                 .setHeartbeatsInterval(HEARTBEAT_INTERVAL)
+                .withPolicy(ReconnectionPolicy.exponentialBackoff()
+                        .retryAfter(RECONNECT_INTERVAL, TimeUnit.SECONDS)
+                        .withMaxDelay(RECONNECT_INTERVAL)
+                        .build())
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -53,7 +62,41 @@ class WsProviderProxyTest {
 
             proxy.setConnectionCut(false);
             await()
-                    .atMost(WAIT_TIMEOUT, TimeUnit.SECONDS)
+                    .atMost(RECONNECT_INTERVAL * 2, TimeUnit.SECONDS)
+                    .until(wsProvider::isConnected);
+        }
+    }
+
+    @Test
+    @SneakyThrows
+    void canReconnectWhenConnectionWasClosedForALongPeriod() {
+        try (val wsProvider = WsProvider.builder()
+                .setEndpoint(getWsAddress())
+                .setHeartbeatsInterval(HEARTBEAT_INTERVAL)
+                .withPolicy(ReconnectionPolicy.exponentialBackoff()
+                        .retryAfter(RECONNECT_INTERVAL, TimeUnit.SECONDS)
+                        .withMaxDelay(RECONNECT_INTERVAL)
+                        .build())
+                .build()) {
+
+            val disconnectionCounter = new AtomicInteger(0);
+            wsProvider.on(ProviderInterfaceEmitted.DISCONNECTED, i -> disconnectionCounter.incrementAndGet());
+            wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            assertTrue(wsProvider.isConnected());
+
+            val CLOSE_AFTER = 1000;
+            val toxic = proxy
+                    .toxics()
+                    .timeout("timeout", ToxicDirection.DOWNSTREAM, CLOSE_AFTER);
+            await()
+                    .atLeast(CLOSE_AFTER, TimeUnit.MILLISECONDS)
+                    .atMost(HEARTBEAT_INTERVAL + RECONNECT_INTERVAL * 4, TimeUnit.SECONDS)
+                    .untilAtomic(disconnectionCounter, greaterThan(2));
+            assertFalse(wsProvider.isConnected());
+
+            toxic.remove();
+            await()
+                    .atMost(RECONNECT_INTERVAL * 2, TimeUnit.SECONDS)
                     .until(wsProvider::isConnected);
         }
     }
@@ -61,21 +104,28 @@ class WsProviderProxyTest {
     @Test
     @SneakyThrows
     void canAutoConnectWhenServerAvailable() {
-        proxy.setConnectionCut(true);
+        val closed = proxy
+                .toxics()
+                .limitData("closed", ToxicDirection.DOWNSTREAM, 0);
 
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(getWsAddress())
                 .disableHeartbeats()
+                .withPolicy(ReconnectionPolicy.exponentialBackoff()
+                        .retryAfter(RECONNECT_INTERVAL, TimeUnit.SECONDS)
+                        .withMaxDelay(RECONNECT_INTERVAL)
+                        .build())
                 .build()) {
 
-            assertThrows(
-                    TimeoutException.class,
+            val exception = assertThrows(
+                    ExecutionException.class,
                     () -> wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS));
+            assertTrue(exception.getCause() instanceof WsClosedException);
             assertFalse(wsProvider.isConnected());
 
-            proxy.setConnectionCut(false);
+            closed.remove();
             await()
-                    .atMost(WAIT_TIMEOUT, TimeUnit.SECONDS)
+                    .atMost(RECONNECT_INTERVAL * 2, TimeUnit.SECONDS)
                     .until(wsProvider::isConnected);
         }
     }
@@ -85,7 +135,7 @@ class WsProviderProxyTest {
     void throwsExceptionWhenCanNotSendRequestAndCleanHandler() {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(getWsAddress())
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -113,7 +163,7 @@ class WsProviderProxyTest {
         try (val wsProvider = WsProvider.builder()
                 .setEndpoint(getWsAddress())
                 .setResponseTimeout(responseTimeout, TimeUnit.MILLISECONDS)
-                .disableAutoConnect()
+                .withPolicy(ReconnectionPolicy.MANUAL)
                 .build()) {
 
             wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
@@ -135,7 +185,7 @@ class WsProviderProxyTest {
         }
     }
 
-    private Map<?, ?> getHandlersOf(WsProvider wsProvider) throws NoSuchFieldException, IllegalAccessException {
+    private <T> Map<?, ?> getHandlersOf(WsProvider<T> wsProvider) throws NoSuchFieldException, IllegalAccessException {
         val handlersFields = wsProvider.getClass().getDeclaredField("handlers");
         handlersFields.setAccessible(true);
 

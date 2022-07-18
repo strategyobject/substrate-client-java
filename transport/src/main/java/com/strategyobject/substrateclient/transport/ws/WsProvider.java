@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -48,7 +49,7 @@ class WsStateAwaiting {
 }
 
 @Slf4j
-public class WsProvider implements ProviderInterface, AutoCloseable {
+public class WsProvider<T> implements ProviderInterface, AutoCloseable {
     private static final int RESUBSCRIBE_TIMEOUT = 20;
     private static final Map<String, String> ALIASES = new HashMap<>();
     private static final ScheduledExecutorService timedOutHandlerCleaner;
@@ -69,33 +70,33 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private final Map<String, JsonRpcResponseSubscription> waitingForId = new ConcurrentHashMap<>();
     private final int heartbeatInterval;
     private final long responseTimeoutInMs;
-    private volatile int autoConnectMs;
+    private final AtomicReference<T> reconnectionPolicyContext = new AtomicReference<>();
+    private volatile ReconnectionPolicy<T> reconnectionPolicy;
     private volatile WebSocketClient webSocket = null;
     private volatile CompletableFuture<Void> whenConnected = null;
     private volatile CompletableFuture<Void> whenDisconnected = null;
     private volatile ProviderStatus status = ProviderStatus.DISCONNECTED;
+    private final ScheduledExecutorService reconnector = Executors.newSingleThreadScheduledExecutor();
 
     WsProvider(@NonNull URI endpoint,
-               int autoConnectMs,
                Map<String, String> headers,
                int heartbeatInterval,
-               long responseTimeoutInMs) {
+               long responseTimeoutInMs,
+               @NonNull ReconnectionPolicy<T> reconnectionPolicy) {
         Preconditions.checkArgument(
                 endpoint.getScheme().matches("(?i)ws|wss"),
                 "Endpoint should start with 'ws://', received " + endpoint);
-        Preconditions.checkArgument(
-                autoConnectMs >= 0,
-                "AutoConnect delay cannot be less than 0");
 
         this.endpoint = endpoint;
-        this.autoConnectMs = autoConnectMs;
         this.headers = headers;
         this.heartbeatInterval = heartbeatInterval;
         this.responseTimeoutInMs = responseTimeoutInMs;
+        this.reconnectionPolicy = reconnectionPolicy;
+        this.reconnectionPolicyContext.set(reconnectionPolicy.initContext());
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static <T> Builder<T> builder() {
+        return new Builder<>();
     }
 
     /**
@@ -193,7 +194,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         this.whenDisconnected = whenDisconnectedFuture;
 
         // switch off autoConnect, we are in manual mode now
-        this.autoConnectMs = 0;
+        this.reconnectionPolicy = ReconnectionPolicy.manual();
         this.status = ProviderStatus.DISCONNECTING;
 
         val ws = this.webSocket;
@@ -358,7 +359,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
                 code,
                 reason);
 
-        if (this.autoConnectMs > 0) {
+        if (this.reconnectionPolicy != ReconnectionPolicy.MANUAL) {
             log.error(errorMessage);
         }
 
@@ -377,10 +378,33 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             this.whenDisconnected = null;
         }
 
-        if (this.autoConnectMs > 0) {
-            log.info("Trying to reconnect to {}", this.endpoint);
-            this.connect();
+        val whenConnectedFuture = this.whenConnected;
+        if (whenConnectedFuture != null) {
+            whenConnectedFuture.completeExceptionally(wsClosedException);
+            this.whenConnected = null;
         }
+
+        if (this.reconnectionPolicy != ReconnectionPolicy.MANUAL) {
+            scheduleReconnect(code, reason);
+        }
+    }
+
+    private void scheduleReconnect(int code, String reason) {
+        val delay = reconnectionPolicy
+                .getNextDelay(ReconnectionContext.of(code,
+                        reason,
+                        reconnectionPolicyContext.get()));
+        if (delay.getValue() < 0) {
+            return;
+        }
+
+        reconnector.schedule(
+                () -> {
+                    log.info("Trying to reconnect to {}", this.endpoint);
+                    this.connect();
+                },
+                delay.getValue(),
+                delay.getUnit());
     }
 
     private void onSocketError(Exception ex) {
@@ -466,6 +490,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         log.info("Connected to: {}", this.webSocket.getURI());
 
         this.status = ProviderStatus.CONNECTED;
+        reconnectionPolicyContext.set(reconnectionPolicy.initContext());
         this.emit(ProviderInterfaceEmitted.CONNECTED);
         this.resubscribe();
     }
@@ -473,6 +498,8 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     @Override
     public void close() {
         try {
+            reconnector.shutdownNow();
+
             val currentStatus = this.status;
             if (currentStatus == ProviderStatus.CONNECTED || currentStatus == ProviderStatus.DISCONNECTING) {
                 this.disconnect();
@@ -515,14 +542,14 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         }
     }
 
-    public static class Builder implements Supplier<ProviderInterface> {
+    public static class Builder<T> implements Supplier<ProviderInterface> {
         private static final String DEFAULT_URI = "ws://127.0.0.1:9944";
 
         private URI endpoint;
-        private int autoConnectMs = 2500;
         private Map<String, String> headers = null;
         private int heartbeatInterval = 30;
         private long responseTimeoutInMs = 20000;
+        private ReconnectionPolicy<T> reconnectionPolicy;
 
         Builder() {
             try {
@@ -532,12 +559,12 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             }
         }
 
-        public Builder setEndpoint(@NonNull URI endpoint) {
+        public Builder<T> setEndpoint(@NonNull URI endpoint) {
             this.endpoint = endpoint;
             return this;
         }
 
-        public Builder setEndpoint(@NonNull String endpoint) {
+        public Builder<T> setEndpoint(@NonNull String endpoint) {
             try {
                 return setEndpoint(new URI(endpoint));
             } catch (URISyntaxException ex) {
@@ -545,46 +572,45 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
             }
         }
 
-        public Builder setAutoConnectDelay(int autoConnectMs) {
-            this.autoConnectMs = autoConnectMs;
-            return this;
-        }
-
-        public Builder disableAutoConnect() {
-            this.autoConnectMs = 0;
-            return this;
-        }
-
-        public Builder setHeaders(Map<String, String> headers) {
+        public Builder<T> setHeaders(Map<String, String> headers) {
             this.headers = headers;
             return this;
         }
 
-        public Builder setHeartbeatsInterval(int heartbeatInterval) {
+        public Builder<T> setHeartbeatsInterval(int heartbeatInterval) {
             this.heartbeatInterval = heartbeatInterval;
             return this;
         }
 
-        public Builder disableHeartbeats() {
+        public Builder<T> disableHeartbeats() {
             this.heartbeatInterval = 0;
             return this;
         }
 
-        public Builder setResponseTimeout(long timeout, TimeUnit timeUnit) {
+        public Builder<T> setResponseTimeout(long timeout, TimeUnit timeUnit) {
             this.responseTimeoutInMs = timeUnit.toMillis(timeout);
             return this;
         }
 
-        public WsProvider build() {
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public <C> Builder<C> withPolicy(ReconnectionPolicy<C> policy) {
+            this.reconnectionPolicy = (ReconnectionPolicy) policy;
+            return (Builder<C>) this;
+        }
+
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        public WsProvider<T> build() {
             return new WsProvider(this.endpoint,
-                    this.autoConnectMs,
                     this.headers,
                     this.heartbeatInterval,
-                    this.responseTimeoutInMs);
+                    this.responseTimeoutInMs,
+                    this.reconnectionPolicy == null ?
+                            ExponentialBackoffReconnectionPolicy.builder().build() :
+                            this.reconnectionPolicy);
         }
 
         @Override
-        public WsProvider get() {
+        public WsProvider<T> get() {
             return build();
         }
     }
