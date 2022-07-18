@@ -1,5 +1,7 @@
 package com.strategyobject.substrateclient.rpc.api;
 
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.Ignore;
 import com.strategyobject.substrateclient.scale.annotation.Scale;

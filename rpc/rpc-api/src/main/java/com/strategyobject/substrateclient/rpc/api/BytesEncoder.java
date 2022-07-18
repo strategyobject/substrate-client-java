@@ -6,7 +6,9 @@ import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.EncoderPair;
 import com.strategyobject.substrateclient.rpc.RpcEncoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
-import com.strategyobject.substrateclient.rpc.api.impl.Hash256;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash256;
 
 @AutoRegister(
         types = {

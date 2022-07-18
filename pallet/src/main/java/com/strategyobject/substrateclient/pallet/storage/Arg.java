@@ -8,6 +8,8 @@ import lombok.NonNull;
  * It contains the list of keys which are required for the specific storage.
  */
 public class Arg {
+    public static final Arg EMPTY = new Arg(new Object[0]);
+
     /**
      * List of keys.
      */
@@ -20,6 +22,7 @@ public class Arg {
 
     /**
      * Creates a new Arg.
+     *
      * @param keys any number of keys.
      * @return a new Arg with given keys.
      */

@@ -1,10 +1,10 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.common.types.tuple.Pair;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.Hash;
-import com.strategyobject.substrateclient.rpc.api.StorageKey;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
 import com.strategyobject.substrateclient.rpc.api.section.State;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -310,7 +310,8 @@ public class StorageNMapImpl<V> implements StorageNMap<V> {
     }
 
     @Override
-    public CompletableFuture<Supplier<CompletableFuture<Boolean>>> subscribe(@NonNull StorageChangeConsumer<V> consumer, @NonNull Arg... args) {
+    public CompletableFuture<Supplier<CompletableFuture<Boolean>>> subscribe(@NonNull StorageChangeConsumer<V> consumer,
+                                                                             @NonNull Arg... args) {
         if (args.length == 0) {
             throw new IllegalArgumentException("Subscription can't be requested with no arguments.");
         }

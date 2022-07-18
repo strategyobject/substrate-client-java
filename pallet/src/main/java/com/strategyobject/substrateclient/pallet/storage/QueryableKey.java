@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
-import com.strategyobject.substrateclient.rpc.api.StorageKey;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
 

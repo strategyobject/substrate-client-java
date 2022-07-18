@@ -18,6 +18,7 @@ dependencies {
     testImplementation 'org.testcontainers:testcontainers:1.17.2'
     testImplementation 'org.testcontainers:junit-jupiter:1.17.2'
     testImplementation 'org.awaitility:awaitility:4.2.0'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
 
     testAnnotationProcessor project(':pallet:pallet-codegen')
 }

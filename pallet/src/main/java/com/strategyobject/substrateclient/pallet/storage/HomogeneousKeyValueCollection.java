@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.common.types.tuple.Pair;
-import com.strategyobject.substrateclient.rpc.api.StorageData;
-import com.strategyobject.substrateclient.rpc.api.StorageKey;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageData;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

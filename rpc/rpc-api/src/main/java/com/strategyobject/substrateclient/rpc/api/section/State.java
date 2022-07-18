@@ -4,6 +4,11 @@ import com.strategyobject.substrateclient.rpc.annotation.RpcCall;
 import com.strategyobject.substrateclient.rpc.annotation.RpcInterface;
 import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
 import com.strategyobject.substrateclient.rpc.api.*;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageChangeSet;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageData;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
 
 import java.util.List;

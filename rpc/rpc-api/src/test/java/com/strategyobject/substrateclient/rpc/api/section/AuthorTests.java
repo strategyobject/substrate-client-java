@@ -7,6 +7,9 @@ import com.strategyobject.substrateclient.crypto.KeyPair;
 import com.strategyobject.substrateclient.crypto.KeyRing;
 import com.strategyobject.substrateclient.crypto.PublicKey;
 import com.strategyobject.substrateclient.rpc.api.*;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
+import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
@@ -30,7 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 class AuthorTests {
@@ -52,12 +55,12 @@ class AuthorTests {
             val keyType = "aura";
             var result = author.hasKey(publicKey, keyType).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            Assertions.assertFalse(result);
+            assertFalse(result);
 
             author.insertKey(keyType, "alice", publicKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             result = author.hasKey(publicKey, keyType).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            Assertions.assertTrue(result);
+            assertTrue(result);
         }
     }
 
@@ -66,7 +69,7 @@ class AuthorTests {
         try (val wsProvider = connect()) {
             val author = TestsHelper.createSectionFactory(wsProvider).create(Author.class);
 
-            Assertions.assertDoesNotThrow(() -> author.insertKey("aura",
+            assertDoesNotThrow(() -> author.insertKey("aura",
                             "alice",
                             PublicKey.fromBytes(
                                     HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d")))
@@ -82,7 +85,7 @@ class AuthorTests {
             val genesis = chain.getBlockHash(BlockNumber.GENESIS).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             val author = sectionFactory.create(Author.class);
-            Assertions.assertDoesNotThrow(() -> author.submitExtrinsic(createBalanceTransferExtrinsic(genesis, NONCE.getAndIncrement()))
+            assertDoesNotThrow(() -> author.submitExtrinsic(createBalanceTransferExtrinsic(genesis, NONCE.getAndIncrement()))
                     .get(WAIT_TIMEOUT, TimeUnit.SECONDS));
         }
     }

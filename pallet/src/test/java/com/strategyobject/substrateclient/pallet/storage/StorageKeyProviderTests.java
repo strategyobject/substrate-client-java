@@ -4,7 +4,7 @@ import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
 import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
-import com.strategyobject.substrateclient.rpc.api.StorageKey;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import lombok.NonNull;

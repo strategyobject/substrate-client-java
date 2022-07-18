@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.rpc.api;
 
 import com.google.common.base.Preconditions;
+import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.scale.ScaleDispatch;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.ScaleWriter;

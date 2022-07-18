@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.rpc.api.section;
 
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.BlockNumber;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;

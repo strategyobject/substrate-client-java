@@ -1,6 +1,6 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
 
 import java.util.List;
 

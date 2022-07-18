@@ -14,5 +14,12 @@ public @interface Event {
     /**
      * @return the index of an event
      */
-    int value();
+    int index();
+
+    /**
+     * Provide a pallet name that corresponds to the event if event class is not defined inside a pallet interface.
+     *
+     * @return pallet name that corresponds to the event
+     */
+    String pallet() default "";
 }

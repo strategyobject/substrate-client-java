@@ -3,8 +3,8 @@ package com.strategyobject.substrateclient.rpc.api.section;
 import com.strategyobject.substrateclient.rpc.annotation.RpcCall;
 import com.strategyobject.substrateclient.rpc.annotation.RpcInterface;
 import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.BlockNumber;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.Header;
 import com.strategyobject.substrateclient.rpc.api.SignedBlock;
 

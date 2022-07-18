@@ -56,15 +56,17 @@ class RpcSubscriptionProcessor extends RpcMethodProcessor<RpcSubscription> {
         val unsubscribeMethod = String.format(RPC_METHOD_NAME_TEMPLATE, section, annotation.unsubscribeMethod());
 
         val callBackCode = CodeBlock.builder()
-                .add("$1T<$2T, $3T> $4L = ($5L, $6L) -> { $7N.$8L($5L, ",
+                .add("$T<$T, $T> $L = ($L, $L) -> { ",
                         BiConsumer.class,
                         Exception.class,
                         RpcObject.class,
                         CALL_BACK_PROXY,
                         CALL_BACK_EX_ARG,
-                        CALL_BACK_ARG,
-                        callbackName,
-                        ACCEPT);
+                        CALL_BACK_ARG)
+                .beginControlFlow("if ($L != null)", CALL_BACK_EX_ARG)
+                .addStatement("$N.$L($L, null)", callbackName, ACCEPT, CALL_BACK_EX_ARG)
+                .nextControlFlow("else")
+                .add("$N.$L($L, ", callbackName, ACCEPT, CALL_BACK_EX_ARG);
 
         if (isCallbackResultVoid(context)) {
             callBackCode.add("null");
@@ -72,9 +74,13 @@ class RpcSubscriptionProcessor extends RpcMethodProcessor<RpcSubscription> {
             callBackCode.add(decoder.apply(callbackParameter, CALL_BACK_ARG));
         }
 
-        callBackCode.add("); }");
+        callBackCode
+                .add(");")
+                .endControlFlow()
+                .addStatement("}");
 
-        methodSpecBuilder.addStatement(callBackCode.build())
+        methodSpecBuilder
+                .addCode(callBackCode.build())
                 .addStatement(CodeBlock.builder()
                         .add("return $L.$L($S, $S, $L, $L)",
                                 PROVIDER_INTERFACE,
