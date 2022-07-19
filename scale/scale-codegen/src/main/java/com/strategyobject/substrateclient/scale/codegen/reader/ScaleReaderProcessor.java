@@ -36,10 +36,11 @@ public class ScaleReaderProcessor extends AbstractProcessor {
         }
 
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(ScaleReader.class)) {
-            if (annotatedElement.getKind() != ElementKind.CLASS) {
+            val elementKind = annotatedElement.getKind();
+            if (!elementKind.isClass()) {
                 context.error(
                         annotatedElement,
-                        "Only classes can be annotated with `@%s`.",
+                        "Only classes and enums can be annotated with `@%s`.",
                         ScaleReader.class.getSimpleName());
 
                 return true;
@@ -47,7 +48,11 @@ public class ScaleReaderProcessor extends AbstractProcessor {
 
             val typeElement = (TypeElement) annotatedElement;
             try {
-                new ScaleReaderAnnotatedClass(typeElement).generateReader(context);
+                if (elementKind == ElementKind.CLASS) {
+                    new ScaleReaderAnnotatedClass(typeElement).generateReader(context);
+                } else {
+                    new ScaleReaderAnnotatedEnum(typeElement).generateReader(context);
+                }
             } catch (ProcessingException e) {
                 context.error(typeElement, e);
                 return true;

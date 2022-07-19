@@ -1,14 +1,8 @@
 package com.strategyobject.substrateclient.rpc.api;
 
-import lombok.Getter;
+import com.strategyobject.substrateclient.scale.annotation.ScaleWriter;
 
+@ScaleWriter
 public enum AddressKind {
-    ID((byte) 0);
-
-    @Getter
-    private final byte value;
-
-    AddressKind(byte value) {
-        this.value = value;
-    }
+    ID
 }

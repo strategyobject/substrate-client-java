@@ -68,7 +68,7 @@ class KnownEncoderTests {
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Test<T> extends TestSuite.TestCase {
+    static class Test<T> implements TestSuite.TestCase {
         private static final Gson GSON = new Gson();
 
         private final RpcEncoder<T> encoder;

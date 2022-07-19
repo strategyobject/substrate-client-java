@@ -14,12 +14,12 @@ public class TestSuite {
     private TestSuite() {
     }
 
-    public abstract static class TestCase {
-        public abstract String getDisplayName();
+    public interface TestCase {
+        String getDisplayName();
 
-        public abstract void execute() throws Throwable;
+        void execute() throws Throwable;
 
-        public DynamicTest generate() {
+        default DynamicTest generate() {
             return DynamicTest.dynamicTest(getDisplayName(), this::execute);
         }
     }

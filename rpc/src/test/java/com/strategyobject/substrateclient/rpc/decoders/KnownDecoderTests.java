@@ -76,7 +76,7 @@ class KnownDecoderTests {
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Test<T> extends TestSuite.TestCase {
+    static class Test<T> implements TestSuite.TestCase {
         private final RpcDecoder<T> decoder;
         private final RpcObject given;
         private final T expected;
