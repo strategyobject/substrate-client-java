@@ -57,7 +57,7 @@ class HexConverterTests {
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Test extends TestSuite.TestCase {
+    static class Test implements TestSuite.TestCase {
         private final String displayName;
         private final Executable executable;
 

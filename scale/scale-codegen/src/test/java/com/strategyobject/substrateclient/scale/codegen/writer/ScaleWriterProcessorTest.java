@@ -1,8 +1,15 @@
 package com.strategyobject.substrateclient.scale.codegen.writer;
 
 import com.google.testing.compile.JavaFileObjects;
+import com.strategyobject.substrateclient.tests.TestSuite;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.val;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+
+import java.util.stream.Stream;
 
 import static com.google.testing.compile.CompilationSubject.assertThat;
 import static com.google.testing.compile.Compiler.javac;
@@ -21,47 +28,39 @@ class ScaleWriterProcessorTest {
                 .hadErrorContaining("brackets");
     }
 
-    @Test
-    void compilesAnnotated() {
-        val clazz = JavaFileObjects.forResource("Annotated.java");
-
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(clazz);
-
-        assertThat(compilation).succeeded();
+    @TestFactory
+    Stream<DynamicTest> compiles() {
+        return TestSuite.of(
+                TestCase.compile("Annotated.java"),
+                TestCase.compile("NonAnnotated.java"),
+                TestCase.compile("ComplexGeneric.java"),
+                TestCase.compile("Arrays.java"),
+                TestCase.compile("Enum.java")
+        );
     }
 
-    @Test
-    void compilesNonAnnotated() {
-        val clazz = JavaFileObjects.forResource("NonAnnotated.java");
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    static class TestCase implements TestSuite.TestCase {
+        private final String filename;
 
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(clazz);
+        @Override
+        public String getDisplayName() {
+            return "compiles " + filename;
+        }
 
-        assertThat(compilation).succeeded();
-    }
+        @Override
+        public void execute() {
+            val clazz = JavaFileObjects.forResource(filename);
 
-    @Test
-    void compilesComplexGeneric() {
-        val clazz = JavaFileObjects.forResource("ComplexGeneric.java");
+            val compilation = javac()
+                    .withProcessors(new ScaleWriterProcessor())
+                    .compile(clazz);
 
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(clazz);
+            assertThat(compilation).succeeded();
+        }
 
-        assertThat(compilation).succeeded();
-    }
-
-    @Test
-    void compilesArrays() {
-        val clazz = JavaFileObjects.forResource("Arrays.java");
-
-        val compilation = javac()
-                .withProcessors(new ScaleWriterProcessor())
-                .compile(clazz);
-
-        assertThat(compilation).succeeded();
+        public static TestCase compile(String filename) {
+            return new TestCase(filename);
+        }
     }
 }

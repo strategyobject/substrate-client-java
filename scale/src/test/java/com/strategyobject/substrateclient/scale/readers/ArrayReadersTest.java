@@ -73,7 +73,7 @@ class ArrayReadersTest {
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Test<T> extends TestSuite.TestCase {
+    static class Test<T> implements TestSuite.TestCase {
         private final ScaleReader<T> reader;
         private final String given;
         private final T expected;

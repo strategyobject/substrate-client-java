@@ -62,7 +62,7 @@ class ArrayWritersTest {
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Test<T> extends TestSuite.TestCase {
+    static class Test<T> implements TestSuite.TestCase {
         private final ScaleWriter<T> writer;
         private final T given;
         private final String expected;
