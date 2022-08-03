@@ -6,7 +6,7 @@ import com.strategyobject.substrateclient.rpc.annotation.RpcInterface;
 import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
 import com.strategyobject.substrateclient.rpc.api.Extrinsic;
 import com.strategyobject.substrateclient.rpc.api.ExtrinsicStatus;
-import com.strategyobject.substrateclient.rpc.api.Hash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
 import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 

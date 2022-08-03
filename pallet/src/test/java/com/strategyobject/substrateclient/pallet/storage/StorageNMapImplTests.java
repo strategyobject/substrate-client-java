@@ -4,8 +4,8 @@ import com.strategyobject.substrateclient.common.types.tuple.Pair;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
 import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.BlockNumber;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
@@ -31,9 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
-import static org.testcontainers.shaded.org.hamcrest.number.OrderingComparison.greaterThan;
 
 @Testcontainers
 class StorageNMapImplTests {

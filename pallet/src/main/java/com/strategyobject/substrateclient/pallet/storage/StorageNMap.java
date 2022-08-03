@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.common.types.tuple.Pair;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.Hash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
 import lombok.NonNull;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package com.strategyobject.substrateclient.rpc.api.section;
 
 import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
-import com.strategyobject.substrateclient.rpc.api.Index;
+import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;

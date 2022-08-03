@@ -1,5 +1,5 @@
 <a href="https://github.com/w3f/Grants-Program/blob/master/applications/substrate_client_java.md">
-  <img align="right" width="400" src="./docs/web3 foundation_grants_badge_black.svg">
+  <img align="right" width="450" src="./docs/web3 foundation_grants_badge_black.svg">
 </a>
 
 # About
@@ -40,7 +40,7 @@ The best approach to reach project’s goals is to use annotations and code gene
     - [x] `@Pallet`;
     - [ ] `@Transaction`;
     - [x] `@Storage`;
-    - [ ] `@EventHandler`.
+    - [x] `@Event`.
 
 These allow the generation of scale serializers, deserializers, RPC methods, code for interaction with pallet, etc.
 More examples you can find below.
@@ -70,4 +70,4 @@ We take care of either lost responses or canceled futures by not holding handler
 
 - ### Tests run with substrate node.
 All API methods related to the substrate node will be tested for operability and compatibility.
-Currently we use [test containers](https://www.testcontainers.org/) and docker image [parity/substrate:v3.0.0](https://hub.docker.com/layers/parity/substrate/v3.0.0/images/sha256-1aef07509d757c584320773c476dcb6077578bbf2f5e468ceb413dcf908897f1?context=explore).
+Currently, we use [test containers](https://www.testcontainers.org/) and docker image [parity/substrate:v3.0.0](https://hub.docker.com/layers/parity/substrate/v3.0.0/images/sha256-1aef07509d757c584320773c476dcb6077578bbf2f5e468ceb413dcf908897f1?context=explore).

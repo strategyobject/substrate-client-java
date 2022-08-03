@@ -3,7 +3,7 @@ dependencies {
 
     implementation 'com.github.multiformats:java-multibase:1.1.0'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
-    implementation 'net.openhft:zero-allocation-hashing:0.15'
+    implementation 'net.openhft:zero-allocation-hashing:0.16'
 }
 
 test {

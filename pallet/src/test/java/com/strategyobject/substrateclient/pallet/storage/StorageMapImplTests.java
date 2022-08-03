@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.pallet.TestsHelper;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;

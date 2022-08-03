@@ -1,8 +1,8 @@
 package com.strategyobject.substrateclient.pallet.storage;
 
 import com.strategyobject.substrateclient.pallet.TestsHelper;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
-import com.strategyobject.substrateclient.rpc.api.impl.Hash256;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash256;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import lombok.SneakyThrows;
 import lombok.val;

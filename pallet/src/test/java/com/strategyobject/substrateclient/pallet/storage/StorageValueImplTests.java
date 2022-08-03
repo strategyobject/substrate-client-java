@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.pallet.storage;
 import com.strategyobject.substrateclient.crypto.ss58.SS58Codec;
 import com.strategyobject.substrateclient.pallet.TestsHelper;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
-import com.strategyobject.substrateclient.rpc.api.BlockNumber;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;

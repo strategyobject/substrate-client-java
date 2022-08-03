@@ -2,7 +2,7 @@ package com.strategyobject.substrateclient.pallet.storage;
 
 import com.google.common.base.Preconditions;
 import com.strategyobject.substrateclient.crypto.Hasher;
-import com.strategyobject.substrateclient.rpc.api.StorageKey;
+import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import lombok.*;
 
 import java.io.ByteArrayInputStream;

@@ -64,6 +64,10 @@ public class PalletAnnotatedInterface {
         val constructorBuilder = createConstructorBuilder();
 
         for (Element method : interfaceElement.getEnclosedElements()) {
+            if (!(method instanceof ExecutableElement)) {
+                continue;
+            }
+
             this.methodProcessor.process(name,
                     (ExecutableElement) method,
                     typeSpecBuilder,

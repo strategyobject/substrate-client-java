@@ -4,6 +4,7 @@ import com.strategyobject.substrateclient.common.reflection.ClassUtils;
 import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
 import com.strategyobject.substrateclient.common.types.Unit;
+import com.strategyobject.substrateclient.common.types.tuple.Pair;
 import com.strategyobject.substrateclient.rpc.RpcDecoder;
 import com.strategyobject.substrateclient.rpc.annotation.AutoRegister;
 import com.strategyobject.substrateclient.rpc.context.RpcDecoderContext;
@@ -37,6 +38,7 @@ public class RpcDecoderRegistry {
         register(new ShortDecoder(), Short.class, short.class);
         register(new StringDecoder(), String.class);
         register(new ArrayDecoder(), Array.class);
+        register(new PairDecoder(), Pair.class);
     }
 
     public void registerAnnotatedFrom(RpcDecoderContextFactory rpcDecoderContextFactory, String... prefixes) {

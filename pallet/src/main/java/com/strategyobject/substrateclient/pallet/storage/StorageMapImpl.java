@@ -2,7 +2,7 @@ package com.strategyobject.substrateclient.pallet.storage;
 
 import com.google.common.annotations.Beta;
 import com.strategyobject.substrateclient.common.types.tuple.Pair;
-import com.strategyobject.substrateclient.rpc.api.BlockHash;
+import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import lombok.NonNull;

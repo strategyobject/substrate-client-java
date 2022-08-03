@@ -3,9 +3,16 @@ package com.strategyobject.substrateclient.api;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.strategyobject.substrateclient.api.pallet.balances.AccountData;
+import com.strategyobject.substrateclient.api.pallet.balances.AccountDataReader;
+import com.strategyobject.substrateclient.api.pallet.system.System;
+import com.strategyobject.substrateclient.common.types.Lambda;
 import com.strategyobject.substrateclient.crypto.ss58.SS58AddressFormat;
 import com.strategyobject.substrateclient.pallet.GeneratedPalletFactory;
 import com.strategyobject.substrateclient.pallet.PalletFactory;
+import com.strategyobject.substrateclient.pallet.events.EventDescriptor;
+import com.strategyobject.substrateclient.pallet.events.EventDescriptorReader;
+import com.strategyobject.substrateclient.pallet.events.EventRegistry;
 import com.strategyobject.substrateclient.rpc.GeneratedRpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.section.State;
@@ -35,12 +42,12 @@ public class DefaultModule extends AbstractModule {
 
     private final @NonNull ProviderInterface providerInterface;
 
-    private Consumer<ScaleReaderRegistry> configureScaleReaderRegistry = x -> x.registerAnnotatedFrom(PREFIX);
-    private Consumer<ScaleWriterRegistry> configureScaleWriterRegistry = x -> x.registerAnnotatedFrom(PREFIX);
-    private BiConsumer<RpcDecoderRegistry, RpcDecoderContextFactory> configureRpcDecoderRegistry =
-            (registry, contextFactory) -> registry.registerAnnotatedFrom(contextFactory, PREFIX);
-    private BiConsumer<RpcEncoderRegistry, RpcEncoderContextFactory> configureRpcEncoderRegistry =
-            (registry, contextFactory) -> registry.registerAnnotatedFrom(contextFactory, PREFIX);
+    private Consumer<ScaleReaderRegistry> configureScaleReaderRegistry = Lambda::noop;
+    private Consumer<ScaleWriterRegistry> configureScaleWriterRegistry = Lambda::noop;
+    private BiConsumer<RpcDecoderRegistry, RpcDecoderContextFactory> configureRpcDecoderRegistry = Lambda::noop;
+    private BiConsumer<RpcEncoderRegistry, RpcEncoderContextFactory> configureRpcEncoderRegistry = Lambda::noop;
+    private Consumer<EventRegistry> configureEventRegistry = Lambda::noop;
+
 
     public DefaultModule configureScaleReaderRegistry(Consumer<ScaleReaderRegistry> configure) {
         configureScaleReaderRegistry = configureScaleReaderRegistry.andThen(configure);
@@ -59,6 +66,11 @@ public class DefaultModule extends AbstractModule {
 
     public DefaultModule configureRpcEncoderRegistry(BiConsumer<RpcEncoderRegistry, RpcEncoderContextFactory> configure) {
         configureRpcEncoderRegistry = configureRpcEncoderRegistry.andThen(configure);
+        return this;
+    }
+
+    public DefaultModule configureEventRegistry(Consumer<EventRegistry> configure) {
+        configureEventRegistry = configureEventRegistry.andThen(configure);
         return this;
     }
 
@@ -97,8 +109,13 @@ public class DefaultModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public ScaleReaderRegistry provideScaleReaderRegistry() {
+    public ScaleReaderRegistry provideScaleReaderRegistry(MetadataProvider metadataProvider,
+                                                          EventRegistry eventRegistry) {
         val registry = new ScaleReaderRegistry();
+        registry.registerAnnotatedFrom(PREFIX);
+        registry.register(new AccountDataReader(registry), System.AccountData.class, AccountData.class);
+        registry.register(new EventDescriptorReader(registry, metadataProvider, eventRegistry), EventDescriptor.class);
+
         configureScaleReaderRegistry.accept(registry);
         return registry;
     }
@@ -107,6 +124,8 @@ public class DefaultModule extends AbstractModule {
     @Singleton
     public ScaleWriterRegistry provideScaleWriterRegistry() {
         val registry = new ScaleWriterRegistry();
+        registry.registerAnnotatedFrom(PREFIX);
+
         configureScaleWriterRegistry.accept(registry);
         return registry;
     }
@@ -120,6 +139,7 @@ public class DefaultModule extends AbstractModule {
                 metadataProvider,
                 registry,
                 scaleReaderRegistry);
+        registry.registerAnnotatedFrom(() -> context, PREFIX);
 
         configureRpcDecoderRegistry.accept(registry, () -> context);
         return registry;
@@ -134,8 +154,19 @@ public class DefaultModule extends AbstractModule {
                 metadataProvider,
                 registry,
                 scaleWriterRegistry);
+        registry.registerAnnotatedFrom(() -> context, PREFIX);
 
         configureRpcEncoderRegistry.accept(registry, () -> context);
+        return registry;
+    }
+
+    @Provides
+    @Singleton
+    public EventRegistry provideEventRegistry() {
+        val registry = new EventRegistry();
+        registry.registerAnnotatedFrom(PREFIX);
+
+        configureEventRegistry.accept(registry);
         return registry;
     }
 
