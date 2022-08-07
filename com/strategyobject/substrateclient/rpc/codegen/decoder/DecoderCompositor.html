@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -202,13 +202,17 @@ extends <a href="../../../../../../com/strategyobject/substrateclient/common/cod
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/strategyobject/substrateclient/rpc/codegen/decoder/DecoderCompositor.html#whenTypeVar-javax.lang.model.type.TypeVariable-javax.lang.model.type.TypeMirror-">whenTypeVar</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeVariable.html?is-external=true" title="class or interface in javax.lang.model.type">TypeVariable</a>&nbsp;type,
            <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;_override)</code>&nbsp;</td>
 </tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>protected <a href="https://www.javadoc.io/doc/com.squareup/javapoet/1.13.0/com/squareup/javapoet/CodeBlock.html?is-external=true" title="class or interface in com.squareup.javapoet">CodeBlock</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/strategyobject/substrateclient/rpc/codegen/decoder/DecoderCompositor.html#whenWildcard-javax.lang.model.type.TypeMirror-">whenWildcard</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.strategyobject.substrateclient.common.codegen.TypeTraverser">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.strategyobject.substrateclient.common.codegen.<a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="class in com.strategyobject.substrateclient.common.codegen">TypeTraverser</a></h3>
-<code><a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#doTraverseArguments-javax.lang.model.type.DeclaredType-javax.lang.model.type.TypeMirror-">doTraverseArguments</a>, <a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#traverse-javax.lang.model.type.TypeMirror-">traverse</a>, <a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#traverse-javax.lang.model.type.TypeMirror-com.strategyobject.substrateclient.common.codegen.TypeTraverser.TypeTreeNode-">traverse</a>, <a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#traverse-com.strategyobject.substrateclient.common.codegen.TypeTraverser.TypeTreeNode-">traverse</a></code></li>
+<code><a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#getTypeArguments-javax.lang.model.type.DeclaredType-javax.lang.model.type.TypeMirror-">getTypeArguments</a>, <a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#traverse-javax.lang.model.type.TypeMirror-">traverse</a>, <a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#traverse-javax.lang.model.type.TypeMirror-com.strategyobject.substrateclient.common.codegen.TypeTraverser.TypeTreeNode-">traverse</a>, <a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#traverse-com.strategyobject.substrateclient.common.codegen.TypeTraverser.TypeTreeNode-">traverse</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -261,6 +265,19 @@ extends <a href="../../../../../../com/strategyobject/substrateclient/common/cod
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="whenWildcard-javax.lang.model.type.TypeMirror-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>whenWildcard</h4>
+<pre>protected&nbsp;<a href="https://www.javadoc.io/doc/com.squareup/javapoet/1.13.0/com/squareup/javapoet/CodeBlock.html?is-external=true" title="class or interface in com.squareup.javapoet">CodeBlock</a>&nbsp;whenWildcard(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#whenWildcard-javax.lang.model.type.TypeMirror-">whenWildcard</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="class in com.strategyobject.substrateclient.common.codegen">TypeTraverser</a>&lt;<a href="https://www.javadoc.io/doc/com.squareup/javapoet/1.13.0/com/squareup/javapoet/CodeBlock.html?is-external=true" title="class or interface in com.squareup.javapoet">CodeBlock</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
 <a name="whenTypeVar-javax.lang.model.type.TypeVariable-javax.lang.model.type.TypeMirror-">
 <!--   -->
 </a>

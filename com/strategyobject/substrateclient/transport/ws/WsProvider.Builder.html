@@ -91,14 +91,14 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">com.strategyobject.substrateclient.transport.ws</div>
-<h2 title="Class WsProvider.Builder" class="title">Class WsProvider.Builder</h2>
+<h2 title="Class WsProvider.Builder" class="title">Class WsProvider.Builder&lt;T&gt;</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>com.strategyobject.substrateclient.transport.ws.WsProvider.Builder</li>
+<li>com.strategyobject.substrateclient.transport.ws.WsProvider.Builder&lt;T&gt;</li>
 </ul>
 </li>
 </ul>
@@ -106,13 +106,18 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html?is-external=true" title="class or interface in java.util.function">Supplier</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ProviderInterface.html" title="interface in com.strategyobject.substrateclient.transport">ProviderInterface</a>&gt;</dd>
+</dl>
+<dl>
 <dt>Enclosing class:</dt>
-<dd><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a></dd>
+<dd><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="type parameter in WsProvider">T</a>&gt;</dd>
 </dl>
 <hr>
 <br>
-<pre>public static class <span class="typeNameLabel">WsProvider.Builder</span>
-extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
+<pre>public static class <span class="typeNameLabel">WsProvider.Builder&lt;T&gt;</span>
+extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>
+implements <a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html?is-external=true" title="class or interface in java.util.function">Supplier</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ProviderInterface.html" title="interface in com.strategyobject.substrateclient.transport">ProviderInterface</a>&gt;</pre>
 </li>
 </ul>
 </div>
@@ -132,41 +137,41 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a></code></td>
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#build--">build</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#disableAutoConnect--">disableAutoConnect</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#disableHeartbeats--">disableHeartbeats</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#setAutoConnectDelay-int-">setAutoConnectDelay</a></span>(int&nbsp;autoConnectMs)</code>&nbsp;</td>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#get--">get</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#setEndpoint-java.lang.String-">setEndpoint</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;endpoint)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#setEndpoint-java.net.URI-">setEndpoint</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;endpoint)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#setHeaders-java.util.Map-">setHeaders</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#setHeartbeatsInterval-int-">setHeartbeatsInterval</a></span>(int&nbsp;heartbeatInterval)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a></code></td>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#setResponseTimeout-long-java.util.concurrent.TimeUnit-">setResponseTimeout</a></span>(long&nbsp;timeout,
                   <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/TimeUnit.html?is-external=true" title="class or interface in java.util.concurrent">TimeUnit</a>&nbsp;timeUnit)</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>&lt;C&gt;&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;C&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html#withPolicy-com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy-">withPolicy</a></span>(<a href="../../../../../com/strategyobject/substrateclient/transport/ws/ReconnectionPolicy.html" title="interface in com.strategyobject.substrateclient.transport.ws">ReconnectionPolicy</a>&lt;C&gt;&nbsp;policy)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -196,8 +201,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setEndpoint</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;setEndpoint(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;endpoint)</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;setEndpoint(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
+                                         <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/net/URI.html?is-external=true" title="class or interface in java.net">URI</a>&nbsp;endpoint)</pre>
 </li>
 </ul>
 <a name="setEndpoint-java.lang.String-">
@@ -206,26 +211,8 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setEndpoint</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;setEndpoint(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;endpoint)</pre>
-</li>
-</ul>
-<a name="setAutoConnectDelay-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setAutoConnectDelay</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;setAutoConnectDelay(int&nbsp;autoConnectMs)</pre>
-</li>
-</ul>
-<a name="disableAutoConnect--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>disableAutoConnect</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;disableAutoConnect()</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;setEndpoint(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
+                                         <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;endpoint)</pre>
 </li>
 </ul>
 <a name="setHeaders-java.util.Map-">
@@ -234,7 +221,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setHeaders</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;setHeaders(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;headers)</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;setHeaders(<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>,<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&gt;&nbsp;headers)</pre>
 </li>
 </ul>
 <a name="setHeartbeatsInterval-int-">
@@ -243,7 +230,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setHeartbeatsInterval</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;setHeartbeatsInterval(int&nbsp;heartbeatInterval)</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;setHeartbeatsInterval(int&nbsp;heartbeatInterval)</pre>
 </li>
 </ul>
 <a name="disableHeartbeats--">
@@ -252,7 +239,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>disableHeartbeats</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;disableHeartbeats()</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;disableHeartbeats()</pre>
 </li>
 </ul>
 <a name="setResponseTimeout-long-java.util.concurrent.TimeUnit-">
@@ -261,17 +248,39 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setResponseTimeout</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&nbsp;setResponseTimeout(long&nbsp;timeout,
-                                             <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/TimeUnit.html?is-external=true" title="class or interface in java.util.concurrent">TimeUnit</a>&nbsp;timeUnit)</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;setResponseTimeout(long&nbsp;timeout,
+                                                <a href="https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/TimeUnit.html?is-external=true" title="class or interface in java.util.concurrent">TimeUnit</a>&nbsp;timeUnit)</pre>
+</li>
+</ul>
+<a name="withPolicy-com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>withPolicy</h4>
+<pre>public&nbsp;&lt;C&gt;&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider.Builder</a>&lt;C&gt;&nbsp;withPolicy(<a href="../../../../../com/strategyobject/substrateclient/transport/ws/ReconnectionPolicy.html" title="interface in com.strategyobject.substrateclient.transport.ws">ReconnectionPolicy</a>&lt;C&gt;&nbsp;policy)</pre>
 </li>
 </ul>
 <a name="build--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>build</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a>&nbsp;build()</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;build()</pre>
+</li>
+</ul>
+<a name="get--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>get</h4>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.html" title="class in com.strategyobject.substrateclient.transport.ws">WsProvider</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ws/WsProvider.Builder.html" title="type parameter in WsProvider.Builder">T</a>&gt;&nbsp;get()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html?is-external=true#get--" title="class or interface in java.util.function">get</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/function/Supplier.html?is-external=true" title="class or interface in java.util.function">Supplier</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/transport/ProviderInterface.html" title="interface in com.strategyobject.substrateclient.transport">ProviderInterface</a>&gt;</code></dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -150,20 +150,20 @@ implements <a href="../../../../../com/strategyobject/substrateclient/crypto/Cry
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/types/KeyPair.html" title="class in com.strategyobject.substrateclient.types">KeyPair</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/crypto/sr25519/Sr25519NativeCryptoProvider.html#createPairFromSeed-com.strategyobject.substrateclient.types.Seed-">createPairFromSeed</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/Seed.html" title="class in com.strategyobject.substrateclient.types">Seed</a>&nbsp;seed)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/crypto/KeyPair.html" title="class in com.strategyobject.substrateclient.crypto">KeyPair</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/crypto/sr25519/Sr25519NativeCryptoProvider.html#createPairFromSeed-com.strategyobject.substrateclient.crypto.Seed-">createPairFromSeed</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/Seed.html" title="class in com.strategyobject.substrateclient.crypto">Seed</a>&nbsp;seed)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/types/SignatureData.html" title="class in com.strategyobject.substrateclient.types">SignatureData</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/crypto/sr25519/Sr25519NativeCryptoProvider.html#sign-com.strategyobject.substrateclient.types.PublicKey-com.strategyobject.substrateclient.types.SecretKey-com.strategyobject.substrateclient.types.Signable-">sign</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/PublicKey.html" title="class in com.strategyobject.substrateclient.types">PublicKey</a>&nbsp;publicKey,
-    <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/SecretKey.html" title="class in com.strategyobject.substrateclient.types">SecretKey</a>&nbsp;secretKey,
-    <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/Signable.html" title="interface in com.strategyobject.substrateclient.types">Signable</a>&nbsp;message)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/crypto/SignatureData.html" title="class in com.strategyobject.substrateclient.crypto">SignatureData</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/crypto/sr25519/Sr25519NativeCryptoProvider.html#sign-com.strategyobject.substrateclient.crypto.PublicKey-com.strategyobject.substrateclient.crypto.SecretKey-com.strategyobject.substrateclient.common.types.Bytes-">sign</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/PublicKey.html" title="class in com.strategyobject.substrateclient.crypto">PublicKey</a>&nbsp;publicKey,
+    <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/SecretKey.html" title="class in com.strategyobject.substrateclient.crypto">SecretKey</a>&nbsp;secretKey,
+    <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/common/types/Bytes.html" title="interface in com.strategyobject.substrateclient.common.types">Bytes</a>&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/crypto/sr25519/Sr25519NativeCryptoProvider.html#verify-com.strategyobject.substrateclient.types.SignatureData-com.strategyobject.substrateclient.types.Signable-com.strategyobject.substrateclient.types.PublicKey-">verify</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/SignatureData.html" title="class in com.strategyobject.substrateclient.types">SignatureData</a>&nbsp;signature,
-      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/Signable.html" title="interface in com.strategyobject.substrateclient.types">Signable</a>&nbsp;message,
-      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/PublicKey.html" title="class in com.strategyobject.substrateclient.types">PublicKey</a>&nbsp;publicKey)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/crypto/sr25519/Sr25519NativeCryptoProvider.html#verify-com.strategyobject.substrateclient.crypto.SignatureData-com.strategyobject.substrateclient.common.types.Bytes-com.strategyobject.substrateclient.crypto.PublicKey-">verify</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/SignatureData.html" title="class in com.strategyobject.substrateclient.crypto">SignatureData</a>&nbsp;signature,
+      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/common/types/Bytes.html" title="interface in com.strategyobject.substrateclient.common.types">Bytes</a>&nbsp;message,
+      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/PublicKey.html" title="class in com.strategyobject.substrateclient.crypto">PublicKey</a>&nbsp;publicKey)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -204,53 +204,53 @@ implements <a href="../../../../../com/strategyobject/substrateclient/crypto/Cry
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="createPairFromSeed-com.strategyobject.substrateclient.types.Seed-">
+<a name="createPairFromSeed-com.strategyobject.substrateclient.crypto.Seed-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>createPairFromSeed</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/types/KeyPair.html" title="class in com.strategyobject.substrateclient.types">KeyPair</a>&nbsp;createPairFromSeed(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                                  <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/Seed.html" title="class in com.strategyobject.substrateclient.types">Seed</a>&nbsp;seed)</pre>
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/crypto/KeyPair.html" title="class in com.strategyobject.substrateclient.crypto">KeyPair</a>&nbsp;createPairFromSeed(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
+                                  <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/Seed.html" title="class in com.strategyobject.substrateclient.crypto">Seed</a>&nbsp;seed)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html#createPairFromSeed-com.strategyobject.substrateclient.types.Seed-">createPairFromSeed</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html" title="interface in com.strategyobject.substrateclient.crypto">CryptoProvider</a></code></dd>
+<dd><code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html#createPairFromSeed-com.strategyobject.substrateclient.crypto.Seed-">createPairFromSeed</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html" title="interface in com.strategyobject.substrateclient.crypto">CryptoProvider</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="sign-com.strategyobject.substrateclient.types.PublicKey-com.strategyobject.substrateclient.types.SecretKey-com.strategyobject.substrateclient.types.Signable-">
+<a name="sign-com.strategyobject.substrateclient.crypto.PublicKey-com.strategyobject.substrateclient.crypto.SecretKey-com.strategyobject.substrateclient.common.types.Bytes-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>sign</h4>
-<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/types/SignatureData.html" title="class in com.strategyobject.substrateclient.types">SignatureData</a>&nbsp;sign(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                          <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/PublicKey.html" title="class in com.strategyobject.substrateclient.types">PublicKey</a>&nbsp;publicKey,
+<pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/crypto/SignatureData.html" title="class in com.strategyobject.substrateclient.crypto">SignatureData</a>&nbsp;sign(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
+                          <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/PublicKey.html" title="class in com.strategyobject.substrateclient.crypto">PublicKey</a>&nbsp;publicKey,
                           <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                          <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/SecretKey.html" title="class in com.strategyobject.substrateclient.types">SecretKey</a>&nbsp;secretKey,
+                          <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/SecretKey.html" title="class in com.strategyobject.substrateclient.crypto">SecretKey</a>&nbsp;secretKey,
                           <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                          <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/Signable.html" title="interface in com.strategyobject.substrateclient.types">Signable</a>&nbsp;message)</pre>
+                          <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/common/types/Bytes.html" title="interface in com.strategyobject.substrateclient.common.types">Bytes</a>&nbsp;message)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html#sign-com.strategyobject.substrateclient.types.PublicKey-com.strategyobject.substrateclient.types.SecretKey-com.strategyobject.substrateclient.types.Signable-">sign</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html" title="interface in com.strategyobject.substrateclient.crypto">CryptoProvider</a></code></dd>
+<dd><code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html#sign-com.strategyobject.substrateclient.crypto.PublicKey-com.strategyobject.substrateclient.crypto.SecretKey-com.strategyobject.substrateclient.common.types.Bytes-">sign</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html" title="interface in com.strategyobject.substrateclient.crypto">CryptoProvider</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="verify-com.strategyobject.substrateclient.types.SignatureData-com.strategyobject.substrateclient.types.Signable-com.strategyobject.substrateclient.types.PublicKey-">
+<a name="verify-com.strategyobject.substrateclient.crypto.SignatureData-com.strategyobject.substrateclient.common.types.Bytes-com.strategyobject.substrateclient.crypto.PublicKey-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>verify</h4>
 <pre>public&nbsp;boolean&nbsp;verify(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/SignatureData.html" title="class in com.strategyobject.substrateclient.types">SignatureData</a>&nbsp;signature,
+                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/SignatureData.html" title="class in com.strategyobject.substrateclient.crypto">SignatureData</a>&nbsp;signature,
                       <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/Signable.html" title="interface in com.strategyobject.substrateclient.types">Signable</a>&nbsp;message,
+                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/common/types/Bytes.html" title="interface in com.strategyobject.substrateclient.common.types">Bytes</a>&nbsp;message,
                       <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/types/PublicKey.html" title="class in com.strategyobject.substrateclient.types">PublicKey</a>&nbsp;publicKey)</pre>
+                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="../../../../../com/strategyobject/substrateclient/crypto/PublicKey.html" title="class in com.strategyobject.substrateclient.crypto">PublicKey</a>&nbsp;publicKey)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html#verify-com.strategyobject.substrateclient.types.SignatureData-com.strategyobject.substrateclient.types.Signable-com.strategyobject.substrateclient.types.PublicKey-">verify</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html" title="interface in com.strategyobject.substrateclient.crypto">CryptoProvider</a></code></dd>
+<dd><code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html#verify-com.strategyobject.substrateclient.crypto.SignatureData-com.strategyobject.substrateclient.common.types.Bytes-com.strategyobject.substrateclient.crypto.PublicKey-">verify</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/strategyobject/substrateclient/crypto/CryptoProvider.html" title="interface in com.strategyobject.substrateclient.crypto">CryptoProvider</a></code></dd>
 </dl>
 </li>
 </ul>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/strategyobject/substrateclient/common/codegen/Constants.html" title="class in com.strategyobject.substrateclient.common.codegen"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/strategyobject/substrateclient/common/codegen/JavaPoet.html" title="class in com.strategyobject.substrateclient.common.codegen"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/strategyobject/substrateclient/common/codegen/AnnotationUtils.html" target="_top">Frames</a></li>
@@ -144,6 +144,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                       <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;elementName)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/AnnotationUtils.html#isAnnotatedWith-javax.lang.model.AnnotatedConstruct-java.lang.Class-">isAnnotatedWith</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/AnnotatedConstruct.html?is-external=true" title="class or interface in javax.lang.model">AnnotatedConstruct</a>&nbsp;annotated,
+               <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;&nbsp;annotation)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/AnnotationUtils.html#isAnnotatedWithAll-javax.lang.model.AnnotatedConstruct-java.lang.Class...-">isAnnotatedWithAll</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/AnnotatedConstruct.html?is-external=true" title="class or interface in javax.lang.model">AnnotatedConstruct</a>&nbsp;annotated,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;...&nbsp;annotations)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/AnnotationUtils.html#isAnnotatedWithAny-javax.lang.model.AnnotatedConstruct-java.lang.Class...-">isAnnotatedWithAny</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/AnnotatedConstruct.html?is-external=true" title="class or interface in javax.lang.model">AnnotatedConstruct</a>&nbsp;annotated,
+                  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;...&nbsp;annotations)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>static <a href="https://www.javadoc.io/doc/com.squareup/javapoet/1.13.0/com/squareup/javapoet/AnnotationSpec.html?is-external=true" title="class or interface in com.squareup.javapoet">AnnotationSpec</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/AnnotationUtils.html#suppressWarnings-java.lang.String...-">suppressWarnings</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>...&nbsp;warnings)</code>&nbsp;</td>
 </tr>
@@ -210,10 +225,42 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="suppressWarnings-java.lang.String...-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>suppressWarnings</h4>
 <pre>public static&nbsp;<a href="https://www.javadoc.io/doc/com.squareup/javapoet/1.13.0/com/squareup/javapoet/AnnotationSpec.html?is-external=true" title="class or interface in com.squareup.javapoet">AnnotationSpec</a>&nbsp;suppressWarnings(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>...&nbsp;warnings)</pre>
+</li>
+</ul>
+<a name="isAnnotatedWith-javax.lang.model.AnnotatedConstruct-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAnnotatedWith</h4>
+<pre>public static&nbsp;boolean&nbsp;isAnnotatedWith(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/AnnotatedConstruct.html?is-external=true" title="class or interface in javax.lang.model">AnnotatedConstruct</a>&nbsp;annotated,
+                                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;&nbsp;annotation)</pre>
+</li>
+</ul>
+<a name="isAnnotatedWithAny-javax.lang.model.AnnotatedConstruct-java.lang.Class...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAnnotatedWithAny</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/SafeVarargs.html?is-external=true" title="class or interface in java.lang">@SafeVarargs</a>
+public static&nbsp;boolean&nbsp;isAnnotatedWithAny(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/AnnotatedConstruct.html?is-external=true" title="class or interface in javax.lang.model">AnnotatedConstruct</a>&nbsp;annotated,
+                                                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;...&nbsp;annotations)</pre>
+</li>
+</ul>
+<a name="isAnnotatedWithAll-javax.lang.model.AnnotatedConstruct-java.lang.Class...-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isAnnotatedWithAll</h4>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/SafeVarargs.html?is-external=true" title="class or interface in java.lang">@SafeVarargs</a>
+public static&nbsp;boolean&nbsp;isAnnotatedWithAll(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/AnnotatedConstruct.html?is-external=true" title="class or interface in javax.lang.model">AnnotatedConstruct</a>&nbsp;annotated,
+                                                      <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;...&nbsp;annotations)</pre>
 </li>
 </ul>
 </li>
@@ -244,7 +291,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/strategyobject/substrateclient/common/codegen/Constants.html" title="class in com.strategyobject.substrateclient.common.codegen"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/strategyobject/substrateclient/common/codegen/JavaPoet.html" title="class in com.strategyobject.substrateclient.common.codegen"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/strategyobject/substrateclient/common/codegen/AnnotationUtils.html" target="_top">Frames</a></li>

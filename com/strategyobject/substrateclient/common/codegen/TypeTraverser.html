@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -147,10 +147,12 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colOne" scope="col">Constructor and Description</th>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#TypeTraverser-java.lang.Class-">TypeTraverser</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&gt;&nbsp;clazz)</code>&nbsp;</td>
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#TypeTraverser-java.lang.Class-">TypeTraverser</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&gt;&nbsp;clazz)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -168,9 +170,9 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>protected boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#doTraverseArguments-javax.lang.model.type.DeclaredType-javax.lang.model.type.TypeMirror-">doTraverseArguments</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/DeclaredType.html?is-external=true" title="class or interface in javax.lang.model.type">DeclaredType</a>&nbsp;type,
-                   <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</code>&nbsp;</td>
+<td class="colFirst"><code>protected <a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#getTypeArguments-javax.lang.model.type.DeclaredType-javax.lang.model.type.TypeMirror-">getTypeArguments</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/DeclaredType.html?is-external=true" title="class or interface in javax.lang.model.type">DeclaredType</a>&nbsp;declaredType,
+                <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a></code></td>
@@ -217,6 +219,10 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#whenTypeVar-javax.lang.model.type.TypeVariable-javax.lang.model.type.TypeMirror-">whenTypeVar</a></span>(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeVariable.html?is-external=true" title="class or interface in javax.lang.model.type">TypeVariable</a>&nbsp;type,
            <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</code>&nbsp;</td>
 </tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>protected abstract <a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html#whenWildcard-javax.lang.model.type.TypeMirror-">whenWildcard</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -245,7 +251,7 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <ul class="blockListLast">
 <li class="blockList">
 <h4>TypeTraverser</h4>
-<pre>public&nbsp;TypeTraverser(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&gt;&nbsp;clazz)</pre>
+<pre>protected&nbsp;TypeTraverser(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;<a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&gt;&nbsp;clazz)</pre>
 </li>
 </ul>
 </li>
@@ -256,6 +262,15 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="whenWildcard-javax.lang.model.type.TypeMirror-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>whenWildcard</h4>
+<pre>protected abstract&nbsp;<a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&nbsp;whenWildcard(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</pre>
+</li>
+</ul>
 <a name="whenTypeVar-javax.lang.model.type.TypeVariable-javax.lang.model.type.TypeMirror-">
 <!--   -->
 </a>
@@ -330,17 +345,6 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
                                    <a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&nbsp;subtype)</pre>
 </li>
 </ul>
-<a name="doTraverseArguments-javax.lang.model.type.DeclaredType-javax.lang.model.type.TypeMirror-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>doTraverseArguments</h4>
-<pre>protected&nbsp;boolean&nbsp;doTraverseArguments(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
-                                      <a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a> <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/DeclaredType.html?is-external=true" title="class or interface in javax.lang.model.type">DeclaredType</a>&nbsp;type,
-                                      <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</pre>
-</li>
-</ul>
 <a name="traverse-javax.lang.model.type.TypeMirror-">
 <!--   -->
 </a>
@@ -366,11 +370,21 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 <a name="traverse-com.strategyobject.substrateclient.common.codegen.TypeTraverser.TypeTreeNode-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>traverse</h4>
 <pre>public&nbsp;<a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.html" title="type parameter in TypeTraverser">T</a>&nbsp;traverse(<a href="https://projectlombok.org/api/lombok/NonNull.html?is-external=true" title="class or interface in lombok">@NonNull</a>
                   <a href="../../../../../com/strategyobject/substrateclient/common/codegen/TypeTraverser.TypeTreeNode.html" title="class in com.strategyobject.substrateclient.common.codegen">TypeTraverser.TypeTreeNode</a>&nbsp;typeOverride)</pre>
+</li>
+</ul>
+<a name="getTypeArguments-javax.lang.model.type.DeclaredType-javax.lang.model.type.TypeMirror-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getTypeArguments</h4>
+<pre>protected&nbsp;<a href="https://docs.oracle.com/javase/8/docs/api/java/util/List.html?is-external=true" title="class or interface in java.util">List</a>&lt;? extends <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&gt;&nbsp;getTypeArguments(<a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/DeclaredType.html?is-external=true" title="class or interface in javax.lang.model.type">DeclaredType</a>&nbsp;declaredType,
+                                                      <a href="https://docs.oracle.com/javase/8/docs/api/javax/lang/model/type/TypeMirror.html?is-external=true" title="class or interface in javax.lang.model.type">TypeMirror</a>&nbsp;override)</pre>
 </li>
 </ul>
 </li>
