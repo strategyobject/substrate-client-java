@@ -2,6 +2,7 @@ package com.strategyobject.substrateclient.api;
 
 import com.google.inject.AbstractModule;
 import com.strategyobject.substrateclient.pallet.PalletFactory;
+import com.strategyobject.substrateclient.pallet.events.EventRegistry;
 import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.metadata.MetadataProvider;
 import com.strategyobject.substrateclient.rpc.registries.RpcDecoderRegistry;
@@ -18,6 +19,7 @@ public class RequireModule extends AbstractModule {
         requireBinding(ScaleWriterRegistry.class);
         requireBinding(RpcDecoderRegistry.class);
         requireBinding(RpcEncoderRegistry.class);
+        requireBinding(EventRegistry.class);
         requireBinding(MetadataProvider.class);
         requireBinding(RpcSectionFactory.class);
         requireBinding(PalletFactory.class);

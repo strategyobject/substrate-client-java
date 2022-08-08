@@ -60,7 +60,7 @@ public interface System {
     @Getter
     @Setter
     @ScaleReader
-    class ExtrinsicFailedEvent {
+    class ExtrinsicFailed {
         private DispatchError dispatchError;
         private DispatchInfo dispatchInfo;
     }
@@ -70,7 +70,7 @@ public interface System {
      */
     @Event(index = 2)
     @ScaleReader
-    class CodeUpdatedEvent {
+    class CodeUpdated {
     }
 
     /**
@@ -80,7 +80,7 @@ public interface System {
     @Getter
     @Setter
     @ScaleReader
-    class NewAccountEvent {
+    class NewAccount {
         private AccountId account;
     }
 
@@ -91,7 +91,7 @@ public interface System {
     @Getter
     @Setter
     @ScaleReader
-    class KilledAccountEvent {
+    class KilledAccount {
         private AccountId account;
     }
 
@@ -102,7 +102,7 @@ public interface System {
     @Getter
     @Setter
     @ScaleReader
-    class RemarkedEvent {
+    class Remarked {
         private AccountId sender;
         private Hash hash;
     }
