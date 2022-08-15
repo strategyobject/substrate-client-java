@@ -17,7 +17,7 @@ public class SignedAdditionalExtra implements AdditionalExtra {
     private final BlockHash genesis;
     private final BlockHash eraBlock;
 
-    SignedAdditionalExtra(long specVersion, long txVersion, @NonNull BlockHash genesis, @NonNull BlockHash eraBlock) {
+    public SignedAdditionalExtra(long specVersion, long txVersion, @NonNull BlockHash genesis, @NonNull BlockHash eraBlock) {
         this.specVersion = (int) specVersion;
         this.txVersion = (int) txVersion;
         this.genesis = genesis;
