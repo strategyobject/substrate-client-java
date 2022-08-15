@@ -21,7 +21,7 @@ public class TestsHelper {
         when(METADATA_PROVIDER.getSS58AddressFormat()).thenReturn(SS58AddressFormat.SUBSTRATE_ACCOUNT);
     }
 
-    static final ScaleReaderRegistry SCALE_READER_REGISTRY = new ScaleReaderRegistry() {{
+    public static final ScaleReaderRegistry SCALE_READER_REGISTRY = new ScaleReaderRegistry() {{
         registerAnnotatedFrom("com.strategyobject.substrateclient");
     }};
 

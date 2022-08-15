@@ -13,7 +13,7 @@ public class VecWriter implements ScaleWriter<List<?>> {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void write(@NonNull List<?> value, @NonNull OutputStream stream, @NonNull ScaleWriter<?>... writers) throws IOException {
-        Preconditions.checkArgument(writers != null && writers.length == 1);
+        Preconditions.checkArgument(writers.length == 1);
         Preconditions.checkNotNull(writers[0]);
 
         val nestedWriter = (ScaleWriter) writers[0];

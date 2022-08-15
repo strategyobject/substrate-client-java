@@ -33,9 +33,18 @@ public class DispatchErrorReader extends BaseUnionReader<DispatchError> {
     public DispatchError read(@NonNull InputStream stream, ScaleReader<?>... readers) throws IOException {
         Preconditions.checkArgument(readers == null || readers.length == 0);
 
+        val voidReader = registry.resolve(Void.class);
         val moduleErrorReader = registry.resolve(ModuleError.class);
         val tokenErrorReader = registry.resolve(TokenError.class);
         val arithmeticErrorReader = registry.resolve(ArithmeticError.class);
-        return super.read(stream, moduleErrorReader, tokenErrorReader, arithmeticErrorReader);
+        return super.read(stream,
+                voidReader,
+                voidReader,
+                voidReader,
+                moduleErrorReader,
+                voidReader,
+                voidReader,
+                tokenErrorReader,
+                arithmeticErrorReader);
     }
 }
