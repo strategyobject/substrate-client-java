@@ -2,12 +2,14 @@ package com.strategyobject.substrateclient.crypto.sr25519;
 
 import com.google.common.base.Strings;
 import com.strategyobject.substrateclient.crypto.NativeException;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
 
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Slf4j
 class Native {
     public static final int SIGNATURE_LENGTH = 64;
     public static final int SECRET_KEY_KEY_LENGTH = 32;
@@ -27,10 +29,12 @@ class Native {
     static {
         try {
             var libPath = System.getenv(LIB_PATH);
-            libPath = Strings.isNullOrEmpty(libPath)
-                    ? copyLibraryFromResourcesToTempDir()
-                    : libPath;
+            log.info("${}={}", LIB_PATH, libPath);
+            if (Strings.isNullOrEmpty(libPath)) {
+                libPath = copyLibraryFromResourcesToTempDir();
+            }
 
+            log.info("{} load path: {}", LIB_NAME, libPath);
             System.load(libPath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,6 +44,8 @@ class Native {
     }
 
     private static String copyLibraryFromResourcesToTempDir() throws IOException {
+        log.info("OS detected: {}", OS_NAME);
+
         String osDir;
         if (IS_WINDOWS) {
             osDir = "windows";
@@ -53,6 +59,7 @@ class Native {
 
         val fileName = System.mapLibraryName(LIB_NAME);
         val sourcePath = "/include/" + osDir + "/" + fileName;
+        log.info("{} source path: {}", LIB_NAME, sourcePath);
 
         try (val sourceStream = Native.class.getResourceAsStream(sourcePath)) {
             if (sourceStream == null) {
@@ -60,6 +67,7 @@ class Native {
             }
 
             val tempDir = Files.createTempDirectory(LIB_NAME + "_lib");
+            log.info("{} temp dir: {}", LIB_NAME, tempDir);
             tempDir.toFile().deleteOnExit();
             val libPath = tempDir.resolve(fileName);
             libPath.toFile().deleteOnExit(); // It doesn't work recursively
