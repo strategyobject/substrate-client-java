@@ -1,19 +1,16 @@
 package com.strategyobject.substrateclient.api;
 
+import com.google.inject.AbstractModule;
 import com.strategyobject.substrateclient.transport.ProviderInterface;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class DefaultModule extends RegistriesModule<DefaultModule> {
-
+public class TransportModule extends AbstractModule {
     private final @NonNull ProviderInterface providerInterface;
 
     @Override
     protected void configure() {
-        install(new TransportModule(providerInterface));
-        install(new RpcModule());
-        install(new PalletModule());
-        install(new ApiModule());
+        bind(ProviderInterface.class).toInstance(providerInterface);
     }
 }
