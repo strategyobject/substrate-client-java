@@ -5,6 +5,7 @@ import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
 import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.common.types.Unit;
+import com.strategyobject.substrateclient.common.types.tuple.Pair;
 import com.strategyobject.substrateclient.common.types.union.*;
 import com.strategyobject.substrateclient.scale.ScaleDispatch;
 import com.strategyobject.substrateclient.scale.ScaleType;
@@ -59,6 +60,7 @@ public class ScaleWriterRegistry {
         register(new Union10Writer(), Union10.class, ScaleType.Union10.class);
         register(new Union11Writer(), Union11.class, ScaleType.Union11.class);
         register(new Union12Writer(), Union12.class, ScaleType.Union12.class);
+        register(new PairWriter(), Pair.class);
         register(new VecWriter(), ScaleType.Vec.class, List.class);
         register(new ArrayWriter(), Array.class);
         register(new BooleanArrayWriter(), boolean[].class);

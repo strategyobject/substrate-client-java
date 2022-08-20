@@ -5,6 +5,7 @@ import com.strategyobject.substrateclient.common.reflection.Scanner;
 import com.strategyobject.substrateclient.common.types.Array;
 import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.common.types.Unit;
+import com.strategyobject.substrateclient.common.types.tuple.Pair;
 import com.strategyobject.substrateclient.common.types.union.*;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleType;
@@ -58,6 +59,7 @@ public class ScaleReaderRegistry {
         register(new Union10Reader(), Union10.class, ScaleType.Union10.class);
         register(new Union11Reader(), Union11.class, ScaleType.Union11.class);
         register(new Union12Reader(), Union12.class, ScaleType.Union12.class);
+        register(new PairReader(), Pair.class);
         register(new VecReader(), ScaleType.Vec.class, List.class);
         register(new ArrayReader(), Array.class);
         register(new BooleanArrayReader(), boolean[].class);

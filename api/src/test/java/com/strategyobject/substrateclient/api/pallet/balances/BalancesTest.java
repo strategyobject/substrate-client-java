@@ -18,7 +18,6 @@ import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.rpc.api.section.Author;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
-import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -83,7 +82,6 @@ class BalancesTest {
                 api.rpc(Author.class).submitExtrinsic(createBalanceTransferExtrinsic(genesis)).join());
     }
 
-    @SuppressWarnings({"unchecked"})
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis) {
         val specVersion = 264;
         val txVersion = 2;
@@ -93,8 +91,10 @@ class BalancesTest {
         val call = new BalanceTransfer(moduleIndex, callIndex, AddressId.fromBytes(bobKeyPair().asPublicKey().getBytes()), BigInteger.valueOf(10));
 
         val extra = new SignedExtra<>(specVersion, txVersion, genesis, genesis, new ImmortalEra(), Index.of(0), BigInteger.valueOf(tip));
-        val writer = (ScaleWriter<? super SignedPayload<? super BalanceTransfer, ? super SignedExtra<ImmortalEra>>>) TestsHelper.SCALE_WRITER_REGISTRY.resolve(SignedPayload.class);
-        val signedPayload = ScaleUtils.toBytes(new SignedPayload<>(call, extra), writer);
+        val signedPayload = ScaleUtils.toBytes(
+                new SignedPayload<>(call, extra),
+                TestsHelper.SCALE_WRITER_REGISTRY,
+                SignedPayload.class);
         val keyRing = KeyRing.fromKeyPair(aliceKeyPair());
 
         val signature = sign(keyRing, signedPayload);
