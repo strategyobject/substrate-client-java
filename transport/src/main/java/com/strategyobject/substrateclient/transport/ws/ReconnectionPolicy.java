@@ -11,6 +11,7 @@ public interface ReconnectionPolicy<T> {
 
     /**
      * The method is called when connection was closed and probably should be reconnected.
+     *
      * @param context contains a reason of disconnection and policy's context.
      * @return a unit of time from now to delay reconnection.
      */
@@ -18,6 +19,7 @@ public interface ReconnectionPolicy<T> {
 
     /**
      * The method is called before the first connection or when the one successfully reestablished.
+     *
      * @return a context required for the policy.
      */
     T initContext();
@@ -41,7 +43,7 @@ public interface ReconnectionPolicy<T> {
     /**
      * The policy that's supposed to not reconnect automatically
      */
-    ReconnectionPolicy<?> MANUAL = new ReconnectionPolicy<Void>() {
+    ReconnectionPolicy<Void> MANUAL = new ReconnectionPolicy<Void>() {
         @Override
         public @NonNull Delay getNextDelay(@NonNull ReconnectionContext<Void> context) {
             return Delay.NEVER;

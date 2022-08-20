@@ -132,7 +132,7 @@ class ChainTests {
         }
     }
 
-    private WsProvider connect() throws ExecutionException, InterruptedException, TimeoutException {
+    private WsProvider<Void> connect() throws ExecutionException, InterruptedException, TimeoutException {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .withPolicy(ReconnectionPolicy.MANUAL)

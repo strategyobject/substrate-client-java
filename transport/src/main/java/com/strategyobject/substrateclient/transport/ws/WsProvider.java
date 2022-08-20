@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -95,7 +96,7 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
         this.reconnectionPolicyContext.set(reconnectionPolicy.initContext());
     }
 
-    public static <T> Builder<T> builder() {
+    public static Builder<LongAdder> builder() {
         return new Builder<>();
     }
 
@@ -592,21 +593,25 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
             return this;
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        public <C> Builder<C> withPolicy(ReconnectionPolicy<C> policy) {
-            this.reconnectionPolicy = (ReconnectionPolicy) policy;
-            return (Builder<C>) this;
+        @SuppressWarnings({"unchecked"})
+        public <C> Builder<C> withPolicy(@NonNull ReconnectionPolicy<C> policy) {
+            val result = (Builder<C>) this;
+            result.reconnectionPolicy = policy;
+            return result;
         }
 
-        @SuppressWarnings({"rawtypes", "unchecked"})
+        @SuppressWarnings("unchecked")
         public WsProvider<T> build() {
-            return new WsProvider(this.endpoint,
+            if (this.reconnectionPolicy == null) {
+                this.reconnectionPolicy = (ReconnectionPolicy<T>) ExponentialBackoffReconnectionPolicy.builder().build();
+            }
+
+            return new WsProvider<>(
+                    this.endpoint,
                     this.headers,
                     this.heartbeatInterval,
                     this.responseTimeoutInMs,
-                    this.reconnectionPolicy == null ?
-                            ExponentialBackoffReconnectionPolicy.builder().build() :
-                            this.reconnectionPolicy);
+                    this.reconnectionPolicy);
         }
 
         @Override

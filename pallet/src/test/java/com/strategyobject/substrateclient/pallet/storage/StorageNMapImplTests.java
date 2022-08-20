@@ -54,7 +54,7 @@ class StorageNMapImplTests {
     }
 
     @NonNull
-    private WsProvider getConnectedProvider() throws InterruptedException, ExecutionException, TimeoutException {
+    private WsProvider<Void> getConnectedProvider() throws InterruptedException, ExecutionException, TimeoutException {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .withPolicy(ReconnectionPolicy.MANUAL)

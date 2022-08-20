@@ -174,7 +174,7 @@ class StateTests {
         }
     }
 
-    private WsProvider connect() throws Exception {
+    private WsProvider<Void> connect() throws Exception {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
                 .withPolicy(ReconnectionPolicy.MANUAL)
