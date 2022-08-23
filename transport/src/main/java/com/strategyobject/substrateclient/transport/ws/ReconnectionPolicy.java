@@ -3,24 +3,24 @@ package com.strategyobject.substrateclient.transport.ws;
 import lombok.NonNull;
 
 /**
- * @param <T> a type of policy's context required for
- *            computing the next delay or other policy's purposes
- *            Represents a strategy of reconnection
+ * Policy required for computing the next delay. Represents a strategy of reconnection.
  */
-public interface ReconnectionPolicy<T> {
+public interface ReconnectionPolicy {
 
     /**
      * The method is called when connection was closed and probably should be reconnected.
+     *
      * @param context contains a reason of disconnection and policy's context.
      * @return a unit of time from now to delay reconnection.
      */
-    @NonNull Delay getNextDelay(@NonNull ReconnectionContext<T> context);
+    @NonNull Delay getNextDelay(@NonNull ReconnectionContext context);
 
     /**
      * The method is called before the first connection or when the one successfully reestablished.
+     *
      * @return a context required for the policy.
      */
-    T initContext();
+    Object initState();
 
     /**
      * @return the builder of ExponentialBackoffReconnectionPolicy
@@ -30,25 +30,16 @@ public interface ReconnectionPolicy<T> {
     }
 
     /**
-     * @param <T> the type of context
-     * @return the policy that's supposed to not reconnect automatically
-     */
-    @SuppressWarnings("unchecked")
-    static <T> ReconnectionPolicy<T> manual() {
-        return (ReconnectionPolicy<T>) MANUAL;
-    }
-
-    /**
      * The policy that's supposed to not reconnect automatically
      */
-    ReconnectionPolicy<?> MANUAL = new ReconnectionPolicy<Void>() {
+    ReconnectionPolicy MANUAL = new ReconnectionPolicy() {
         @Override
-        public @NonNull Delay getNextDelay(@NonNull ReconnectionContext<Void> context) {
+        public @NonNull Delay getNextDelay(@NonNull ReconnectionContext context) {
             return Delay.NEVER;
         }
 
         @Override
-        public Void initContext() {
+        public Void initState() {
             return null;
         }
     };

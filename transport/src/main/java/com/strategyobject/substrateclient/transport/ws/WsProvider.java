@@ -49,7 +49,7 @@ class WsStateAwaiting {
 }
 
 @Slf4j
-public class WsProvider<T> implements ProviderInterface, AutoCloseable {
+public class WsProvider implements ProviderInterface, AutoCloseable {
     private static final int RESUBSCRIBE_TIMEOUT = 20;
     private static final Map<String, String> ALIASES = new HashMap<>();
     private static final ScheduledExecutorService timedOutHandlerCleaner;
@@ -70,8 +70,8 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
     private final Map<String, JsonRpcResponseSubscription> waitingForId = new ConcurrentHashMap<>();
     private final int heartbeatInterval;
     private final long responseTimeoutInMs;
-    private final AtomicReference<T> reconnectionPolicyContext = new AtomicReference<>();
-    private volatile ReconnectionPolicy<T> reconnectionPolicy;
+    private final AtomicReference<Object> reconnectionPolicyContext = new AtomicReference<>();
+    private volatile ReconnectionPolicy reconnectionPolicy;
     private volatile WebSocketClient webSocket = null;
     private volatile CompletableFuture<Void> whenConnected = null;
     private volatile CompletableFuture<Void> whenDisconnected = null;
@@ -82,7 +82,7 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
                Map<String, String> headers,
                int heartbeatInterval,
                long responseTimeoutInMs,
-               @NonNull ReconnectionPolicy<T> reconnectionPolicy) {
+               @NonNull ReconnectionPolicy reconnectionPolicy) {
         Preconditions.checkArgument(
                 endpoint.getScheme().matches("(?i)ws|wss"),
                 "Endpoint should start with 'ws://', received " + endpoint);
@@ -92,11 +92,11 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
         this.heartbeatInterval = heartbeatInterval;
         this.responseTimeoutInMs = responseTimeoutInMs;
         this.reconnectionPolicy = reconnectionPolicy;
-        this.reconnectionPolicyContext.set(reconnectionPolicy.initContext());
+        this.reconnectionPolicyContext.set(reconnectionPolicy.initState());
     }
 
-    public static <T> Builder<T> builder() {
-        return new Builder<>();
+    public static Builder builder() {
+        return new Builder();
     }
 
     /**
@@ -194,7 +194,7 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
         this.whenDisconnected = whenDisconnectedFuture;
 
         // switch off autoConnect, we are in manual mode now
-        this.reconnectionPolicy = ReconnectionPolicy.manual();
+        this.reconnectionPolicy = ReconnectionPolicy.MANUAL;
         this.status = ProviderStatus.DISCONNECTING;
 
         val ws = this.webSocket;
@@ -490,7 +490,7 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
         log.info("Connected to: {}", this.webSocket.getURI());
 
         this.status = ProviderStatus.CONNECTED;
-        reconnectionPolicyContext.set(reconnectionPolicy.initContext());
+        reconnectionPolicyContext.set(reconnectionPolicy.initState());
         this.emit(ProviderInterfaceEmitted.CONNECTED);
         this.resubscribe();
     }
@@ -542,14 +542,14 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
         }
     }
 
-    public static class Builder<T> implements Supplier<ProviderInterface> {
+    public static class Builder implements Supplier<ProviderInterface> {
         private static final String DEFAULT_URI = "ws://127.0.0.1:9944";
 
         private URI endpoint;
         private Map<String, String> headers = null;
         private int heartbeatInterval = 30;
         private long responseTimeoutInMs = 20000;
-        private ReconnectionPolicy<T> reconnectionPolicy;
+        private ReconnectionPolicy reconnectionPolicy;
 
         Builder() {
             try {
@@ -559,12 +559,12 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
             }
         }
 
-        public Builder<T> setEndpoint(@NonNull URI endpoint) {
+        public Builder setEndpoint(@NonNull URI endpoint) {
             this.endpoint = endpoint;
             return this;
         }
 
-        public Builder<T> setEndpoint(@NonNull String endpoint) {
+        public Builder setEndpoint(@NonNull String endpoint) {
             try {
                 return setEndpoint(new URI(endpoint));
             } catch (URISyntaxException ex) {
@@ -572,34 +572,32 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
             }
         }
 
-        public Builder<T> setHeaders(Map<String, String> headers) {
+        public Builder setHeaders(Map<String, String> headers) {
             this.headers = headers;
             return this;
         }
 
-        public Builder<T> setHeartbeatsInterval(int heartbeatInterval) {
+        public Builder setHeartbeatsInterval(int heartbeatInterval) {
             this.heartbeatInterval = heartbeatInterval;
             return this;
         }
 
-        public Builder<T> disableHeartbeats() {
+        public Builder disableHeartbeats() {
             this.heartbeatInterval = 0;
             return this;
         }
 
-        public Builder<T> setResponseTimeout(long timeout, TimeUnit timeUnit) {
+        public Builder setResponseTimeout(long timeout, TimeUnit timeUnit) {
             this.responseTimeoutInMs = timeUnit.toMillis(timeout);
             return this;
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        public <C> Builder<C> withPolicy(ReconnectionPolicy<C> policy) {
-            this.reconnectionPolicy = (ReconnectionPolicy) policy;
-            return (Builder<C>) this;
+        public Builder withPolicy(ReconnectionPolicy policy) {
+            this.reconnectionPolicy = policy;
+            return this;
         }
 
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        public WsProvider<T> build() {
+        public WsProvider build() {
             return new WsProvider(this.endpoint,
                     this.headers,
                     this.heartbeatInterval,
@@ -610,7 +608,7 @@ public class WsProvider<T> implements ProviderInterface, AutoCloseable {
         }
 
         @Override
-        public WsProvider<T> get() {
+        public WsProvider get() {
             return build();
         }
     }

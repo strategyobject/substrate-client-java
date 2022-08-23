@@ -185,7 +185,7 @@ class WsProviderProxyTest {
         }
     }
 
-    private <T> Map<?, ?> getHandlersOf(WsProvider<T> wsProvider) throws NoSuchFieldException, IllegalAccessException {
+    private <T> Map<?, ?> getHandlersOf(WsProvider wsProvider) throws NoSuchFieldException, IllegalAccessException {
         val handlersFields = wsProvider.getClass().getDeclaredField("handlers");
         handlersFields.setAccessible(true);
 

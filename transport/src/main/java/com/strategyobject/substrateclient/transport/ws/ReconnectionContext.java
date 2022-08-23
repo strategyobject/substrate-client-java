@@ -5,13 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Represents a context why connection was closed
- *
- * @param <T> a type of policy's context required for
- *            computing the next delay or other policy's purposes
  */
 @RequiredArgsConstructor(staticName = "of")
 @Getter
-public class ReconnectionContext<T> {
+public class ReconnectionContext {
     /**
      * The code of the reason of disconnection
      */
@@ -23,7 +20,7 @@ public class ReconnectionContext<T> {
     private final String reason;
 
     /**
-     * The policy's context
+     * The policy's state
      */
-    private final T policyContext;
+    private final Object policyState;
 }
