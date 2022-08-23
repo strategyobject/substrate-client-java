@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.LongAdder;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Slf4j
-public class ExponentialBackoffReconnectionPolicy implements ReconnectionPolicy<LongAdder> {
+public class ExponentialBackoffReconnectionPolicy implements ReconnectionPolicy {
     /**
      * Max number of attempts
      */
@@ -40,21 +40,23 @@ public class ExponentialBackoffReconnectionPolicy implements ReconnectionPolicy<
      * @return a unit of time to delay the next reconnection
      */
     @Override
-    public @NonNull Delay getNextDelay(@NonNull ReconnectionContext<LongAdder> context) {
+    public @NonNull Delay getNextDelay(@NonNull ReconnectionContext context) {
+        val state = (LongAdder) context.getPolicyState();
+
         try {
-            if (context.getPolicyContext().longValue() >= maxAttempts) {
+            if (state.longValue() >= maxAttempts) {
                 log.info("Provider won't reconnect more.");
 
                 return Delay.NEVER;
             }
 
-            var nextDelay = delay * Math.pow(factor, context.getPolicyContext().longValue());
+            var nextDelay = delay * Math.pow(factor, state.longValue());
             nextDelay = Math.min(nextDelay, maxDelay);
 
             log.info("Provider will try to reconnect after: {} {}", nextDelay, unit);
             return Delay.of((long) nextDelay, unit);
         } finally {
-            context.getPolicyContext().increment();
+            state.increment();
         }
     }
 
@@ -62,7 +64,7 @@ public class ExponentialBackoffReconnectionPolicy implements ReconnectionPolicy<
      * Returns the counter of attempts
      */
     @Override
-    public LongAdder initContext() {
+    public LongAdder initState() {
         return new LongAdder();
     }
 

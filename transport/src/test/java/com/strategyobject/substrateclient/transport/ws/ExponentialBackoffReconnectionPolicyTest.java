@@ -31,7 +31,7 @@ class ExponentialBackoffReconnectionPolicyTest {
                 .withMaxDelay(maxDelay)
                 .notMoreThan(maxAttempts)
                 .build();
-        val context = policy.initContext();
+        val context = policy.initState();
 
         for (var i = 0; i < iterations - 1; i++) {
             policy.getNextDelay(ReconnectionContext.of(-1, "some", context));
