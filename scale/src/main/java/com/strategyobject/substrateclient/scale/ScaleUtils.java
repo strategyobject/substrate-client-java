@@ -2,7 +2,6 @@ package com.strategyobject.substrateclient.scale;
 
 import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.common.inject.Injection;
-import com.strategyobject.substrateclient.common.inject.Injector;
 import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
 import lombok.val;
@@ -35,14 +34,14 @@ public final class ScaleUtils {
 
     @SuppressWarnings({"unchecked"})
     public static <T> byte[] toBytes(T value, @NonNull ScaleWriterRegistry registry, @NonNull Object clazz) {
-        return new Injector<>(
+        val writer = Injection.traverse(
                 clazz instanceof Injection ?
                         (Injection<Class<?>>) clazz :
                         Injection.of((Class<?>) clazz),
                 ScaleWriter.class,
-                registry::resolve,
-                x -> toBytes(value, (ScaleWriter<T>) x))
-                .process();
+                registry::resolve);
+
+        return toBytes(value, writer);
     }
 
     public static <T> T fromHexString(@NonNull String hex, @NonNull ScaleReader<T> reader) {
