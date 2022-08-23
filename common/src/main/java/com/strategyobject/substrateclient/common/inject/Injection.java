@@ -5,8 +5,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -31,5 +33,23 @@ public class Injection<T> {
 
     public static <T> Injection<T> of(T dependant) {
         return new Injection<>(dependant);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T, D extends Dependant> D traverse(@NonNull Injection<T> injection,
+                                                      @NonNull Class<D> clazz,
+                                                      @NonNull Function<T, D> resolver) {
+        if (injection.getInjections() == null) {
+            return resolver.apply(injection.getDependant());
+        }
+
+        D[] dependencies = injection.getInjections()
+                .stream()
+                .map(x -> traverse(x, clazz, resolver))
+                .toArray(size -> (D[]) Array.newInstance(clazz, size));
+
+        return (D) resolver
+                .apply(injection.getDependant())
+                .inject(dependencies);
     }
 }
