@@ -52,10 +52,8 @@ class WsStateAwaiting {
 public class WsProvider implements ProviderInterface, AutoCloseable {
     private static final int RESUBSCRIBE_TIMEOUT = 20;
     private static final Map<String, String> ALIASES = new HashMap<>();
-    private static final ScheduledExecutorService timedOutHandlerCleaner;
 
     static {
-        timedOutHandlerCleaner = Executors.newScheduledThreadPool(1);
         ALIASES.put("chain_finalisedHead", "chain_finalizedHead");
         ALIASES.put("chain_subscribeFinalisedHeads", "chain_subscribeFinalizedHeads");
         ALIASES.put("chain_unsubscribeFinalisedHeads", "chain_unsubscribeFinalizedHeads");
@@ -77,6 +75,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private volatile CompletableFuture<Void> whenDisconnected = null;
     private volatile ProviderStatus status = ProviderStatus.DISCONNECTED;
     private final ScheduledExecutorService reconnector = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService timedOutHandlerCleaner = Executors.newScheduledThreadPool(1);
 
     WsProvider(@NonNull URI endpoint,
                Map<String, String> headers,
@@ -499,6 +498,7 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     public void close() {
         try {
             reconnector.shutdownNow();
+            timedOutHandlerCleaner.shutdownNow();
 
             val currentStatus = this.status;
             if (currentStatus == ProviderStatus.CONNECTED || currentStatus == ProviderStatus.DISCONNECTING) {
