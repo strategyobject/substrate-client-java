@@ -13,6 +13,7 @@ public class TestSubstrateContainer extends GenericContainer<TestSubstrateContai
     }
 
     public String getWsAddress() {
+        System.out.println("####################### " + this.getMappedPort(9933));
         return String.format("ws://%s:%s", this.getHost(), this.getMappedPort(9944));
     }
 }

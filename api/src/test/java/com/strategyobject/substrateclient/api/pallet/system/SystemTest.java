@@ -9,6 +9,7 @@ import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
@@ -49,6 +50,7 @@ class SystemTest {
     }
 
     @Test
+    @Disabled("instant seal does not cause blocks to be created at idle, so no extrinsic timestamp.set is being called")
     void events() throws Exception {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress());
