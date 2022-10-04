@@ -43,7 +43,7 @@ class SystemTest {
 
             assertNotNull(actual);
             assertEquals(
-                    new BigInteger("1000000000000000000000"),
+                    new BigInteger("4951760157141521099596496896"),
                     actual.getData().into(AccountData.class).getFree());
         }
     }
