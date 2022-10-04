@@ -11,6 +11,7 @@ import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @Testcontainers
 class StorageMapImplTests {
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
     private static final int CONNECTION_TIMEOUT = 1000;
 
     @Test

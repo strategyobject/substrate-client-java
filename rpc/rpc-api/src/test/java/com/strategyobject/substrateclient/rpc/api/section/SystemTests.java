@@ -10,6 +10,7 @@ import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -23,7 +24,7 @@ class SystemTests {
     private static final Network network = Network.newNetwork();
 
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).withNetwork(network);
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
 
     @Test
     void accountNextIndex() throws Exception {

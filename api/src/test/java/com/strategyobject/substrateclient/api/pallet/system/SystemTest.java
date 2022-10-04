@@ -10,6 +10,7 @@ import com.strategyobject.substrateclient.tests.containers.TestSubstrateContaine
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -27,7 +28,7 @@ class SystemTest {
     private static final int WAIT_TIMEOUT = 30;
 
     @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
 
     @Test
     void account() throws Exception {

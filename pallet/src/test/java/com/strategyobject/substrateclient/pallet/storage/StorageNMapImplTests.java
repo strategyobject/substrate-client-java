@@ -19,6 +19,7 @@ import lombok.NonNull;
 import lombok.val;
 import lombok.var;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -40,7 +41,7 @@ class StorageNMapImplTests {
     private static final int CONNECTION_TIMEOUT = 1000;
     private static final int WAIT_TIMEOUT = 10;
     @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
 
     @SuppressWarnings("unchecked")
     private static StorageNMapImpl<BlockHash> newSystemBlockHashStorage(State state) {

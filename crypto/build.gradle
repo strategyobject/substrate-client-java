@@ -13,14 +13,14 @@ test {
 task compileRust {
     doLast {
 // TODO 'MasOS support problem'. Uncomment it and adjust compiler or consider another approach to get compiled libraries.
-//        exec {
-//            workingDir 'src/jni-crypto'
-//            commandLine 'cargo', 'build', '--release', '--target=x86_64-apple-darwin', '--target-dir=../../build/jni-crypto'
-//        }
         exec {
             workingDir 'src/jni-crypto'
-            commandLine 'cargo', 'build', '--release', '--target=x86_64-unknown-linux-gnu', '--target-dir=../../build/jni-crypto'
+            commandLine 'cargo', 'build', '--release', '--target=x86_64-apple-darwin', '--target-dir=../../build/jni-crypto'
         }
+//        exec {
+//            workingDir 'src/jni-crypto'
+//            commandLine 'cargo', 'build', '--release', '--target=x86_64-unknown-linux-gnu', '--target-dir=../../build/jni-crypto'
+//        }
 // TODO the build of the native library will be moved out of the project
 //        exec {
 //            workingDir 'src/jni-crypto'
