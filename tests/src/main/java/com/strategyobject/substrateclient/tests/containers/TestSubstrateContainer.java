@@ -3,13 +3,13 @@ package com.strategyobject.substrateclient.tests.containers;
 import org.testcontainers.containers.GenericContainer;
 
 public class TestSubstrateContainer extends GenericContainer<TestSubstrateContainer> {
-    private static final String IMAGE = "parity/substrate:";
+    private static final String IMAGE = "frequencychain/instant-seal-node:";
 
     public TestSubstrateContainer(String version) {
         super(IMAGE + version);
 
         addExposedPorts(30333, 9944, 9933);
-        setCommand("/usr/local/bin/substrate --tmp --dev --ws-external --rpc-methods=Unsafe --rpc-cors all --rpc-external");
+        //setCommand("");
     }
 
     public String getWsAddress() {

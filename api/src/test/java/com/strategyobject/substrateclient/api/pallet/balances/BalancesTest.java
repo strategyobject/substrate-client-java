@@ -49,7 +49,7 @@ class BalancesTest {
     private static final int WAIT_TIMEOUT = 30;
 
     @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void transfer() throws Exception {

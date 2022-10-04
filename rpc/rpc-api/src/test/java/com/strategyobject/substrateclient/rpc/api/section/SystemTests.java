@@ -24,7 +24,7 @@ class SystemTests {
     private static final Network network = Network.newNetwork();
 
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void accountNextIndex() throws Exception {

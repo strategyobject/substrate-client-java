@@ -30,7 +30,7 @@ class ApiTest {
     private static final int WAIT_TIMEOUT = 1000;
 
     @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void getSystemPalletAndCall() throws Exception { // TODO move the test out of the project

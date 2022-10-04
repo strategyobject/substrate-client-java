@@ -25,7 +25,7 @@ class WsProviderTest {
     private static final int WAIT_TIMEOUT = 10;
 
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Idle \\(0 peers\\).*", 1));
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void canConnect() {
