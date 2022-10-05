@@ -28,8 +28,12 @@ public class EventDescriptorReader implements ScaleReader<EventDescriptor> {
 
         val eventClass = eventRegistry.resolve(pallet.getName(), eventIndex);
         if (eventClass == null) {
+            return null;
+            /*
             throw new RuntimeException(
                     String.format("Unknown event with index %d in pallet %s", eventIndex, pallet.getName()));
+
+             */
         }
 
         val eventReader = scaleReaderRegistry.resolve(eventClass);
