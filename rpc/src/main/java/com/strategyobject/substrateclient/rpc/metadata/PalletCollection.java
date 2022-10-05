@@ -11,9 +11,9 @@ public class PalletCollection {
     public PalletCollection(Pallet @NonNull ... pallets) {
         Preconditions.checkArgument(pallets.length > 0);
         Preconditions.checkArgument(pallets[0].getIndex() == 0);
-        Preconditions.checkArgument(pallets.length == 1 ||
+/*        Preconditions.checkArgument(pallets.length == 1 ||
                 IntStream.range(1, pallets.length)
-                        .allMatch(i -> pallets[i].getIndex() == pallets[i - 1].getIndex() + 1));
+                        .allMatch(i -> pallets[i].getIndex() == pallets[i - 1].getIndex() + 1));*/
 
         this.pallets = pallets;
     }
