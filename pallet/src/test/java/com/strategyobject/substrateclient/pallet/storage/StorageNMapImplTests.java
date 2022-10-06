@@ -18,6 +18,7 @@ import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.NonNull;
 import lombok.val;
 import lombok.var;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
@@ -37,11 +38,11 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
+@Disabled("Try this with the substrate container")
 class StorageNMapImplTests {
     private static final int CONNECTION_TIMEOUT = 1000;
     private static final int WAIT_TIMEOUT = 10;
-    @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
 
     @SuppressWarnings("unchecked")
     private static StorageNMapImpl<BlockHash> newSystemBlockHashStorage(State state) {

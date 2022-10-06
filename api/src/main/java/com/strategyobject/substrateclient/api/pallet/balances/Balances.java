@@ -66,7 +66,7 @@ public interface Balances {
     /**
      * Some amount was deposited (e.g. for transaction fees). \[who, deposit\]
      */
-    @Event(index = 4)
+    @Event(index = 7)
     @Getter
     @Setter
     @ScaleReader
@@ -78,7 +78,7 @@ public interface Balances {
     /**
      * Some balance was reserved (moved from free to reserved). \[who, value\]
      */
-    @Event(index = 5)
+    @Event(index = 4)
     @Getter
     @Setter
     @ScaleReader
@@ -90,7 +90,7 @@ public interface Balances {
     /**
      * Some balance was unreserved (moved from reserved to free). \[who, value\]
      */
-    @Event(index = 6)
+    @Event(index = 5)
     @Getter
     @Setter
     @ScaleReader
@@ -104,7 +104,7 @@ public interface Balances {
      * Final argument indicates the destination balance type.
      * \[from, to, balance, destination_status\]
      */
-    @Event(index = 7)
+    @Event(index = 6)
     @Getter
     @Setter
     @ScaleReader
@@ -115,4 +115,21 @@ public interface Balances {
         private BalanceStatus destinationStatus;
     }
 
+    @Event(index = 8)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Withdraw {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 9)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Slashed {
+        private AccountId account;
+        private Balance value;
+    }
 }
