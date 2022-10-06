@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.rpc.metadata;
 
 import lombok.val;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,6 +32,7 @@ class PalletCollectionTest {
     }
 
     @Test
+    @Disabled("It's no longer incremental by design")
     void failsWhenIndexIsNotIncremental() {
         val pallet1 = mock(Pallet.class);
         when(pallet1.getIndex()).thenReturn(0);
