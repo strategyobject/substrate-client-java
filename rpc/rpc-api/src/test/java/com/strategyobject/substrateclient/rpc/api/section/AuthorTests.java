@@ -51,13 +51,13 @@ class AuthorTests {
             val author = TestsHelper.createSectionFactory(wsProvider).create(Author.class);
 
             val publicKey = PublicKey.fromBytes(
-                    HexConverter.toBytes("0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d"));
+                    HexConverter.toBytes("0x8eaf04151687736326c9fea17e25fc5287613693c912909cb226aa4794f26a48"));
             val keyType = "aura";
             var result = author.hasKey(publicKey, keyType).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertFalse(result);
 
-            author.insertKey(keyType, "alice", publicKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
+            author.insertKey(keyType, "bob", publicKey).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
             result = author.hasKey(publicKey, keyType).get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
             assertTrue(result);
@@ -133,9 +133,9 @@ class AuthorTests {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis, int nonce) {
-        val specVersion = 264;
-        val txVersion = 2;
-        val moduleIndex = (byte) 6;
+        val specVersion = 1;
+        val txVersion = 1;
+        val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;
         val tip = 0;
         val call = new BalanceTransfer(moduleIndex, callIndex, AddressId.fromBytes(bobKeyPair().asPublicKey().getBytes()), BigInteger.valueOf(10));
