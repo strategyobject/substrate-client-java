@@ -28,7 +28,7 @@ public interface Msa {
     @ScaleReader
     class MsaCreated {
         @Scale(ScaleType.U64.class)
-        private BigInteger messageId;
+        private BigInteger msaId;
         private AccountId accountId;
     }
 /*
