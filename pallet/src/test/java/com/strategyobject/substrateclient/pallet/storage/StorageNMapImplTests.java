@@ -38,11 +38,15 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@Disabled("Try this with the substrate container")
+@Disabled("Another instant seal issue for frequency, when runninh this against vanilla substrate this works. When " +
+        "Frequency can run in non-instant seal mode we can turn this back on, until then we are going to assume it works")
 class StorageNMapImplTests {
     private static final int CONNECTION_TIMEOUT = 1000;
     private static final int WAIT_TIMEOUT = 10;
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0);
+
+    @Container
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
+
 
     @SuppressWarnings("unchecked")
     private static StorageNMapImpl<BlockHash> newSystemBlockHashStorage(State state) {
