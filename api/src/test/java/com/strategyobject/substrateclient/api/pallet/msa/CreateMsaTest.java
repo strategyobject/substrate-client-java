@@ -77,7 +77,11 @@ public class CreateMsaTest {
             List<Object> _events = eventRecords.get().stream().map(er -> er.getEvent().getEvent()).collect(Collectors.toList());
             assertTrue(events.get().anyMatch(x -> x instanceof Msa.MsaCreated));
             assertTrue(events.get().anyMatch(x -> x instanceof System.ExtrinsicSuccess));
+
+            Msa msaPallet = api.pallet(Msa.class);
         }
+
+
     }
 
     private void doCreateMsa(Api api) {
