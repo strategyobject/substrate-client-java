@@ -23,6 +23,7 @@ import com.strategyobject.substrateclient.tests.containers.TestSubstrateContaine
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.SneakyThrows;
 import lombok.val;
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -74,11 +75,23 @@ public class CreateMsaTest {
                     .untilAtomic(eventRecords, iterableWithSize(greaterThan(1)));
             assertTrue(unsubscribe.get().join());
             Supplier<Stream<Object>> events = () -> eventRecords.get().stream().map(x -> x.getEvent().getEvent());
-            List<Object> _events = eventRecords.get().stream().map(er -> er.getEvent().getEvent()).collect(Collectors.toList());
+
             assertTrue(events.get().anyMatch(x -> x instanceof Msa.MsaCreated));
+            List<Object> _events = eventRecords.get().stream().map(er -> er.getEvent().getEvent()).collect(Collectors.toList());
+            Msa.MsaCreated msaCreated = null;
+            for(Object o : _events){
+                if(o instanceof Msa.MsaCreated){
+                    msaCreated = (Msa.MsaCreated) o;
+                    break;
+                }
+            }
             assertTrue(events.get().anyMatch(x -> x instanceof System.ExtrinsicSuccess));
 
             Msa msaPallet = api.pallet(Msa.class);
+            AccountId aliceAccountId = AccountId.fromBytes(aliceKeyPair().asPublicKey().getBytes());
+            MessageSourceId msaId = msaPallet.messageSourceIdOf().get(aliceAccountId).join();
+            Assertions.assertThat(msaId).isNotNull();
+            Assertions.assertThat(msaId.getValue()).isEqualTo(msaCreated.getMsaId().getValue());
         }
 
 

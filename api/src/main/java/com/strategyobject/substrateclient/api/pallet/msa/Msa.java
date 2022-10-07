@@ -1,7 +1,8 @@
 package com.strategyobject.substrateclient.api.pallet.msa;
 
-import com.strategyobject.substrateclient.pallet.annotation.Event;
-import com.strategyobject.substrateclient.pallet.annotation.Pallet;
+import com.strategyobject.substrateclient.api.pallet.system.AccountInfo;
+import com.strategyobject.substrateclient.pallet.annotation.*;
+import com.strategyobject.substrateclient.pallet.storage.StorageNMap;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
@@ -14,6 +15,16 @@ import java.math.BigInteger;
 
 @Pallet("Msa")
 public interface Msa {
+
+    @Storage(
+            name = "MessageSourceIdOf",
+            keys = {
+                    @StorageKey(
+                            type = @Scale(AccountId.class),
+                            hasher = StorageHasher.TWOX_64_CONCAT
+                    )
+            })
+    StorageNMap<MessageSourceId> messageSourceIdOf();
 /*
 		MsaCreated {
 			/// The MSA for the Event
@@ -27,8 +38,7 @@ public interface Msa {
     @Setter
     @ScaleReader
     class MsaCreated {
-        @Scale(ScaleType.U64.class)
-        private BigInteger msaId;
+        private MessageSourceId msaId;
         private AccountId accountId;
     }
 /*
