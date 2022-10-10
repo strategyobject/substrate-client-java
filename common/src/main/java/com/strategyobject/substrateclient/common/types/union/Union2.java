@@ -7,7 +7,7 @@ import lombok.val;
 import java.util.function.Function;
 
 public class Union2<T0, T1> extends Union {
-    private Union2() {
+    public Union2() {
     }
 
     public <T> T match(@NonNull Function<T0, T> f0, @NonNull Function<T1, T> f1) {
