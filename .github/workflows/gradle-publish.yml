@@ -3,9 +3,10 @@
 
 name: Gradle Package
 
-## TODO it should be bound to releases
 on:
-  workflow_dispatch
+  push:
+    tags:
+      - '*'
 
 jobs:
   publish:
