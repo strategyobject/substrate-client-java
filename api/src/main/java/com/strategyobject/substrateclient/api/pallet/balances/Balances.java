@@ -62,7 +62,7 @@ public interface Balances {
         private Balance free;
         private Balance reserved;
     }
-
+    
     /**
      * Some amount was deposited (e.g. for transaction fees). \[who, deposit\]
      */

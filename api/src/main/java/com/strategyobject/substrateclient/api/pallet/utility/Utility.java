@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.api.pallet.utility;
 
+import com.strategyobject.substrateclient.common.types.Result;
 import com.strategyobject.substrateclient.pallet.annotation.Event;
 import com.strategyobject.substrateclient.pallet.annotation.Pallet;
 import com.strategyobject.substrateclient.rpc.api.runtime.DispatchError;
@@ -8,6 +9,7 @@ import com.strategyobject.substrateclient.scale.annotation.Scale;
 import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
 import lombok.Getter;
 import lombok.Setter;
+import com.strategyobject.substrateclient.common.types.Unit;
 
 @Pallet("Utility")
 public interface Utility {
@@ -35,11 +37,40 @@ public interface Utility {
     }
 
     /**
+     * Batch of dispatches completed but has errors.
+     */
+    @Event(index=2)
+    @ScaleReader
+    class BatchCompletedWithErrors {
+    }
+
+    /**
      * A single item within a Batch of dispatches has completed with no error.
      */
-    @Event(index = 2)
+    @Event(index = 3)
     @ScaleReader
     class ItemCompleted {
     }
 
+    /**
+     * A single item within a Batch of dispatches has completed with error.
+     */
+    @Event(index=4)
+    @Getter
+    @Setter
+    @ScaleReader
+    class ItemFailed {
+        private DispatchError dispatchError;
+    }
+
+    /**
+     * A call was dispatched.
+     */
+    @Event(index=5)
+    @Getter
+    @Setter
+    @ScaleReader
+    class DispatchedAs {
+        private Result<Unit, DispatchError> result;
+    }
 }
