@@ -2,8 +2,6 @@ package com.strategyobject.substrateclient.api.pallet.parachain_system;
 
 import com.strategyobject.substrateclient.pallet.annotation.*;
 import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
-import com.strategyobject.substrateclient.rpc.api.primitives.Hash256;
-import com.strategyobject.substrateclient.rpc.api.weights.DispatchInfo;
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
 import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
