@@ -13,12 +13,18 @@ import java.math.BigInteger;
 
 @Pallet("ParachainSystem")
 public interface ParachainSystem {
+    /**
+     * The validation function has been scheduled to apply.
+     */
     @Event(index = 0)
     @Getter
     @Setter
     @ScaleReader
     class ValidationFunctionStored {}
 
+    /**
+     * The validation function was applied as of the contained relay chain block number.
+     */
     @Event(index = 1)
     @Getter
     @Setter
@@ -28,12 +34,18 @@ public interface ParachainSystem {
         private Long relayChainBlockNum;
     }
 
+    /**
+     * The relay-chain aborted the upgrade process.
+     */
     @Event(index = 2)
     @Getter
     @Setter
     @ScaleReader
     class ValidationFunctionDiscarded {}
 
+    /**
+     * An upgrade has been authorized.
+     */
     @Event(index = 3)
     @Getter
     @Setter
@@ -42,6 +54,9 @@ public interface ParachainSystem {
         private Hash codeHash; //H256
     }
 
+    /**
+     * Some downward messages have been received and will be processed.
+     */
     @Event(index = 4)
     @Getter
     @Setter
@@ -51,6 +66,9 @@ public interface ParachainSystem {
         private Long count;
     }
 
+    /**
+     * Downward messages were processed using the given weight.
+     */
     @Event(index = 5)
     @Getter
     @Setter

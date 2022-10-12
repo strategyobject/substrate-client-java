@@ -8,6 +8,9 @@ import lombok.Setter;
 
 @Pallet("Preimage")
 public interface Preimage {
+    /**
+     * A preimage has been noted.
+     */
     @Event(index = 0)
     @Getter
     @Setter
@@ -16,6 +19,9 @@ public interface Preimage {
         private Hash hash;
     }
 
+    /**
+     * A preimage has been requested.
+     */
     @Event(index = 1)
     @Getter
     @Setter
@@ -24,6 +30,9 @@ public interface Preimage {
         private Hash hash;
     }
 
+    /**
+     * A preimage has ben cleared.
+     */
     @Event(index = 2)
     @Getter
     @Setter
