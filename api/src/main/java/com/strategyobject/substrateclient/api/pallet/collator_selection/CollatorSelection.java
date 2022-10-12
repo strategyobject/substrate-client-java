@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.api.pallet.collator_selection;
 
 import com.strategyobject.substrateclient.pallet.annotation.Event;
+import com.strategyobject.substrateclient.pallet.annotation.Pallet;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.primitives.Balance;
 import com.strategyobject.substrateclient.scale.ScaleType;
@@ -11,6 +12,7 @@ import lombok.Setter;
 
 import java.util.List;
 
+@Pallet("CollatorSelection")
 public interface CollatorSelection {
     @Event(index = 0)
     @Getter
