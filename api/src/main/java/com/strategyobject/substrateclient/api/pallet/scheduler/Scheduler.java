@@ -54,6 +54,11 @@ public interface Scheduler {
     @Setter
     @ScaleReader
     class Dispatched {
+        @ScaleGeneric(
+                template = "Pair<U32,U32>",
+                types = {
+                        @Scale(ScaleType.U32.class)
+                })
         private Pair<Long,Long> task;
         @ScaleGeneric(
                 template = "Option<Vec<U8>>",
@@ -63,7 +68,7 @@ public interface Scheduler {
                         @Scale(ScaleType.U8.class)
                 })
         private Optional<List<Short>> id;
-        private Result<NullType, DispatchError> result;
+        private Result<Void, DispatchError> result;
     }
 
     /**
