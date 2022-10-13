@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.api.pallet.polkadot_xcm;
 
+import com.strategyobject.substrateclient.api.pallet.cumulus_xcm.Outcome;
 import com.strategyobject.substrateclient.pallet.annotation.Event;
 import com.strategyobject.substrateclient.pallet.annotation.Pallet;
 import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
@@ -22,8 +23,7 @@ public interface PolkadotXcm {
     @Setter
     @ScaleReader
     class Attempted {
-        @Scale(ScaleType.U32.class)
-        private Long outcome; // u32 - type 4 - Outcome
+        private Outcome outcome; // type 56 - Outcome
     }
 
     @Event(index = 1)
@@ -133,6 +133,8 @@ public interface PolkadotXcm {
     class InvalidResponder {
         private MultiLocation multiLocation;
         private BigInteger queryId; // u64 - type 8 - QueryId
+
+        @Scale(ScaleType.Option.class)
         private Optional<MultiLocation> optionalMultiLocation;
     }
 
@@ -158,7 +160,7 @@ public interface PolkadotXcm {
     @Setter
     @ScaleReader
     class AssetsTrapped {
-        private Hash256 h256; // Array(size 32) u8 - type 9 - H256
+        private Hash hash; // Array(size 32) u8 - type 9 - H256
         private MultiLocation multiLocation;
         private VersionedMultiAssets versionedMultiAssets; // Empty Class
     }

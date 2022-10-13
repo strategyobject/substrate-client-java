@@ -22,7 +22,7 @@ public interface CumulusXcm {
     @Setter
     @ScaleReader
     class InvalidFormat {
-        private Byte[] array; //Array(size 8) u8 - type 77
+        private short[] array; //Array(size 8) u8 - type 77
     }
 
     @Event(index = 1)
@@ -30,7 +30,7 @@ public interface CumulusXcm {
     @Setter
     @ScaleReader
     class UnsupportedVersion {
-        private Byte[] array; //Array(size 8) u8 - type 77
+        private short[] array; //Array(size 8) u8 - type 77
     }
 
     @Event(index = 2)
@@ -38,7 +38,7 @@ public interface CumulusXcm {
     @Setter
     @ScaleReader
     class ExecutedDownward {
-        private Byte[] array; //Array(size 8) u8 - type 77
+        private short[] array; //Array(size 8) u8 - type 77
         private Outcome outcome;
     }
 }
