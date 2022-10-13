@@ -64,18 +64,6 @@ public interface Balances {
     }
 
     /**
-     * Some amount was deposited (e.g. for transaction fees). \[who, deposit\]
-     */
-    @Event(index = 7)
-    @Getter
-    @Setter
-    @ScaleReader
-    class Deposit {
-        private AccountId account;
-        private Balance value;
-    }
-
-    /**
      * Some balance was reserved (moved from free to reserved). \[who, value\]
      */
     @Event(index = 4)
@@ -115,6 +103,22 @@ public interface Balances {
         private BalanceStatus destinationStatus;
     }
 
+    /**
+     * Some amount was deposited (e.g. for transaction fees). \[who, deposit\]
+     */
+    @Event(index = 7)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Deposit {
+        private AccountId account;
+        private Balance value;
+    }
+
+    /**
+     * Some amount was withdrawn from the account (e.g. for transaction fees).
+     */
+
     @Event(index = 8)
     @Getter
     @Setter
@@ -123,6 +127,10 @@ public interface Balances {
         private AccountId account;
         private Balance value;
     }
+
+    /**
+     * Some amount was removed from the account (e.g. for misbehavior).
+     */
 
     @Event(index = 9)
     @Getter
