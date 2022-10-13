@@ -1,271 +1,275 @@
 package com.strategyobject.substrateclient.api.pallet.democracy;
 
+import com.strategyobject.substrateclient.common.types.Result;
+import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.pallet.annotation.*;
+import com.strategyobject.substrateclient.rpc.api.AccountId;
+import com.strategyobject.substrateclient.rpc.api.primitives.Balance;
+import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
+import com.strategyobject.substrateclient.rpc.api.runtime.DispatchError;
+import com.strategyobject.substrateclient.scale.ScaleType;
+import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Pallet("Democracy")
 public interface Democracy {
     /**
-     * Value too low
+     * A motion has been proposed by a public account.
      */
     @Event(index = 0)
     @Getter
     @Setter
     @ScaleReader
-    class ValueLow {}
+    class Proposed {
+        @Scale(ScaleType.U32.class)
+        private Long proposalIndex;
+        private Balance deposit;
+    }
 
     /**
-     * Proposal does not exist
+     * A public proposal has been tabled for referendum vote.
      */
     @Event(index = 1)
     @Getter
     @Setter
     @ScaleReader
-    class ProposalMissing {}
+    class Tabled {
+        @Scale(ScaleType.U32.class)
+        private Long proposalIndex;
+        private Balance deposit;
+        @ScaleGeneric(
+                template = "Vec<AccountId>",
+                types = {
+                        @Scale(ScaleType.Vec.class),
+                })
+        private List<AccountId> depositors;
+    }
 
     /**
-     * Cannot cancel the same proposal twice
+     * An external proposal has been tabled.
      */
     @Event(index = 2)
-    @Getter
-    @Setter
     @ScaleReader
-    class AlreadyCanceled {}
+    class ExternalTabled {}
 
     /**
-     * Proposal already made
+     * A referendum has begun.
      */
     @Event(index = 3)
     @Getter
     @Setter
     @ScaleReader
-    class DuplicateProposal {}
+    class Started {
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+        private VoteThreshold threshold;
+    }
 
     /**
-     * Proposal still blacklisted
+     * A proposal has been approved by referendum.
      */
     @Event(index = 4)
     @Getter
     @Setter
     @ScaleReader
-    class ProposalBlacklisted {}
+    class Passed {
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+    }
 
     /**
-     * Next external proposal not simple majority
+     * A proposal has been rejected by referendum.
      */
     @Event(index = 5)
     @Getter
     @Setter
     @ScaleReader
-    class NotSimpleMajority {}
+    class NotPassed {
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+    }
 
     /**
-     * Invalid hash
+     * A referendum has been cancelled.
      */
     @Event(index = 6)
     @Getter
     @Setter
     @ScaleReader
-    class InvalidHash {}
+    class Cancelled {
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+    }
 
     /**
-     * No external proposal
+     * A proposal has been enacted.
      */
     @Event(index = 7)
     @Getter
     @Setter
     @ScaleReader
-    class NoProposal {}
+    class Executed {
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+        private Result<Unit, DispatchError> result;
+    }
 
     /**
-     * Identity may not veto a proposal twice
+     * An account has delegated their vote to another account.
      */
     @Event(index = 8)
     @Getter
     @Setter
     @ScaleReader
-    class AlreadyVetoed {}
+    class Delegated {
+        private AccountId who;
+        private AccountId target;
+    }
 
     /**
-     * Preimage already noted
+     * An account has cancelled a previous delegation operation.
      */
     @Event(index = 9)
     @Getter
     @Setter
     @ScaleReader
-    class DuplicatePreimage {}
+    class Undelegated {
+        private AccountId account;
+    }
 
     /**
-     * Not imminent
+     * An external proposal has been vetoed.
      */
     @Event(index = 10)
     @Getter
     @Setter
     @ScaleReader
-    class NotImminent {}
+    class Vetoed {
+        private AccountId who;
+        private Hash proposalHash;
+        @Scale(ScaleType.U32.class)
+        private Long until;
+    }
 
     /**
-     * Too early
+     * A proposal's preimage was noted, and the deposit taken.
      */
     @Event(index = 11)
     @Getter
     @Setter
     @ScaleReader
-    class TooEarly {}
+    class PreimageNoted {
+        private Hash proposalHash;
+        private AccountId who;
+        private Balance deposit;
+    }
 
     /**
-     * Imminent
+     * A proposal preimage was removed and used (the deposit was returned).
      */
     @Event(index = 12)
     @Getter
     @Setter
     @ScaleReader
-    class Imminent {}
+    class PreimageUsed {
+        private Hash proposalHash;
+        private AccountId provider;
+        private Balance deposit;
+    }
 
     /**
-     * Preimage not found
+     * A proposal could not be executed because its preimage was invalid.
      */
     @Event(index = 13)
     @Getter
     @Setter
     @ScaleReader
-    class PreimageMissing {}
+    class PreimageInvalid {
+        private Hash proposalHash;
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+    }
 
     /**
-     * Vote given for invalid referendum
+     * A proposal could not be executed because its preimage was missing.
      */
     @Event(index = 14)
     @Getter
     @Setter
     @ScaleReader
-    class ReferendumInvalid {}
+    class PreimageMissing {
+        private Hash proposalHash;
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+    }
 
     /**
-     * Invalid preimage
+     * A registered preimage was removed and the deposit collected by the reaper.
      */
     @Event(index = 15)
     @Getter
     @Setter
     @ScaleReader
-    class PreimageInvalid {}
+    class PreimageReaped {
+        private Hash proposalHash;
+        private AccountId provider;
+        private Balance deposit;
+        private AccountId reaper;
+    }
 
     /**
-     * No proposals waiting
+     * A proposal_hash has been blacklisted permanently.
      */
     @Event(index = 16)
     @Getter
     @Setter
     @ScaleReader
-    class NoneWaiting {}
+    class Blacklisted {
+        private Hash proposalHash;
+    }
 
     /**
-     * The given account did not vote on the referendum.
+     * An account has voted in a referendum
      */
     @Event(index = 17)
     @Getter
     @Setter
     @ScaleReader
-    class NotVoter {}
+    class Voted {
+        private AccountId voter;
+        @Scale(ScaleType.U32.class)
+        private Long refIndex;
+        private AccountVote vote;
+
+    }
 
     /**
-     * The actor has no permission to conduct the action.
+     * An account has seconded a proposal
      */
     @Event(index = 18)
     @Getter
     @Setter
     @ScaleReader
-    class NoPermission {}
+    class Seconded {
+        private AccountId seconder;
+        @Scale(ScaleType.U32.class)
+        private Long propIndex;
+    }
 
     /**
-     * The account is already delegating.
+     * A proposal got canceled.
      */
     @Event(index = 19)
     @Getter
     @Setter
     @ScaleReader
-    class AlreadyDelegating {}
-
-    /**
-     * Too high a balance was provided that the account cannot afford.
-     */
-    @Event(index = 20)
-    @Getter
-    @Setter
-    @ScaleReader
-    class InsufficientFunds {}
-
-    /**
-     * The account is not currently delegating.
-     */
-    @Event(index = 21)
-    @Getter
-    @Setter
-    @ScaleReader
-    class NotDelegating {}
-
-    /**
-     * The account currently has votes attached to it and the operation cannot succeed until
-     * these are removed, either through `unvote` or `reap_vote`.
-     */
-    @Event(index = 22)
-    @Getter
-    @Setter
-    @ScaleReader
-    class VotesExist {}
-
-    /**
-     * The instant referendum origin is currently disallowed.
-     */
-    @Event(index = 23)
-    @Getter
-    @Setter
-    @ScaleReader
-    class InstantNotAllowed {}
-
-    /**
-     * Delegation to oneself makes no sense.
-     */
-    @Event(index = 24)
-    @Getter
-    @Setter
-    @ScaleReader
-    class Nonsense {}
-
-    /**
-     * Invalid upper bound.
-     */
-    @Event(index = 25)
-    @Getter
-    @Setter
-    @ScaleReader
-    class WrongUpperBound {}
-
-    /**
-     * Maximum number of votes reached.
-     */
-    @Event(index = 26)
-    @Getter
-    @Setter
-    @ScaleReader
-    class MaxVotesReached {}
-
-    /**
-     * Maximum number of proposals reached.
-     */
-    @Event(index = 27)
-    @Getter
-    @Setter
-    @ScaleReader
-    class TooManyProposals {}
-
-    /**
-     * Voting period too low
-     */
-    @Event(index = 28)
-    @Getter
-    @Setter
-    @ScaleReader
-    class VotingPeriodLow {}
+    class ProposalCanceled {
+        @Scale(ScaleType.U32.class)
+        private Long propIndex;
+    }
 }

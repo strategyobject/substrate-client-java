@@ -1,6 +1,7 @@
 package com.strategyobject.substrateclient.api.pallet.scheduler;
 
 import com.strategyobject.substrateclient.common.types.Result;
+import com.strategyobject.substrateclient.common.types.Unit;
 import com.strategyobject.substrateclient.common.types.tuple.Pair;
 import com.strategyobject.substrateclient.pallet.annotation.*;
 import com.strategyobject.substrateclient.rpc.api.runtime.DispatchError;
@@ -68,7 +69,7 @@ public interface Scheduler {
                         @Scale(ScaleType.U8.class)
                 })
         private Optional<List<Short>> id;
-        private Result<Void, DispatchError> result;
+        private Result<Unit, DispatchError> result;
     }
 
     /**
@@ -79,6 +80,11 @@ public interface Scheduler {
     @Setter
     @ScaleReader
     class CallLookupFailed {
+        @ScaleGeneric(
+                template = "Pair<U32,U32>",
+                types = {
+                        @Scale(ScaleType.U32.class)
+                })
         private Pair<Long,Long> task;
         @ScaleGeneric(
                 template = "Option<Vec<U8>>",

@@ -17,8 +17,6 @@ public interface ParachainSystem {
      * The validation function has been scheduled to apply.
      */
     @Event(index = 0)
-    @Getter
-    @Setter
     @ScaleReader
     class ValidationFunctionStored {}
 
@@ -38,8 +36,6 @@ public interface ParachainSystem {
      * The relay-chain aborted the upgrade process.
      */
     @Event(index = 2)
-    @Getter
-    @Setter
     @ScaleReader
     class ValidationFunctionDiscarded {}
 
