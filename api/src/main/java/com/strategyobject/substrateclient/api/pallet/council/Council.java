@@ -43,6 +43,7 @@ public interface Council {
     class Voted {
         private AccountId account;
         private Hash proposalHash;
+        @Scale(ScaleType.Bool.class)
         private Boolean voted;
         @Scale(ScaleType.U32.class)
         private Long votedYes;
