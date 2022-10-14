@@ -44,7 +44,7 @@ public class OutcomeReader implements ScaleReader<Outcome> {
                 return (Outcome) errorReader.read(stream);
         }
 
-        throw new NoSuchElementException("Outcome index is out of bound.");
+        throw new NoSuchElementException(String.format("Outcome index %d is out of bounds.", index));
     }
 }
 
