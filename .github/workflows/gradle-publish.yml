@@ -25,7 +25,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        run: gradle build
+        run: gradle -i build
 
       # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
