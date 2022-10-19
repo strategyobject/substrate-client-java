@@ -11,6 +11,7 @@ test {
 }
 
 task compileRust {
+    project.logger.info("#####################" + System.getProperty("os.name").toLowerCase())
     doLast {
         if(System.getProperty("os.name").toLowerCase().contains("linux")) {
             exec {
