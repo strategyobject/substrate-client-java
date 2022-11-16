@@ -11,7 +11,7 @@ import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
 import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
-import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
+import com.strategyobject.substrateclient.tests.containers.FrequencyVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -42,7 +42,7 @@ class AuthorTests {
     private static final AtomicInteger NONCE = new AtomicInteger(0);
 
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1))
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(FrequencyVersion.CURRENT_VERSION).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1))
             .withNetwork(network);
 
     @Test
@@ -133,7 +133,7 @@ class AuthorTests {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis, int nonce) {
-        val specVersion = 1;
+        val specVersion = 2;
         val txVersion = 1;
         val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;

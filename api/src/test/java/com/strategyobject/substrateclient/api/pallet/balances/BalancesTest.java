@@ -18,17 +18,13 @@ import com.strategyobject.substrateclient.rpc.api.primitives.Index;
 import com.strategyobject.substrateclient.rpc.api.section.Author;
 import com.strategyobject.substrateclient.rpc.api.section.Chain;
 import com.strategyobject.substrateclient.scale.ScaleUtils;
-import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
+import com.strategyobject.substrateclient.tests.containers.FrequencyVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.startupcheck.StartupCheckStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.containers.wait.strategy.WaitStrategy;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -36,7 +32,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -51,7 +46,7 @@ class BalancesTest {
     private static final int WAIT_TIMEOUT = 30;
 
     @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(FrequencyVersion.CURRENT_VERSION).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void transfer() throws Exception {
@@ -96,7 +91,7 @@ class BalancesTest {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis) {
-        val specVersion = 1;
+        val specVersion = 2;
         val txVersion = 1;
         val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;

@@ -5,7 +5,7 @@ import com.strategyobject.substrateclient.api.pallet.balances.AccountData;
 import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.pallet.storage.Arg;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
-import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
+import com.strategyobject.substrateclient.tests.containers.FrequencyVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
@@ -29,7 +29,7 @@ class SystemTest {
     private static final int WAIT_TIMEOUT = 30;
 
     @Container
-    private final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
+    private final TestSubstrateContainer substrate = new TestSubstrateContainer(FrequencyVersion.CURRENT_VERSION).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void account() throws Exception {

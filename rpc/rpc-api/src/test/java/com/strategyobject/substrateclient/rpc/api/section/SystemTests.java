@@ -3,7 +3,7 @@ package com.strategyobject.substrateclient.rpc.api.section;
 import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.api.AccountId;
 import com.strategyobject.substrateclient.rpc.api.primitives.Index;
-import com.strategyobject.substrateclient.tests.containers.SubstrateVersion;
+import com.strategyobject.substrateclient.tests.containers.FrequencyVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
 import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
@@ -24,7 +24,7 @@ class SystemTests {
     private static final Network network = Network.newNetwork();
 
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(SubstrateVersion.V3_0_0).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(FrequencyVersion.CURRENT_VERSION).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1));
 
     @Test
     void accountNextIndex() throws Exception {
