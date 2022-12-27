@@ -6,6 +6,7 @@ import com.strategyobject.substrateclient.rpc.annotation.RpcSubscription;
 import com.strategyobject.substrateclient.rpc.api.*;
 import com.strategyobject.substrateclient.rpc.api.primitives.BlockHash;
 import com.strategyobject.substrateclient.rpc.api.primitives.Hash;
+import com.strategyobject.substrateclient.rpc.api.primitives.IndexU32;
 import com.strategyobject.substrateclient.rpc.api.storage.StorageChangeSet;
 import com.strategyobject.substrateclient.rpc.api.storage.StorageData;
 import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
@@ -223,4 +224,8 @@ public interface State {
     @RpcSubscription(type = "storage", subscribeMethod = "subscribeStorage", unsubscribeMethod = "unsubscribeStorage")
     CompletableFuture<Supplier<CompletableFuture<Boolean>>> subscribeStorage(List<StorageKey> keys,
                                                                              BiConsumer<Exception, StorageChangeSet> callback);
+
+    @RpcCall("call")
+    @Scale
+    CompletableFuture<IndexU32> retrieveAccountNonce(String method, @Scale AccountIdScaleWrapper addressId);
 }

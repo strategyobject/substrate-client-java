@@ -1,7 +1,13 @@
 package com.strategyobject.substrateclient.rpc.api.section;
 
 import com.strategyobject.substrateclient.common.convert.HexConverter;
+import com.strategyobject.substrateclient.crypto.KeyPair;
+import com.strategyobject.substrateclient.rpc.api.AccountId;
+import com.strategyobject.substrateclient.rpc.api.AccountIdScaleWrapper;
+import com.strategyobject.substrateclient.rpc.api.AddressId;
 import com.strategyobject.substrateclient.rpc.api.primitives.BlockNumber;
+import com.strategyobject.substrateclient.rpc.api.primitives.Index;
+import com.strategyobject.substrateclient.rpc.api.primitives.IndexU32;
 import com.strategyobject.substrateclient.rpc.api.storage.StorageKey;
 import com.strategyobject.substrateclient.tests.containers.FrequencyVersion;
 import com.strategyobject.substrateclient.tests.containers.TestSubstrateContainer;
@@ -15,7 +21,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigInteger;
 import java.util.Collections;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -175,6 +183,19 @@ class StateTests {
         }
     }
 
+    @Test
+    public void retrieveAccountNonce() throws Exception {
+        try (val wsProvider = connect()) {
+            val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
+            val aliceAddress = AccountId.fromBytes(aliceKeyPair().asPublicKey().getBytes());
+            AddressId.fromBytes(aliceAddress.getBytes());
+            CompletableFuture<IndexU32> nonceFuture = state.retrieveAccountNonce("AccountNonceApi_account_nonce", AccountIdScaleWrapper.fromBytes(aliceAddress.getBytes()));
+            IndexU32 index = nonceFuture.get();
+
+            Assertions.assertEquals(Long.valueOf(0L), index.getValue());
+        }
+    }
+
     private WsProvider connect() throws Exception {
         val wsProvider = WsProvider.builder()
                 .setEndpoint(substrate.getWsAddress())
@@ -183,5 +204,12 @@ class StateTests {
 
         wsProvider.connect().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
         return wsProvider;
+    }
+
+    private KeyPair aliceKeyPair() {
+        val str = "0x98319d4ff8a9508c4bb0cf0b5a78d760a0b2082c02775e6e82370816fedfff48925a225d97aa00682d6a59b95b18780c10d" +
+            "7032336e88f3442b42361f4a66011d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d";
+
+        return KeyPair.fromBytes(HexConverter.toBytes(str));
     }
 }
