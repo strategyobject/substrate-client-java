@@ -53,7 +53,6 @@ class BalancesTest {
         val wsProvider = WsProvider.builder().setEndpoint(substrate.getWsAddress());
 
         try (val api = Api.with(wsProvider).build().join()) {
-            /* TODO update these with new metadata for pallets and events and also figure out storage event EOF*/
             AtomicReference<List<EventRecord>> eventRecords = new AtomicReference<>(new ArrayList<>());
             val unsubscribe = api.pallet(System.class).events()
                     .subscribe((exception, block, value, keys) -> {
@@ -91,7 +90,7 @@ class BalancesTest {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis) {
-        val specVersion = 2;
+        val specVersion = 5;
         val txVersion = 1;
         val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;
