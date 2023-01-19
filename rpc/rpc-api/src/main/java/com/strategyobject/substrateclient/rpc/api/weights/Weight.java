@@ -8,25 +8,13 @@ import lombok.Setter;
 
 import java.math.BigInteger;
 
-/**
- * A bundle of static information collected from the `weight` attributes.
- */
 @Getter
 @Setter
 @ScaleReader
-public class DispatchInfo {
-    /**
-     * Weight of this transaction.
-     */
-    private Weight weight;
+public class Weight {
+  @Scale(ScaleType.CompactBigInteger.class)
+  private BigInteger refTime;
 
-    /**
-     * Class of this transaction.
-     */
-    private DispatchClass dispatchClass;
-
-    /**
-     * Does this transaction pay fees.
-     */
-    private Pays paysFee;
+  @Scale(ScaleType.CompactBigInteger.class)
+  private BigInteger proofSize;
 }
