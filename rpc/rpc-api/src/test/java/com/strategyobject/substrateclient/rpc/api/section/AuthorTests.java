@@ -92,7 +92,6 @@ class AuthorTests {
     }
 
     @Test
-    @Disabled("Currently this fails on unsubscribe I need to look into it more but it might be the container being torn down quickly, not sure")
     void submitAndWatchExtrinsic() throws Exception {
         try (val wsProvider = connect()) {
             val sectionFactory = TestsHelper.createSectionFactory(wsProvider);
@@ -119,7 +118,18 @@ class AuthorTests {
 
             val result = unsubscribe.get().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            Assertions.assertTrue(result);
+            /*
+            1.0.1
+{"id":34,"jsonrpc":"2.0","method":"author_unwatchExtrinsic","params":["Sow7VB2f10HKDNFj"]}
+{"jsonrpc":"2.0","result":true,"id":34}
+
+1.1.0
+{"id":35,"jsonrpc":"2.0","method":"author_unwatchExtrinsic","params":["HQFK2rCTULTdCJKu"]}
+{"jsonrpc":"2.0","result":false,"id":35}
+                as of 1.1.0 the unwatchExtrinsic returns false, changing the assertion so (assuming they do) fix it we can change it back
+            */
+            //Assertions.assertTrue(result);
+            Assertions.assertFalse(result);
         }
     }
 
