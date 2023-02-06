@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +36,7 @@ public class RpcDecoderRegistry {
         register(new FloatDecoder(), Float.class, float.class);
         register(new IntDecoder(), Integer.class, int.class);
         register(new LongDecoder(), Long.class, long.class);
+        register(new BigIntegerDecoder(), BigInteger.class);
         register(new ShortDecoder(), Short.class, short.class);
         register(new StringDecoder(), String.class);
         register(new ArrayDecoder(), Array.class);

@@ -8,7 +8,7 @@ import com.strategyobject.substrateclient.transport.RpcObject;
 public abstract class AbstractDecoder<T> implements RpcDecoder<T> {
     @Override
     public final T decode(RpcObject value, DecoderPair<?>... decoders) {
-        if (value.isNull()) {
+        if (value == null || value.isNull()) {
             return null;
         }
 
