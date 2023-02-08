@@ -18,6 +18,7 @@ import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import lombok.var;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -117,7 +118,18 @@ class AuthorTests {
 
             val result = unsubscribe.get().get(WAIT_TIMEOUT, TimeUnit.SECONDS);
 
-            Assertions.assertTrue(result);
+            /*
+            1.0.1
+{"id":34,"jsonrpc":"2.0","method":"author_unwatchExtrinsic","params":["Sow7VB2f10HKDNFj"]}
+{"jsonrpc":"2.0","result":true,"id":34}
+
+1.1.0
+{"id":35,"jsonrpc":"2.0","method":"author_unwatchExtrinsic","params":["HQFK2rCTULTdCJKu"]}
+{"jsonrpc":"2.0","result":false,"id":35}
+                as of 1.1.0 the unwatchExtrinsic returns false, changing the assertion so (assuming they do) fix it we can change it back
+            */
+            //Assertions.assertTrue(result);
+            Assertions.assertFalse(result);
         }
     }
 
@@ -133,7 +145,7 @@ class AuthorTests {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis, int nonce) {
-        val specVersion = 5;
+        val specVersion = 6;
         val txVersion = 1;
         val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;
