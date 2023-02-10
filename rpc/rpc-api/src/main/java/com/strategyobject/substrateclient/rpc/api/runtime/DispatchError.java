@@ -53,19 +53,23 @@ public class DispatchError extends Union {
         return index == 5;
     }
 
+    public boolean isTooManyConsumers() { return index == 6; }
+
     /**
      * @return true if is an error to do with tokens
      */
     public boolean isToken() {
-        return index == 6;
+        return index == 7;
     }
 
     /**
      * @return true if is an arithmetic error
      */
     public boolean isArithmetic() {
-        return index == 7;
+        return index == 8;
     }
+
+    public boolean isTransactional() { return index == 9; }
 
     /**
      * @return module error
@@ -128,17 +132,30 @@ public class DispatchError extends Union {
         return result;
     }
 
+    public static DispatchError ofTooManyConsumer() {
+        DispatchError result = new DispatchError();
+        result.index = 6;
+        return result;
+    }
+
     public static DispatchError ofToken(TokenError tokenError) {
         DispatchError result = new DispatchError();
         result.value = tokenError;
-        result.index = 6;
+        result.index = 7;
         return result;
     }
 
     public static DispatchError ofArithmetic(ArithmeticError arithmeticError) {
         DispatchError result = new DispatchError();
         result.value = arithmeticError;
-        result.index = 7;
+        result.index = 8;
+        return result;
+    }
+
+    public static DispatchError ofTransactional(TransactionalError transactionalError) {
+        DispatchError result = new DispatchError();
+        result.value = transactionalError;
+        result.index = 9;
         return result;
     }
 }

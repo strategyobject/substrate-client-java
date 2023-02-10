@@ -16,15 +16,17 @@ public class DispatchErrorReader extends BaseUnionReader<DispatchError> {
     private final ScaleReaderRegistry registry;
 
     public DispatchErrorReader(ScaleReaderRegistry registry) {
-        super(8,
+        super(10,
                 x -> DispatchError.ofOther(),
                 x -> DispatchError.ofCannotLookup(),
                 x -> DispatchError.ofBadOrigin(),
                 x -> DispatchError.ofModule((ModuleError) x),
                 x -> DispatchError.ofConsumerRemaining(),
                 x -> DispatchError.ofNoProviders(),
+                x -> DispatchError.ofTooManyConsumer(),
                 x -> DispatchError.ofToken((TokenError) x),
-                x -> DispatchError.ofArithmetic((ArithmeticError) x));
+                x -> DispatchError.ofArithmetic((ArithmeticError) x),
+                x -> DispatchError.ofTransactional((TransactionalError) x));
 
         this.registry = registry;
     }
@@ -37,6 +39,7 @@ public class DispatchErrorReader extends BaseUnionReader<DispatchError> {
         val moduleErrorReader = registry.resolve(ModuleError.class);
         val tokenErrorReader = registry.resolve(TokenError.class);
         val arithmeticErrorReader = registry.resolve(ArithmeticError.class);
+        val transactionalErrorReader = registry.resolve(TransactionalError.class);
         return super.read(stream,
                 voidReader,
                 voidReader,
@@ -44,7 +47,9 @@ public class DispatchErrorReader extends BaseUnionReader<DispatchError> {
                 moduleErrorReader,
                 voidReader,
                 voidReader,
+                voidReader,
                 tokenErrorReader,
-                arithmeticErrorReader);
+                arithmeticErrorReader,
+                transactionalErrorReader);
     }
 }

@@ -8,12 +8,15 @@ import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 @RequiredArgsConstructor
 public class EventDescriptorReader implements ScaleReader<EventDescriptor> {
+    private static final Logger LOG = LoggerFactory.getLogger(EventDescriptorReader.class);
     private final @NonNull ScaleReaderRegistry scaleReaderRegistry;
     private final @NonNull MetadataProvider metadataProvider;
     private final @NonNull EventRegistry eventRegistry;
@@ -30,6 +33,8 @@ public class EventDescriptorReader implements ScaleReader<EventDescriptor> {
         if (eventClass == null) {
             throw new RuntimeException(
                     String.format("Unknown event with index %d in pallet %s", eventIndex, pallet.getName()));
+        }else{
+            LOG.debug("EventClass={}", eventClass.getName());
         }
 
         val eventReader = scaleReaderRegistry.resolve(eventClass);

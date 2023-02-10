@@ -15,6 +15,7 @@ import com.strategyobject.substrateclient.transport.ws.ReconnectionPolicy;
 import com.strategyobject.substrateclient.transport.ws.WsProvider;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -69,6 +70,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getKeys() throws Exception {
         try (val wsProvider = connect()) {
             val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
@@ -80,6 +82,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getStorage() throws Exception {
         try (val wsProvider = connect()) {
             val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
@@ -104,6 +107,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getStorageAtBlock() throws Exception {
         try (val wsProvider = connect()) {
             val chainSection = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
@@ -118,6 +122,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getStorageHash() throws Exception {
         try (val wsProvider = connect()) {
             val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
@@ -130,6 +135,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getStorageHashAt() throws Exception {
         try (val wsProvider = connect()) {
             val chainSection = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
@@ -144,6 +150,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getStorageSize() throws Exception {
         try (val wsProvider = connect()) {
             val state = TestsHelper.createSectionFactory(wsProvider).create(State.class);
@@ -155,6 +162,7 @@ class StateTests {
     }
 
     @Test
+    @Disabled("the storageKey is made from StorageVersion which was removed in Frequency 1.2.0")
     void getStorageSizeAt() throws Exception {
         try (val wsProvider = connect()) {
             val chainSection = TestsHelper.createSectionFactory(wsProvider).create(Chain.class);
