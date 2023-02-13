@@ -16,7 +16,7 @@ class CompactBigIntegerReaderTest {
 
     @SneakyThrows
     @ParameterizedTest
-    @CsvSource({"0x00,0", "0x04,1", "0xa8,42", "0x1501,69", "0xfeffffff,1073741823", "0x0300000040,1073741824"})
+    @CsvSource({"0x00,0", "0x04,1", "0xa8,42", "0x1501,69", "0xfeffffff,1073741823", "0x0300000040,1073741824", "0x020B197C,520504000"})
     void read(String input, String expected) {
         val bytes = HexConverter.toBytes(input);
         val stream = new ByteArrayInputStream(bytes);

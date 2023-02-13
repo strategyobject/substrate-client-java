@@ -145,7 +145,7 @@ class AuthorTests {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis, int nonce) {
-        val specVersion = 6;
+        val specVersion = 11;
         val txVersion = 1;
         val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;

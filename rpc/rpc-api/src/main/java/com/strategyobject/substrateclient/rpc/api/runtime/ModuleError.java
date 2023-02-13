@@ -2,14 +2,17 @@ package com.strategyobject.substrateclient.rpc.api.runtime;
 
 import com.strategyobject.substrateclient.scale.ScaleType;
 import com.strategyobject.substrateclient.scale.annotation.Scale;
+import com.strategyobject.substrateclient.scale.annotation.ScaleGeneric;
 import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigInteger;
+import java.util.List;
+
 /**
  * A custom error in a module.
  */
-@ScaleReader
 @Getter
 @Setter
 public class ModuleError {
@@ -22,6 +25,12 @@ public class ModuleError {
     /**
      * Module specific error value.
      */
-    @Scale(ScaleType.U8.class)
-    private Integer error;
+    @ScaleGeneric(
+        template = "Vec<U8>",
+        types = {
+            @Scale(ScaleType.Vec.class),
+            @Scale(ScaleType.U8.class)
+        }
+    )
+    private List<Integer> error;
 }

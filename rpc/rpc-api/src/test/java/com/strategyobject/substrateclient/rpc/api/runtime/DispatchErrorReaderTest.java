@@ -2,6 +2,7 @@ package com.strategyobject.substrateclient.rpc.api.runtime;
 
 import com.strategyobject.substrateclient.common.convert.HexConverter;
 import com.strategyobject.substrateclient.rpc.api.section.TestsHelper;
+import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,8 @@ class DispatchErrorReaderTest {
 
     @Test
     void readIsOther() throws IOException {
-        val dispatchErrorReader = new DispatchErrorReader(TestsHelper.SCALE_READER_REGISTRY);
+        ScaleReaderRegistry readerRegistry = TestsHelper.SCALE_READER_REGISTRY;
+        val dispatchErrorReader = new DispatchErrorReader(readerRegistry);
 
         val bytes = HexConverter.toBytes("0x00");
         val stream = new ByteArrayInputStream(bytes);
