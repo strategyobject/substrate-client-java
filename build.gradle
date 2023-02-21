@@ -40,6 +40,10 @@ subprojects {
         useJUnitPlatform()
     }
 
+    java {
+        withSourcesJar()
+    }
+
     publishing {
         publications {
             gpr(MavenPublication) {
