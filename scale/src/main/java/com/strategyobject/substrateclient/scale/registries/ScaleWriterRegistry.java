@@ -62,6 +62,7 @@ public class ScaleWriterRegistry {
         register(new Union12Writer(), Union12.class, ScaleType.Union12.class);
         register(new PairWriter(), Pair.class);
         register(new VecWriter(), ScaleType.Vec.class, List.class);
+        register(new HeterogeneousVecWriter(this), ScaleType.HeterogeneousVec.class, HeterogeneousVecWriter.HeterogeneousVec.class);
         register(new ArrayWriter(), Array.class);
         register(new BooleanArrayWriter(), boolean[].class);
         register(new ByteArrayWriter(), byte[].class);

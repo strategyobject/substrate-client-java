@@ -55,6 +55,9 @@ public interface ScaleType {
     class Vec<T> implements ScaleType {
     }
 
+    class HeterogeneousVec<T> implements ScaleType{
+    }
+
     class Union1<T1> implements ScaleType {
     }
 
