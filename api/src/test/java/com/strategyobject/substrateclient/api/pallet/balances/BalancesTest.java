@@ -90,7 +90,7 @@ class BalancesTest {
     }
 
     private Extrinsic<?, ?, ?, ?> createBalanceTransferExtrinsic(BlockHash genesis) {
-        val specVersion = 27;
+        val specVersion = 28;
         val txVersion = 1;
         val moduleIndex = (byte) 10;
         val callIndex = (byte) 0;
