@@ -2,6 +2,8 @@ package com.strategyobject.substrateclient.transport.coder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.strategyobject.substrateclient.rpc.api.BroadcastScale;
+import com.strategyobject.substrateclient.rpc.api.BroadcastScaleFactory;
 import com.strategyobject.substrateclient.transport.RpcObject;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RpcCoder {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(RpcObject.class, new RpcObjectTypeAdapter())
+            .registerTypeAdapter(BroadcastScale.class, new BroadcastScaleFactory())
             .create();
 
     private final AtomicInteger id = new AtomicInteger(0);

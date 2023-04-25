@@ -3,7 +3,9 @@ dependencies {
 
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
     implementation 'com.google.code.gson:gson:2.9.0'
+    implementation project(':scale')
 
+    annotationProcessor project(':scale:scale-codegen')
     testImplementation project(':tests')
     testImplementation 'org.testcontainers:testcontainers:1.17.3'
     testImplementation 'org.testcontainers:junit-jupiter:1.17.3'
