@@ -47,10 +47,9 @@ public interface ExtrinsicStatus {
     @NoArgsConstructor
     @Getter
     @Setter
-    @RpcDecoder
     class Broadcast implements ExtrinsicStatus {
 
-        private List<BroadcastScale> broadcast;
+        private List<String> broadcast;
 
         @Override
         public Status getStatus() {
