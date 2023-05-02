@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
     group = 'com.strategyobject.substrateclient'
-    version = '0.2.4.13'
+    version = '0.2.4.14-SNAPSHOT'
 
     repositories {
         mavenLocal()
