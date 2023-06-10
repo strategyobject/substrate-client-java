@@ -76,6 +76,7 @@ public class RpcModule extends AbstractModule {
                             new Pallet(60, "Msa"),
                             new Pallet(61, "Messages"),
                             new Pallet(62, "Schemas"),
+                            new Pallet(63, "StatefulStorage"),
                             new Pallet(64, "Capacity"),
                             new Pallet(65, "FrequencyTxPayment"),
                             new Pallet(66, "Handles")
