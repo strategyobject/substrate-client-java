@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,8 +28,8 @@ public class RpcEncoderRegistry {
         encoders = new ConcurrentHashMap<>(128);
         register(new PlainEncoder<>(),
                 Void.class, void.class, String.class, Boolean.class, boolean.class, Byte.class, byte.class,
-                Double.class, double.class, Float.class, float.class, Integer.class, int.class, Long.class,
-                long.class, Short.class, short.class);
+                Double.class, double.class, Float.class, float.class, BigInteger.class, Integer.class, int.class,
+                Long.class, long.class, Short.class, short.class);
         register(new UnitEncoder(), Unit.class);
         register(new ListEncoder(), List.class);
         register(new MapEncoder(), Map.class);
