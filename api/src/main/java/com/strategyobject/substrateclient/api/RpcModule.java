@@ -64,15 +64,18 @@ public class RpcModule extends AbstractModule {
                             new Pallet(11, "TransactionPayment"),
                             new Pallet(12, "Council"),
                             new Pallet(13, "TechnicalCommittee"),
+                            new Pallet(14, "Treasury"),
                             new Pallet(20, "Authorship"),
                             new Pallet(21, "CollatorSelection"),
                             new Pallet(22, "Session"),
                             new Pallet(23, "Aura"),
                             new Pallet(24, "AuraExt"),
-                            new Pallet(30, "XcmpQueue"),
+                            new Pallet(30, "XcmpQueue"), //Is called Pallet Multisig is that new or is that a rename?
+                        /* Removed
                             new Pallet(31, "PolkadotXcm"),
                             new Pallet(32, "DmpQueue"),
-                            new Pallet(40, "Vesting"),
+                         */
+                            new Pallet(40, "Vesting"), //Is Called Pallet TimeRelease is that new or is that a rename?
                             new Pallet(60, "Msa"),
                             new Pallet(61, "Messages"),
                             new Pallet(62, "Schemas"),

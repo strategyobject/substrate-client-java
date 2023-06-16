@@ -9,6 +9,9 @@ import com.strategyobject.substrateclient.scale.annotation.Scale;
 import com.strategyobject.substrateclient.scale.annotation.ScaleReader;
 import lombok.Getter;
 import lombok.Setter;
+import org.checkerframework.checker.units.qual.C;
+
+import java.math.BigInteger;
 
 @Pallet("Treasury")
 public interface Treasury {
@@ -95,6 +98,26 @@ public interface Treasury {
     @ScaleReader
     class Deposit {
         private Balance value;
+    }
+
+    @Event(index = 7)
+    @Getter
+    @Setter
+    @ScaleReader
+    class SpendApproved {
+        @Scale(ScaleType.U32.class)
+        private Long proposalIndex;
+        private Balance amount;
+        private AccountId accountId;
+    }
+
+    @Event(index = 8)
+    @Getter
+    @Setter
+    @ScaleReader
+    class UpdatedInactive {
+        private Balance reactivated;
+        private Balance deactivated;
     }
 
 }

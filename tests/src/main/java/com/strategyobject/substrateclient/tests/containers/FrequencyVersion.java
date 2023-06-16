@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.tests.containers;
 
 public class FrequencyVersion {
-    public static final String CURRENT_VERSION = "v1.6.2";
+    public static final String CURRENT_VERSION = "v1.7.0-rc1";
 
     private FrequencyVersion() {
     }

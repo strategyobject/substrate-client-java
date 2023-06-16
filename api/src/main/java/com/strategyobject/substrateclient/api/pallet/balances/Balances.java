@@ -60,7 +60,6 @@ public interface Balances {
     class BalanceSet {
         private AccountId account;
         private Balance free;
-        private Balance reserved;
     }
 
     /**
@@ -137,6 +136,102 @@ public interface Balances {
     @Setter
     @ScaleReader
     class Slashed {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 10)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Minted {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 11)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Burned {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 12)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Suspended {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 13)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Restored {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 14)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Upgraded {
+        private AccountId account;
+    }
+
+    @Event(index = 15)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Issued {
+        private Balance value;
+    }
+
+    @Event(index = 16)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Rescinded {
+        private Balance value;
+    }
+
+    @Event(index = 17)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Locked {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 18)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Unlocked {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 19)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Frozen {
+        private AccountId account;
+        private Balance value;
+    }
+
+    @Event(index = 20)
+    @Getter
+    @Setter
+    @ScaleReader
+    class Thawed {
         private AccountId account;
         private Balance value;
     }
