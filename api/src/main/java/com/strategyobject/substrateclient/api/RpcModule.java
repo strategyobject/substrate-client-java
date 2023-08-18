@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.strategyobject.substrateclient.crypto.ss58.SS58AddressFormat;
+import com.strategyobject.substrateclient.rpc.CachingRpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.GeneratedRpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.metadata.ManualMetadataProvider;
@@ -25,21 +26,18 @@ public class RpcModule extends AbstractModule {
     }
 
     public static class RpcSectionModule extends AbstractModule {
-        @Override
-        protected void configure() {
-            try {
-                bind(RpcSectionFactory.class)
-                        .toConstructor(
-                                GeneratedRpcSectionFactory.class.getConstructor(
-                                        ProviderInterface.class,
-                                        RpcEncoderRegistry.class,
-                                        ScaleWriterRegistry.class,
-                                        RpcDecoderRegistry.class,
-                                        ScaleReaderRegistry.class))
-                        .asEagerSingleton();
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
+        @Provides
+        @Singleton
+        public RpcSectionFactory provideRpcSectionFactory(ProviderInterface providerInterface,
+                                                      RpcEncoderRegistry rpcEncoderRegistry,
+                                                      ScaleWriterRegistry scaleWriterRegistry,
+                                                      RpcDecoderRegistry rpcDecoderRegistry,
+                                                      ScaleReaderRegistry scaleReaderRegistry) {
+            return new CachingRpcSectionFactory(new GeneratedRpcSectionFactory(providerInterface,
+                    rpcEncoderRegistry,
+                    scaleWriterRegistry,
+                    rpcDecoderRegistry,
+                    scaleReaderRegistry));
         }
     }
 
@@ -48,10 +46,8 @@ public class RpcModule extends AbstractModule {
         @Singleton
         public MetadataProvider provideMetadata() {
             // TODO. Use provider based on real Metadata
-            return new ManualMetadataProvider(
-                    SS58AddressFormat.SUBSTRATE_ACCOUNT,
-                    new PalletCollection(
-                            new Pallet(0, "System"),
+            return new ManualMetadataProvider(SS58AddressFormat.SUBSTRATE_ACCOUNT,
+                    new PalletCollection(new Pallet(0, "System"),
                             new Pallet(1, "Utility"),
                             new Pallet(2, "Babe"),
                             new Pallet(3, "Timestamp"),

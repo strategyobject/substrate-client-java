@@ -1,5 +1,6 @@
 package com.strategyobject.substrateclient.pallet;
 
+import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.rpc.api.section.State;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ class GeneratedPalletFactoryTests {
     private final GeneratedPalletFactory factory = new GeneratedPalletFactory(
             TestsHelper.SCALE_READER_REGISTRY,
             TestsHelper.SCALE_WRITER_REGISTRY,
-            mock(State.class));
+            mock(RpcSectionFactory.class));
 
     @Test
     void throwsWhenPalletIsNotAnnotated() {

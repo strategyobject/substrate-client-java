@@ -8,7 +8,7 @@ import com.squareup.javapoet.TypeSpec;
 import com.strategyobject.substrateclient.common.codegen.ProcessingException;
 import com.strategyobject.substrateclient.common.codegen.ProcessorContext;
 import com.strategyobject.substrateclient.pallet.annotation.Pallet;
-import com.strategyobject.substrateclient.rpc.api.section.State;
+import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.val;
@@ -59,7 +59,7 @@ public class PalletAnnotatedInterface {
                 .addSuperinterface(TypeName.get(interfaceElement.asType()))
                 .addField(ScaleReaderRegistry.class, SCALE_READER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
                 .addField(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY, Modifier.PRIVATE, Modifier.FINAL)
-                .addField(State.class, STATE, Modifier.PRIVATE, Modifier.FINAL);
+                .addField(RpcSectionFactory.class, RPC_SECTION_FACTORY, Modifier.PRIVATE, Modifier.FINAL);
 
         val constructorBuilder = createConstructorBuilder();
 
@@ -85,9 +85,9 @@ public class PalletAnnotatedInterface {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(ScaleReaderRegistry.class, SCALE_READER_REGISTRY)
                 .addParameter(ScaleWriterRegistry.class, SCALE_WRITER_REGISTRY)
-                .addParameter(State.class, STATE);
+                .addParameter(RpcSectionFactory.class, RPC_SECTION_FACTORY);
 
-        Stream.of(SCALE_READER_REGISTRY, SCALE_WRITER_REGISTRY, STATE)
+        Stream.of(SCALE_READER_REGISTRY, SCALE_WRITER_REGISTRY, RPC_SECTION_FACTORY)
                 .forEach(x ->
                         ctor.beginControlFlow("if ($L == null)", x)
                                 .addStatement("throw new $T(\"$L can't be null.\")", IllegalArgumentException.class, x)

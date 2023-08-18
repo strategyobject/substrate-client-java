@@ -33,7 +33,7 @@ public class Api implements AutoCloseable {
      * @return appropriate instance of the rpc
      */
     public <T> T rpc(@NonNull Class<T> clazz) {
-        return clazz.cast(resolvedCache.computeIfAbsent(clazz, rpcSectionFactory::create));
+        return rpcSectionFactory.create(clazz);
     }
 
     /**

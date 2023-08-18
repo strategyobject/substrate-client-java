@@ -14,6 +14,7 @@ import com.strategyobject.substrateclient.common.types.Size;
 import com.strategyobject.substrateclient.pallet.annotation.Storage;
 import com.strategyobject.substrateclient.pallet.annotation.StorageHasher;
 import com.strategyobject.substrateclient.pallet.storage.*;
+import com.strategyobject.substrateclient.rpc.api.section.State;
 import com.strategyobject.substrateclient.scale.ScaleReader;
 import com.strategyobject.substrateclient.scale.ScaleWriter;
 import com.strategyobject.substrateclient.scale.codegen.ScaleAnnotationParser;
@@ -152,11 +153,13 @@ class StorageProcessor extends PalletMethodProcessor {
                 context);
 
         methodSpecBuilder
-                .addStatement("$1T $2L = $1T.$3L($4L, $5L, $6L)",
+                .addStatement("$1T $2L = $1T.$3L($4L.$5L($6T.class), $7L, $8L)",
                         StorageNMapImpl.class,
                         STORAGE_MAP,
                         STORAGE_FACTORY_METHOD,
-                        STATE,
+                        RPC_SECTION_FACTORY,
+                        RPC_SECTION_FACTORY_METHOD,
+                        State.class,
                         VALUE_READER,
                         KEY_PROVIDER);
     }

@@ -12,7 +12,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 import java.io.IOException;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Set;
 
 @SupportedAnnotationTypes("com.strategyobject.substrateclient.pallet.annotation.Pallet")
@@ -51,8 +51,8 @@ public class PalletInterfaceProcessor extends AbstractProcessor {
                 val annotatedInterface = new PalletAnnotatedInterface(
                         typeElement,
                         new CompoundMethodProcessor(typeElement,
-                                Collections.singletonList(
-                                        new StorageProcessor(typeElement)
+                                Arrays.asList(new StorageProcessor(typeElement),
+                                        new TransactionProcessor(typeElement)
                                 )));
 
                 annotatedInterface.generateClass(context);

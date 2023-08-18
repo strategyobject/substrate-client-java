@@ -7,4 +7,6 @@ public interface MetadataProvider {
     SS58AddressFormat getSS58AddressFormat();
 
     PalletCollection getPallets();
+
+
 }

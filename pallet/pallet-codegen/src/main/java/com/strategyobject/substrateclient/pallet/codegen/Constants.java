@@ -1,7 +1,8 @@
 package com.strategyobject.substrateclient.pallet.codegen;
 
 class Constants {
-    static final String STATE = "state";
+    static final String RPC_SECTION_FACTORY = "rpcSectionFactory";
+    static final String RPC_SECTION_FACTORY_METHOD = "create";
     static final String CLASS_NAME_TEMPLATE = "%sImpl";
     static final String SCALE_READER_REGISTRY = "scaleReaderRegistry";
     static final String SCALE_WRITER_REGISTRY = "scaleWriterRegistry";

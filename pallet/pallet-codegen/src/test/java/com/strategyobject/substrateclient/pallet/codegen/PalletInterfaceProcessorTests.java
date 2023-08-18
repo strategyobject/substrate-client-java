@@ -100,7 +100,7 @@ class PalletInterfaceProcessorTests {
 
         assertContains(generatedName, compilation, "private final ScaleReaderRegistry scaleReaderRegistry;");
         assertContains(generatedName, compilation, "private final ScaleWriterRegistry scaleWriterRegistry;");
-        assertContains(generatedName, compilation, "private final State state;");
+        assertContains(generatedName, compilation, "private final RpcSectionFactory rpcSectionFactory;");
         assertContains(generatedName, compilation, "private final StorageNMap<Integer> value;");
         assertContains(generatedName, compilation, "private final StorageNMap<Integer> map;");
         assertContains(generatedName, compilation, "private final StorageNMap<AccountId> doubleMap;");

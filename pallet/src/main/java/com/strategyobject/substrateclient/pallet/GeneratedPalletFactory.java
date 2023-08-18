@@ -1,7 +1,7 @@
 package com.strategyobject.substrateclient.pallet;
 
 import com.strategyobject.substrateclient.pallet.annotation.Pallet;
-import com.strategyobject.substrateclient.rpc.api.section.State;
+import com.strategyobject.substrateclient.rpc.RpcSectionFactory;
 import com.strategyobject.substrateclient.scale.registries.ScaleReaderRegistry;
 import com.strategyobject.substrateclient.scale.registries.ScaleWriterRegistry;
 import lombok.NonNull;
@@ -14,7 +14,7 @@ public class GeneratedPalletFactory implements PalletFactory {
 
     private final @NonNull ScaleReaderRegistry scaleReaderRegistry;
     private final @NonNull ScaleWriterRegistry scaleWriterRegistry;
-    private final @NonNull State state;
+    private final @NonNull RpcSectionFactory rpcSectionFactory;
 
     @Override
     public <T> T create(Class<T> interfaceClass) {
@@ -28,9 +28,9 @@ public class GeneratedPalletFactory implements PalletFactory {
         Class<?> implClazz;
         try {
             implClazz = Class.forName(String.format(CLASS_NAME_TEMPLATE, interfaceClass.getCanonicalName()));
-            val ctor = implClazz.getConstructor(ScaleReaderRegistry.class, ScaleWriterRegistry.class, State.class);
+            val ctor = implClazz.getConstructor(ScaleReaderRegistry.class, ScaleWriterRegistry.class, RpcSectionFactory.class);
 
-            return interfaceClass.cast(ctor.newInstance(scaleReaderRegistry, scaleWriterRegistry, state));
+            return interfaceClass.cast(ctor.newInstance(scaleReaderRegistry, scaleWriterRegistry, rpcSectionFactory));
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
