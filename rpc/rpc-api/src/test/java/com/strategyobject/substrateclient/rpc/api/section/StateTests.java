@@ -37,7 +37,7 @@ class StateTests {
     private final StorageKey storageKey;
 
     @Container
-    static final TestSubstrateContainer substrate = new TestSubstrateContainer(FrequencyVersion.CURRENT_VERSION).waitingFor(Wait.forLogMessage(".*Running JSON-RPC WS server.*", 1))
+    static final TestSubstrateContainer substrate = new TestSubstrateContainer(FrequencyVersion.CURRENT_VERSION).waitingFor(Wait.forLogMessage(".*Running JSON-RPC server.*", 1))
             .withNetwork(network);
 
     StateTests() {
