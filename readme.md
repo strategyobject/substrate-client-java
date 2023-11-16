@@ -77,5 +77,5 @@ Currently, we use [test containers](https://www.testcontainers.org/) and docker 
 You will need to install
 
 - [Rust](https://www.rust-lang.org/tools/install)
-- Java (recommended to install via [`sdkman`]())
+- Java (recommended to install via [`sdkman`](https://sdkman.io/install))
 - [Docker](https://www.docker.com/products/docker-desktop/)
