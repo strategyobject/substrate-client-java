@@ -30,7 +30,7 @@ task compileRust {
         else {
             exec {
                 workingDir 'src/jni-crypto'
-                commandLine 'cargo', 'build', '--release', '--target=x86_64-apple-darwin', '--target-dir=../../build/jni-crypto'
+                commandLine 'cargo', 'build', '--release', '--target-dir=../../build/jni-crypto'
             }
         }
     }
@@ -39,7 +39,7 @@ task compileRust {
 compileJava.dependsOn(compileRust)
 
 processResources {
-    from("${buildDir}/jni-crypto/x86_64-apple-darwin/release") {
+    from("${buildDir}/jni-crypto/release") {
         into "include/macos"
         include '*.dylib'
     }
