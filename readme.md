@@ -72,4 +72,16 @@ We take care of either lost responses or canceled futures by not holding handler
 All API methods related to the substrate node will be tested for operability and compatibility.
 Currently, we use [test containers](https://www.testcontainers.org/) and docker image [parity/substrate:v3.0.0](https://hub.docker.com/layers/parity/substrate/v3.0.0/images/sha256-1aef07509d757c584320773c476dcb6077578bbf2f5e468ceb413dcf908897f1?context=explore).
 
+## Building Locally
 
+You will need to install
+
+- [asdf](https://asdf-vm.com/guide/getting-started.html)
+  - Install the [Rust plugin](https://github.com/asdf-community/asdf-rust)
+  - Install the [Java plugin](https://github.com/halcyon/asdf-java)
+    - Make sure to follow instructions in the **MacOS** section.
+  - Then, run `asdf install` at the root of the repo.
+
+  _If you prefer to not use `asdf`, you can install [Rust directly](https://www.rust-lang.org/tools/install) and install Java via [`sdkman`](https://sdkman.io/install). Reference `.tool-versions` to ensure you are installing the correct versions._
+
+- [Docker](https://www.docker.com/products/docker-desktop/)
