@@ -76,6 +76,12 @@ Currently, we use [test containers](https://www.testcontainers.org/) and docker 
 
 You will need to install
 
-- [Rust](https://www.rust-lang.org/tools/install)
-- Java (recommended to install via [`sdkman`](https://sdkman.io/install))
+- [asdf](https://asdf-vm.com/guide/getting-started.html)
+  - Install the [Rust plugin](https://github.com/asdf-community/asdf-rust)
+  - Install the [Java plugin](https://github.com/halcyon/asdf-java)
+    - Make sure to follow instructions in the **MacOS** section.
+  - Then, run `asdf install` at the root of the repo.
+
+  _If you prefer to not use `asdf`, you can install [Rust directly](https://www.rust-lang.org/tools/install) and install Java via [`sdkman`](https://sdkman.io/install). Reference `.tool-versions` to ensure you are installing the correct versions._
+
 - [Docker](https://www.docker.com/products/docker-desktop/)
