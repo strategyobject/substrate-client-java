@@ -221,11 +221,6 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
     private CompletableFuture<RpcObject> send(String method,
                                               List<Object> params,
                                               SubscriptionHandler subscription) {
-        val ws = this.webSocket;
-        Preconditions.checkState(
-                ws != null && this.isConnected(),
-                "WebSocket is not connected");
-
         val jsonRpcRequest = this.coder.encodeObject(method, params);
         val json = RpcCoder.encodeJson(jsonRpcRequest);
         val id = jsonRpcRequest.getId();
@@ -234,16 +229,20 @@ public class WsProvider implements ProviderInterface, AutoCloseable {
         val whenResponseReceived = new CompletableFuture<RpcObject>();
         this.handlers.put(id, new WsStateAwaiting(whenResponseReceived, method, params, subscription));
 
-        return CompletableFuture.runAsync(() -> ws.send(json))
-                .whenCompleteAsync((_res, ex) -> {
-                    if (ex != null) {
-                        this.handlers.remove(id);
-                        whenResponseReceived.completeExceptionally(ex);
-                    } else {
-                        scheduleCleanupIfNoResponseWithinTimeout(id);
-                    }
-                })
-                .thenCombineAsync(whenResponseReceived, (_a, b) -> b);
+        return CompletableFuture.runAsync(() -> {
+            if (this.webSocket == null || !this.isConnected()) {
+                throw new IllegalStateException("WebSocket is not connected");
+            } else {
+                this.webSocket.send(json);
+            }
+        }).whenCompleteAsync((_res, ex) -> {
+            if (ex != null) {
+                this.handlers.remove(id);
+                whenResponseReceived.completeExceptionally(ex);
+            } else {
+                scheduleCleanupIfNoResponseWithinTimeout(id);
+            }
+        }).thenCombineAsync(whenResponseReceived, (_a, b) -> b);
     }
 
     /**
