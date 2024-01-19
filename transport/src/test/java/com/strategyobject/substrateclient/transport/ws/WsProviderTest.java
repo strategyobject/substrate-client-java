@@ -158,6 +158,21 @@ class WsProviderTest {
 
     @Test
     @SneakyThrows
+    void sendWhileDisconnectedThrows() {
+        try (val wsProvider = WsProvider.builder()
+                .setEndpoint(substrate.getWsAddress())
+                .withPolicy(ReconnectionPolicy.MANUAL)
+                .build()) {
+
+            val executionException = assertThrows(
+                    ExecutionException.class,
+                    () -> wsProvider.send("unknown_method", null).get(WAIT_TIMEOUT, TimeUnit.SECONDS));
+            assertTrue(executionException.getCause() instanceof IllegalStateException);
+        }
+    }
+
+    @Test
+    @SneakyThrows
     @Disabled("This test is flaky and given that the instant seal node does emit less events it seems like this flaking out is not a real danger, it's more a difference in configuration on the server side.")
     void canSubscribe() {
         try (val wsProvider = WsProvider.builder()
