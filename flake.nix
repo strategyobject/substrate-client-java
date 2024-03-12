@@ -11,12 +11,7 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        mkLinkerPath = {cc, ...}:
-            # let
-              # inherit (stdenv) cc;
-            # in
-              "${cc}/bin/${cc.targetPrefix}cc";
-
+        mkLinkerPath = {cc, ...}: "${cc}/bin/${cc.targetPrefix}cc";
       in
         {
           devShells.default = with pkgs; mkShell {
