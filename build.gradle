@@ -54,8 +54,7 @@ subprojects {
         repositories {
             maven {
                 name = "GitHubPackages"
-                // url = "https://maven.pkg.github.com/LibertyDSNP/substrate-client-java"
-                url = "https://maven.pkg.github.com/kczulko/substrate-client-java"
+                url = "https://maven.pkg.github.com/LibertyDSNP/substrate-client-java"
                 credentials {
                     username = System.getenv("USERNAME")
                     password = System.getenv("TOKEN")
