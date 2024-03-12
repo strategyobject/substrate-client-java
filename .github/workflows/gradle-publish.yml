@@ -21,7 +21,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@main
       - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Build with Gradle
-        run: nix develop --ignore-environment --command bash -c "./gradlew build && ./gradlew publishToMavenLocal"
+        run: nix develop --ignore-environment --command bash -c "./gradlew build && ./gradlew publish"
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
