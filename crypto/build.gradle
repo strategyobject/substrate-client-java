@@ -13,7 +13,7 @@ test {
 task compileRust {
     project.logger.info("#####################" + System.getProperty("os.name").toLowerCase())
     doLast {
-    // nix build detection
+        // nix build detection
         if (!System.getenv('NIX_CC').empty) {
             exec {
                 workingDir 'src/jni-crypto'
