@@ -12,14 +12,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        with:
-          java-version: '8'
-          distribution: 'temurin'
-
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Generate Javadoc
-        run: gradle aggregateJavadoc
+        run: nix develop --command bash -c "./gradlew aggregateJavadoc"
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

@@ -1,0 +1,5 @@
+[toolchain]
+channel = "nightly-2024-02-04"
+components = [ "rustc" ]
+targets = [ "x86_64-pc-windows-gnu", "aarch64-unknown-linux-gnu", "x86_64-pc-windows-gnu" ]
+profile = "minimal"

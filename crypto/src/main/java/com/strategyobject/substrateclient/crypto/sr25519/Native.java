@@ -22,9 +22,12 @@ class Native {
     private static final String LIB_PATH = "SUBSTRATE_CLIENT_CRYPTO_LIB_PATH";
     private static final String LIB_NAME = "jni_crypto";
     private static final String OS_NAME = System.getProperty("os.name").toLowerCase();
+    private static final String ARCH_NAME = System.getProperty("os.arch").toLowerCase();
     private static final boolean IS_WINDOWS = OS_NAME.contains("win");
     private static final boolean IS_MAC = OS_NAME.contains("mac");
     private static final boolean IS_LINUX = OS_NAME.contains("linux");
+    private static final boolean IS_AMD64 = ARCH_NAME.contains("amd64") || ARCH_NAME.contains("x86_64");
+    private static final boolean IS_AARCH64 = ARCH_NAME.contains("aarch64");
 
     static {
         try {
@@ -49,8 +52,10 @@ class Native {
         String osDir;
         if (IS_WINDOWS) {
             osDir = "windows";
-        } else if (IS_LINUX) {
-            osDir = "linux";
+        } else if (IS_LINUX && IS_AMD64) {
+            osDir = "x86_64-linux";
+        } else if (IS_LINUX && IS_AARCH64)  {
+            osDir = "aarch64-linux";
         } else if (IS_MAC) { // TODO 'MasOS support problem'
             osDir = "macos";
         } else {

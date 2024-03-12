@@ -13,21 +13,24 @@ test {
 task compileRust {
     project.logger.info("#####################" + System.getProperty("os.name").toLowerCase())
     doLast {
-        if(System.getProperty("os.name").toLowerCase().contains("linux")) {
+    // nix build detection
+        if (!System.getenv('NIX_CC').empty) {
+            exec {
+                workingDir 'src/jni-crypto'
+                commandLine 'cargo', 'build', '--release', '--target=aarch64-unknown-linux-gnu', '--target-dir=../../build/jni-crypto'
+            }
             exec {
                 workingDir 'src/jni-crypto'
                 commandLine 'cargo', 'build', '--release', '--target=x86_64-unknown-linux-gnu', '--target-dir=../../build/jni-crypto'
             }
-        }
-        else if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             exec {
                 workingDir 'src/jni-crypto'
                 commandLine 'cargo', 'build', '--release', '--target=x86_64-pc-windows-gnu', '--target-dir=../../build/jni-crypto'
+                environment RUSTFLAGS: "-L ${System.getenv('PTHREAD_LOCATION')}"
             }
-        }
-        // Does not cover solaris, just MacOS. See potential return types here:
-        // https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/platform/OperatingSystem.html
-        else {
+        } else {
+            // Does not cover solaris, just MacOS. See potential return types here:
+            // https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/platform/OperatingSystem.html  
             exec {
                 workingDir 'src/jni-crypto'
                 commandLine 'cargo', 'build', '--release', '--target-dir=../../build/jni-crypto'
@@ -44,7 +47,11 @@ processResources {
         include '*.dylib'
     }
     from("${buildDir}/jni-crypto/x86_64-unknown-linux-gnu/release") {
-        into "include/linux"
+        into "include/x86_64-linux"
+        include '*.so'
+    }
+    from("${buildDir}/jni-crypto/aarch64-unknown-linux-gnu/release") {
+        into "include/aarch64-linux"
         include '*.so'
     }
     from("${buildDir}/jni-crypto/x86_64-pc-windows-gnu/release") {
