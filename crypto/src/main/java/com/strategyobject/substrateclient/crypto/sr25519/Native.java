@@ -56,7 +56,7 @@ class Native {
             osDir = "x86_64-linux";
         } else if (IS_LINUX && IS_AARCH64)  {
             osDir = "aarch64-linux";
-        } else if (IS_MAC) { // TODO 'MasOS support problem'
+        } else if (IS_MAC) { // TODO 'MacOS support problem'
             osDir = "macos";
         } else {
             throw new RuntimeException("JNI library can't be loaded because OS wasn't detected as supported.");
