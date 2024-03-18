@@ -17,20 +17,21 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
         with:
-          java-version: '8'
-          distribution: 'temurin'
-
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.rustup
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Build with Gradle
-        run: gradle -i build
-
-      # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
-      # the publishing section of your build.gradle
-      - name: Publish to GitHub Packages
-        run: gradle publish
+        run: nix develop --ignore-environment --keep USERNAME --keep TOKEN --command bash -c "./gradlew build && ./gradlew publish"
         env:
           USERNAME: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
