@@ -85,3 +85,5 @@ You will need to install
   _If you prefer to not use `asdf`, you can install [Rust directly](https://www.rust-lang.org/tools/install) and install Java via [`sdkman`](https://sdkman.io/install). Reference `.tool-versions` to ensure you are installing the correct versions._
 
 - [Docker](https://www.docker.com/products/docker-desktop/)
+
+build
